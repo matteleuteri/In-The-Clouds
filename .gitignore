@@ -1,0 +1,28 @@
+# Prerequisites
+*.d
+
+# debug
+*.pdb
+*.rdbg
+
+# Compiled Object files
+*.o
+*.obj
+
+# Precompiled Headers
+*.pch
+
+# Compiled Dynamic libraries
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executables
+*.exe
+
+.svg
+build/
+shell.bat
+.vscode/

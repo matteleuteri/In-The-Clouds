@@ -1,0 +1,76 @@
+#include "headers/Scene.h"
+
+Scene::Scene(int64_t currentTime, bool ia, std::vector<ID2D1Bitmap*> bitmaps) : isActive(ia)
+{
+    player = std::make_unique<Player>(bitmaps[0], 400.0f, 400.0f);
+    background = std::make_unique<Background>(bitmaps[1], 0.0f, 0.0f);
+}
+
+void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
+{
+    int64_t timeElapsed = endTime - startTime;
+    player->update(timeElapsed, hwnd);
+}
+
+void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
+{
+    renderTarget->BeginDraw();
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0,0));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(0,{0,0}));
+    renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
+    // draw border of window
+    // D2D1_RECT_F border = D2D1::RectF((float)rc->left, (float)rc->top, (float)rc->right, (float)rc->bottom);
+    // renderTarget->DrawRectangle(border, brushes[0]);
+    drawBackground(renderTarget);
+    drawPlayer(renderTarget);
+    renderTarget->EndDraw();  
+}
+
+void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
+{
+    D2D1_SIZE_F size = background->bitmap->GetSize();
+    renderTarget->DrawBitmap(background->bitmap, D2D1::RectF(
+                background->x - (size.width / 2), 
+                background->y - (size.height / 2), 
+                background->x + (size.width / 2), 
+                background->y + (size.height / 2))); 
+}
+
+void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
+{
+    D2D1_POINT_2F center = {};
+    center.x = player->x;
+    center.y = player->y;
+    D2D1_SIZE_F size = player->bitmap->GetSize();
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(player->angle, center));
+    renderTarget->DrawBitmap(player->bitmap, D2D1::RectF(
+                player->x - (size.width / 2), 
+                player->y - (size.height / 2), 
+                player->x + (size.width / 2), 
+                player->y + (size.height / 2)));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(0, center));
+}
+
+// void Scene::drawBM(GameObject* g)
+// {
+//     size = g->bitmap->GetSize();
+//     renderTmrget->DrawBitmap(g->>bitmap, D2D1::RectF(
+//                 g->x - (size.width / 2), 
+//                 g->y - (size.height / 2), 
+//                 g->x + (size.width / 2), 
+//                 g->y + (size.height / 2)));
+// }
+
+// D2D1_RECT_F layoutRect = D2D1::RectF(
+// static_cast<FLOAT>(rc->left),
+// static_cast<FLOAT>(rc->top),
+// static_cast<FLOAT>(rc->right - rc->left),
+// static_cast<FLOAT>(rc->bottom - rc->top));
+// const wchar_t* wszText_ = L"This is my text, it has a null terminating charcetr\n";
+// UINT32 cTextLength_ = 53;// check for overflow
+// renderTarget->DrawText(
+// wszText_,        // The string to render.
+// cTextLength_,    // The string's length.
+// pTextFormat_,    // The text format.
+// layoutRect,       // The region of the window where the text will be rendered.
+// brushes[0]);

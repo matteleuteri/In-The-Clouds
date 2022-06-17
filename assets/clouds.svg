@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="clouds.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.37059484"
+     inkscape:cx="-348.68662"
+     inkscape:cy="415.27046"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="1923"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g9397"
+       inkscape:export-filename="C:\Users\meleu\OneDrive\Desktop\untitled 2d adventure\assets\CloudLayer1_1.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <rect
+         style="fill:#ddffff;fill-opacity:1;stroke-width:11.4652;stroke-opacity:0.638554;paint-order:stroke markers fill"
+         id="rect846"
+         width="381"
+         height="190.5"
+         x="0"
+         y="0" />
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.160529px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.85576923"
+         d="m 15.71645,48.316409 c 0,0 -13.42818,-5.631173 -3.465338,-19.492521 C 22.213961,14.96254 36.291889,17.99471 36.291889,17.99471 c 0,0 -4.764835,-13.2115973 8.663345,-14.5110987 13.428179,-1.2995015 13.861347,7.3638407 13.861347,7.3638407 0,0 20.358852,-8.4467587 21.874938,14.511099 1.516086,22.957858 -11.912094,20.792022 -11.912094,20.792022 0,0 13.42818,22.524686 -10.396012,27.072939 C 34.55922,77.77177 31.96022,67.592339 31.96022,67.592339 c 0,0 -24.0407772,4.981424 -16.24377,-19.27593 z"
+         id="path2185" />
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.122532px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.76602564"
+         d="m 312.48036,56.859068 c 0,0 -12.57077,4.281533 -17.66238,-5.211469 -5.09161,-9.493003 5.79233,-14.987144 5.79233,-14.987144 0,0 -13.42318,-2.407077 -6.3919,-9.115355 7.03128,-6.708279 14.21597,-3.876571 14.21597,-3.876571 0,0 5.48381,-12.438346 24.74449,-5.105778 19.26068,7.332572 9.45966,12.827479 9.45966,12.827479 0,0 26.07327,1.633646 15.39094,14.320698 -10.68234,12.687049 -20.38039,10.333077 -20.38039,10.333077 0,0 -10.46628,12.939586 -25.16872,0.815063 z"
+         id="path2185-5" />
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.265061px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.79487179"
+         d="m 124.22139,30.702552 c 0,0 -16.82628,-5.833249 20.10221,-14.253831 36.92847,-8.420582 36.02026,0.797709 36.02026,0.797709 0,0 3.78319,-10.7930231 33.61144,-4.808583 29.82824,5.98444 22.12255,9.893631 22.12255,9.893631 0,0 52.65443,2.614988 29.51269,26.329752 -23.14171,23.714774 -48.99395,14.274808 -48.99395,14.274808 0,0 -3.06294,6.812429 -28.64968,5.709798 -40.76926,-1.756893 -40.04035,-12.719654 -40.04035,-12.719654 0,0 -67.971152,-5.262269 -23.68517,-25.22363 z"
+         id="path2185-6"
+         sodipodi:nodetypes="cscscscscc" />
+    </g>
+  </g>
+</svg>
