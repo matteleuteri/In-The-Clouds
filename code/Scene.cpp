@@ -2,9 +2,15 @@
 
 Scene::Scene(int64_t currentTime, bool ia, std::vector<ID2D1Bitmap*> bitmaps) : isActive(ia)
 {
-    player = std::make_unique<Player>(bitmaps[0], 400.0f, 400.0f);
+    player = std::make_unique<Player>(bitmaps[0], 600.0f, 600.0f);
     background = std::make_unique<Background>(bitmaps[1], 0.0f, 0.0f);
+    // chunk1 = std::make_unique<WorldChunk>(bitmaps[2], 200.0f, 20.0f);
+    chunk1 = std::make_unique<WorldChunk>(bitmaps[2], 200.0f, 20.0f);
+    chunk2 = std::make_unique<WorldChunk>(bitmaps[3], 400.0f, 400.0f);
 }
+
+
+
 
 void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
 {
@@ -22,6 +28,9 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
     // D2D1_RECT_F border = D2D1::RectF((float)rc->left, (float)rc->top, (float)rc->right, (float)rc->bottom);
     // renderTarget->DrawRectangle(border, brushes[0]);
     drawBackground(renderTarget);
+
+    drawWorldChunks(renderTarget);
+
     drawPlayer(renderTarget);
     renderTarget->EndDraw();  
 }
@@ -30,10 +39,28 @@ void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 {
     D2D1_SIZE_F size = background->bitmap->GetSize();
     renderTarget->DrawBitmap(background->bitmap, D2D1::RectF(
-                background->x - (size.width / 2), 
-                background->y - (size.height / 2), 
-                background->x + (size.width / 2), 
-                background->y + (size.height / 2))); 
+                background->x, 
+                background->y, 
+                background->x + size.width, 
+                background->y + size.height)); 
+}
+
+void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
+{
+    D2D1_SIZE_F size = chunk1->bitmap->GetSize();
+    renderTarget->DrawBitmap(chunk1->bitmap, D2D1::RectF(
+                chunk1->x,
+                chunk1->y,
+                chunk1->x + size.width,
+                chunk1->y + size.height)); 
+
+
+    D2D1_SIZE_F size2 = chunk2->bitmap->GetSize();
+    renderTarget->DrawBitmap(chunk2->bitmap, D2D1::RectF(
+                chunk2->x,
+                chunk2->y,
+                chunk2->x + size2.width,
+                chunk2->y + size2.height));     
 }
 
 void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)

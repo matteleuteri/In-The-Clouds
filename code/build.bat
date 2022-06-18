@@ -3,7 +3,7 @@
 IF NOT EXIST ..\build mkdir ..\build
 pushd ..\build
 
-set compilerFlags=-EHsc -W4 -wd4100 -Z7 -std:c++17 /Fe"Winmain.exe"
+set compilerFlags=-EHsc -W4 -wd4100 -Z7 -std:c++17 /Fe"In-The-Clouds.exe"
 
 set linkerFlags=-link -INCREMENTAL:NO -DEBUG:FULL
 

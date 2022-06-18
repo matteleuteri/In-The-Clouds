@@ -13,6 +13,7 @@
 #include <Objbase.h>
 
 #include "Player.h"
+#include "WorldChunk.h"
 #include "../background/Background.h"
 
 class Scene
@@ -21,6 +22,14 @@ public:
     bool isActive;
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
+
+    // should actually be array or something
+    std::unique_ptr<WorldChunk> chunk1;
+    std::unique_ptr<WorldChunk> chunk2;
+
+    void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
+
+
     void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget);
     void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget);
     Scene::Scene(int64_t currentTime, bool ia, std::vector<ID2D1Bitmap*> bitmaps);

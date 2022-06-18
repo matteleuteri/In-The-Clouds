@@ -83,8 +83,8 @@ static void createResources(HWND hwnd, RECT* rc)
     p /= "assets";
     loadBitmapFile(pIWICFactory, "player.png", &playerBitmap);
     loadBitmapFile(pIWICFactory, "CloudLayer1_1.png", &BLayer1_1);
-
-
+    loadBitmapFile(pIWICFactory, "WorldChunk_1.png", &chunk_bm_1);
+    loadBitmapFile(pIWICFactory, "WorldChunk_2.png", &chunk_bm_2);
 }
 
 /*  THESE KEY FUNCTIONS BELOW ARE NOT FINAL  */
@@ -166,7 +166,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
-    const wchar_t CLASS_NAME[]  = L"Robo Spiders in Space";
+    const wchar_t CLASS_NAME[]  = L"In The Clouds";
     
     WNDCLASS wc = { };
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -182,7 +182,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     if(RegisterClass(&wc))
     {
-        HWND hwnd = CreateWindowEx(0, CLASS_NAME, L"Robo Spiders in Space", 
+        HWND hwnd = CreateWindowEx(0, CLASS_NAME, L"In The Clouds", 
                     WS_OVERLAPPEDWINDOW|WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 
                     CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, hInstance, 0);
         if(hwnd) 
@@ -201,6 +201,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::vector<ID2D1Bitmap*> bitmaps;//= { playerBitmap, BLayer1_1};
             bitmaps.push_back(playerBitmap);
             bitmaps.push_back(BLayer1_1);
+            bitmaps.push_back(chunk_bm_1);
+            bitmaps.push_back(chunk_bm_2);
             scene = std::make_unique<Scene>(GetTicks(), true, bitmaps);
 
             int64_t startTime = GetTicks();

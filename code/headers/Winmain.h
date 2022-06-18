@@ -19,6 +19,10 @@ ID2D1SolidColorBrush* brushes[3];
 
 ID2D1Bitmap *playerBitmap;
 ID2D1Bitmap *BLayer1_1;
+ID2D1Bitmap *chunk_bm_1;
+ID2D1Bitmap *chunk_bm_2;
+
+
 
 IDWriteFactory* pDWriteFactory_;
 IDWriteTextFormat* pTextFormat_;
