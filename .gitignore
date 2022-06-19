@@ -22,7 +22,7 @@
 # Executables
 *.exe
 
-.svg
+*.svg
 build/
 shell.bat
 .vscode/
