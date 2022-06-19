@@ -39,14 +39,14 @@ static HRESULT LoadBitmapFromFile(IWICImagingFactory *pIWICFactory, LPCWSTR uri,
     return hr;
 }
 
-static void loadBitmapFile(IWICImagingFactory* pIWICFactory, std::filesystem::path bitmapFileName, ID2D1Bitmap **tBitmap)
-{
-    p /= bitmapFileName;
-    LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, tBitmap);  
-    p.remove_filename();
-}
+// static void loadBitmapFile(IWICImagingFactory* pIWICFactory, std::filesystem::path bitmapFileName, ID2D1Bitmap **tBitmap)
+// {
+//     p /= bitmapFileName;
+//     LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, tBitmap);  
+//     p.remove_filename();
+// }
 
-static void createResources(HWND hwnd, RECT* rc)
+static IWICImagingFactory* createResources(HWND hwnd, RECT* rc)
 {
     ID2D1Factory* pD2DFactory = NULL;
 
@@ -79,16 +79,16 @@ static void createResources(HWND hwnd, RECT* rc)
     
     CoInitializeEx(NULL, COINIT_MULTITHREADED); 
     CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pIWICFactory));    
+    return pIWICFactory;
+    // p /= "assets";    
+    // loadBitmapFile(pIWICFactory, "player_idle_01.png", &playerBitmap_idle_01);
+    // loadBitmapFile(pIWICFactory, "player_idle_02.png", &playerBitmap_idle_02);
+    // loadBitmapFile(pIWICFactory, "player_idle_03.png", &playerBitmap_idle_03);
 
-    p /= "assets";
-    loadBitmapFile(pIWICFactory, "player_idle_01.png", &playerBitmap_idle_01);
-    loadBitmapFile(pIWICFactory, "player_idle_02.png", &playerBitmap_idle_02);
-    loadBitmapFile(pIWICFactory, "player_idle_03.png", &playerBitmap_idle_03);
+    // loadBitmapFile(pIWICFactory, "CloudLayer1_1.png", &BLayer1_1);
 
-    loadBitmapFile(pIWICFactory, "CloudLayer1_1.png", &BLayer1_1);
-
-    loadBitmapFile(pIWICFactory, "WorldChunk_1.png", &chunk_bm_1);
-    loadBitmapFile(pIWICFactory, "WorldChunk_2.png", &chunk_bm_2);
+    // loadBitmapFile(pIWICFactory, "WorldChunk_1.png", &chunk_bm_1);
+    // loadBitmapFile(pIWICFactory, "WorldChunk_2.png", &chunk_bm_2);
 }
 
 /*  THESE KEY FUNCTIONS BELOW ARE NOT FINAL  */
@@ -162,6 +162,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return result;
 }
 
+
+
+static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFactory, std::vector<std::string>& assetNames)
+{
+    std::vector<ID2D1Bitmap*> bitmapVector = {};
+    for(auto& asset : assetNames)
+    {
+        p /= asset;
+        ID2D1Bitmap *currBitmap;
+        LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, &currBitmap);  
+        p.remove_filename();
+        bitmapVector.push_back(currBitmap);
+    }
+    return bitmapVector;
+}
+
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
     const wchar_t CLASS_NAME[]  = L"In The Clouds";
@@ -191,14 +208,20 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             // this is a cpp17 feature, try to get rid of it
             p = std::filesystem::current_path().remove_filename();
+            p /= "assets";    
             // wchar_t fnameBuffer[MAX_PATH];
             // GetModuleFileName(NULL, fnameBuffer, MAX_PATH);
 
-            createResources(hwnd, &rc);
+            IWICImagingFactory* pIWICFactory = createResources(hwnd, &rc);
 
-            std::vector<ID2D1Bitmap*> playerBitmaps = { playerBitmap_idle_01, playerBitmap_idle_02, playerBitmap_idle_03 };
-            std::vector<ID2D1Bitmap*> chunkBitmaps = { chunk_bm_1, chunk_bm_1 };
-            std::vector<ID2D1Bitmap*> backgroundBitmaps = { BLayer1_1 };
+            std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png"};
+            std::vector<ID2D1Bitmap*> playerBitmaps = loadBitmapVector(pIWICFactory, playerAssetNames);
+
+            std::vector<std::string> chunkAssetNames = { "WorldChunk_1.png", "WorldChunk_2.png" };
+            std::vector<ID2D1Bitmap*> chunkBitmaps = loadBitmapVector(pIWICFactory, chunkAssetNames);
+
+            std::vector<std::string> backgroundAssetNames = { "CloudLayer1_1.png" };
+            std::vector<ID2D1Bitmap*> backgroundBitmaps = loadBitmapVector(pIWICFactory, backgroundAssetNames);
 
             std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerBitmaps, chunkBitmaps, backgroundBitmaps };
             scene = std::make_unique<Scene>(GetTicks(), true, bitmaps);

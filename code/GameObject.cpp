@@ -7,4 +7,3 @@ void GameObject::flipBitmap()
 {
     animation->currentFrame = (animation->currentFrame + 1) % animation->bitmaps.size();
 }
-

@@ -19,13 +19,6 @@ std::unique_ptr<Scene> scene;
 ID2D1HwndRenderTarget* renderTarget;
 ID2D1SolidColorBrush* brushes[3];
 
-ID2D1Bitmap *playerBitmap_idle_01;
-ID2D1Bitmap *playerBitmap_idle_02;
-ID2D1Bitmap *playerBitmap_idle_03;
-ID2D1Bitmap *BLayer1_1;
-ID2D1Bitmap *chunk_bm_1;
-ID2D1Bitmap *chunk_bm_2;
-
 ButtonAction *up_Button;
 
 IDWriteFactory *pDWriteFactory_;
