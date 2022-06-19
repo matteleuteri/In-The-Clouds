@@ -1,5 +1,18 @@
 #include "headers/Player.h"
 
+Player::Player(Animation *animation, float x, float y): GameObject(animation, x, y)
+{
+    isActive = true;
+    goingRight = false;
+    goingLeft = false;
+    onPlatform = false;
+    // width = 20;
+    // height = 20;
+    speedScale = 1.0f;
+    leftSpeed = 0;
+    rightSpeed = 0;
+}
+
 void Player::moveTowardsZero(DIRECTION direction) 
 {
     float* dirSpeed = 0;
@@ -27,7 +40,7 @@ void Player::update(int64_t timeElapsed, HWND hwnd)
     if(goingRight)
     {
         rightSpeed += 0.025f;
-        if(rightSpeed > 1.0) // do these ones need f annotation for float?
+        if(rightSpeed > 1.0)
         {
             rightSpeed = 1.0;
         }
@@ -63,26 +76,9 @@ void Player::pointPlayerTowards(POINT mousePosition)
     if(mousePosition.x < x) angle += 180; // not sure why, but this is important
 }
 
-Player::Player(Animation *animation, float x, float y): GameObject(animation, x, y)
-{
-    isActive = true;
-    goingRight = false;
-    goingLeft = false;
-    onPlatform = false;
-    // width = 20;
-    // height = 20;
-    speedScale = 1.0f;
-    leftSpeed = 0;
-    rightSpeed = 0;
-}
 
-// void Player::flipBitmap()
-// {
-    
-//     // do nothing until player has more bitmaps to animate with
-// }
 
-// can take game object as parameter eventually
+// can take game object as parameter eventually?
 void Player::doGravity()
 {
     if(!onPlatform)

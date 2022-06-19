@@ -3,6 +3,9 @@
 Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps) : isActive(active)
 {    
     Animation* playerAnm = new Animation(bitmaps[0], 0);
+    playerAnm->lastFlipTime = currentTime;
+    playerAnm->timeFrame = 1000000;
+
     Animation* chunkAnm = new Animation(bitmaps[1], 0);
     Animation* bAnm = new Animation(bitmaps[2], 0);
 
@@ -17,6 +20,7 @@ void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
 {
     int64_t timeElapsed = endTime - startTime;
     player->update(timeElapsed, hwnd);
+    player->animate(endTime);
     chunk1->update(timeElapsed, hwnd);
     chunk2->update(timeElapsed, hwnd);
 }

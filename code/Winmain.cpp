@@ -74,21 +74,25 @@ static IWICImagingFactory* createResources(HWND hwnd, RECT* rc)
         hr = pTextFormat_->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     }
 
-    // load images here
     IWICImagingFactory *pIWICFactory = NULL; 
-    
     CoInitializeEx(NULL, COINIT_MULTITHREADED); 
     CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pIWICFactory));    
+    
     return pIWICFactory;
-    // p /= "assets";    
-    // loadBitmapFile(pIWICFactory, "player_idle_01.png", &playerBitmap_idle_01);
-    // loadBitmapFile(pIWICFactory, "player_idle_02.png", &playerBitmap_idle_02);
-    // loadBitmapFile(pIWICFactory, "player_idle_03.png", &playerBitmap_idle_03);
+}
 
-    // loadBitmapFile(pIWICFactory, "CloudLayer1_1.png", &BLayer1_1);
-
-    // loadBitmapFile(pIWICFactory, "WorldChunk_1.png", &chunk_bm_1);
-    // loadBitmapFile(pIWICFactory, "WorldChunk_2.png", &chunk_bm_2);
+static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFactory, std::vector<std::string>& assetNames)
+{
+    std::vector<ID2D1Bitmap*> bitmapVector = {};
+    for(auto& asset : assetNames)
+    {
+        p /= asset;
+        ID2D1Bitmap *currBitmap;
+        LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, &currBitmap);  
+        p.remove_filename();
+        bitmapVector.push_back(currBitmap);
+    }
+    return bitmapVector;
 }
 
 /*  THESE KEY FUNCTIONS BELOW ARE NOT FINAL  */
@@ -99,9 +103,7 @@ static void handleKeyDown(WPARAM wParam)
 
     if(wParam == VK_UP) up_Button->execute(scene); // up
 
-    if(wParam == VK_DOWN) scene->player->flipBitmap();
-
-
+    // if(wParam == VK_DOWN);
     // if(wParam == 77) m_Button->execute(scene); // M
     // if(wParam == 80) p_Button->execute(scene); // P
     // if(wParam == 69) e_Button->execute(scene); // E
@@ -162,23 +164,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return result;
 }
 
-
-
-static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFactory, std::vector<std::string>& assetNames)
-{
-    std::vector<ID2D1Bitmap*> bitmapVector = {};
-    for(auto& asset : assetNames)
-    {
-        p /= asset;
-        ID2D1Bitmap *currBitmap;
-        LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, &currBitmap);  
-        p.remove_filename();
-        bitmapVector.push_back(currBitmap);
-    }
-    return bitmapVector;
-}
-
-
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
     const wchar_t CLASS_NAME[]  = L"In The Clouds";
@@ -214,7 +199,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             IWICImagingFactory* pIWICFactory = createResources(hwnd, &rc);
 
-            std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png"};
+            std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png", "player_idle_02.png" };
             std::vector<ID2D1Bitmap*> playerBitmaps = loadBitmapVector(pIWICFactory, playerAssetNames);
 
             std::vector<std::string> chunkAssetNames = { "WorldChunk_1.png", "WorldChunk_2.png" };
