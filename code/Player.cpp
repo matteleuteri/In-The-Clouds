@@ -18,7 +18,7 @@ void Player::moveTowardsZero(DIRECTION direction)
 
 void Player::update(int64_t timeElapsed, HWND hwnd)
 {
-    doGravity();
+    // doGravity();
     POINT mousePosition;
     BOOL cursorFound = GetCursorPos(&mousePosition);
     BOOL converted = ScreenToClient(hwnd, &mousePosition);
@@ -63,7 +63,7 @@ void Player::pointPlayerTowards(POINT mousePosition)
     if(mousePosition.x < x) angle += 180; // not sure why, but this is important
 }
 
-Player::Player(std::vector<ID2D1Bitmap*> bitmaps, float x, float y): GameObject(bitmaps, x, y)
+Player::Player(Animation *animation, float x, float y): GameObject(animation, x, y)
 {
     isActive = true;
     goingRight = false;
@@ -74,13 +74,13 @@ Player::Player(std::vector<ID2D1Bitmap*> bitmaps, float x, float y): GameObject(
     speedScale = 1.0f;
     leftSpeed = 0;
     rightSpeed = 0;
-    currentBitmap = bitmaps[0];
 }
 
-void Player::flipBitmap()
-{
-    // do nothing until player has more bitmaps to animate with
-}
+// void Player::flipBitmap()
+// {
+    
+//     // do nothing until player has more bitmaps to animate with
+// }
 
 // can take game object as parameter eventually
 void Player::doGravity()

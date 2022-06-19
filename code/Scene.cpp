@@ -1,12 +1,16 @@
 #include "headers/Scene.h"
 
-Scene::Scene(int64_t currentTime, bool active, std::vector<ID2D1Bitmap*> bitmaps) : isActive(active)
-{
-    player = std::make_unique<Player>(bitmaps, 600.0f, 600.0f);
-    background = std::make_unique<Background>(bitmaps, 0.0f, 0.0f);
+Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps) : isActive(active)
+{    
+    Animation* playerAnm = new Animation(bitmaps[0], 0);
+    Animation* chunkAnm = new Animation(bitmaps[1], 0);
+    Animation* bAnm = new Animation(bitmaps[2], 0);
+
+    player = std::make_unique<Player>(playerAnm, 600.0f, 600.0f);
+    background = std::make_unique<Background>(bAnm, 0.0f, 0.0f);
     // make this a function to load all chunks at once
-    chunk1 = std::make_unique<WorldChunk>(bitmaps, 200.0f, 20.0f);
-    chunk2 = std::make_unique<WorldChunk>(bitmaps, 400.0f, 400.0f);
+    chunk1 = std::make_unique<WorldChunk>(chunkAnm, 200.0f, 20.0f);
+    chunk2 = std::make_unique<WorldChunk>(chunkAnm, 400.0f, 400.0f);
 }
 
 void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
@@ -16,8 +20,6 @@ void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
     chunk1->update(timeElapsed, hwnd);
     chunk2->update(timeElapsed, hwnd);
 }
-
-
 
 void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
 {
@@ -36,8 +38,8 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
 
 void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 {
-    D2D1_SIZE_F size = background->currentBitmap->GetSize();
-    renderTarget->DrawBitmap(background->currentBitmap, D2D1::RectF(
+    D2D1_SIZE_F size = background->animation->bitmaps[background->animation->currentFrame]->GetSize();
+    renderTarget->DrawBitmap(background->animation->bitmaps[background->animation->currentFrame], D2D1::RectF(
                 background->x, 
                 background->y, 
                 background->x + size.width, 
@@ -46,16 +48,16 @@ void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 {
-    D2D1_SIZE_F size = chunk1->currentBitmap->GetSize();
-    renderTarget->DrawBitmap(chunk1->currentBitmap, D2D1::RectF(
+    D2D1_SIZE_F size = chunk1->animation->bitmaps[chunk1->animation->currentFrame]->GetSize();
+    renderTarget->DrawBitmap(chunk1->animation->bitmaps[chunk1->animation->currentFrame], D2D1::RectF(
                 chunk1->x,
                 chunk1->y,
                 chunk1->x + size.width,
                 chunk1->y + size.height)); 
 
 
-    D2D1_SIZE_F size2 = chunk2->currentBitmap->GetSize();
-    renderTarget->DrawBitmap(chunk2->currentBitmap, D2D1::RectF(
+    D2D1_SIZE_F size2 = chunk2->animation->bitmaps[chunk2->animation->currentFrame]->GetSize();
+    renderTarget->DrawBitmap(chunk2->animation->bitmaps[chunk2->animation->currentFrame], D2D1::RectF(
                 chunk2->x,
                 chunk2->y,
                 chunk2->x + size2.width,
@@ -67,9 +69,9 @@ void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
     D2D1_POINT_2F center = {};
     center.x = player->x;
     center.y = player->y;
-    D2D1_SIZE_F size = player->currentBitmap->GetSize();
+    D2D1_SIZE_F size = player->animation->bitmaps[player->animation->currentFrame]->GetSize();
     renderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(player->angle, center));
-    renderTarget->DrawBitmap(player->currentBitmap, D2D1::RectF(
+    renderTarget->DrawBitmap(player->animation->bitmaps[player->animation->currentFrame], D2D1::RectF(
                 player->x - (size.width / 2), 
                 player->y - (size.height / 2), 
                 player->x + (size.width / 2), 

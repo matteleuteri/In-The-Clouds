@@ -98,6 +98,10 @@ static void handleKeyDown(WPARAM wParam)
     if(wParam == VK_LEFT)  scene->player->goingLeft = true;    
 
     if(wParam == VK_UP) up_Button->execute(scene); // up
+
+    if(wParam == VK_DOWN) scene->player->flipBitmap();
+
+
     // if(wParam == 77) m_Button->execute(scene); // M
     // if(wParam == 80) p_Button->execute(scene); // P
     // if(wParam == 69) e_Button->execute(scene); // E
@@ -192,20 +196,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             createResources(hwnd, &rc);
 
-            std::vector<ID2D1Bitmap*> bitmaps;//= { playerBitmap, BLayer1_1};
-            bitmaps.push_back(playerBitmap_idle_01);
-            bitmaps.push_back(playerBitmap_idle_02);
-            bitmaps.push_back(playerBitmap_idle_03);
-            bitmaps.push_back(chunk_bm_1);
-            bitmaps.push_back(chunk_bm_2);
-            bitmaps.push_back(BLayer1_1);
+            std::vector<ID2D1Bitmap*> playerBitmaps = { playerBitmap_idle_01, playerBitmap_idle_02, playerBitmap_idle_03 };
+            std::vector<ID2D1Bitmap*> chunkBitmaps = { chunk_bm_1, chunk_bm_1 };
+            std::vector<ID2D1Bitmap*> backgroundBitmaps = { BLayer1_1 };
+
+            std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerBitmaps, chunkBitmaps, backgroundBitmaps };
             scene = std::make_unique<Scene>(GetTicks(), true, bitmaps);
 
-
-
             up_Button = new JumpButton();
-
-
 
             int64_t startTime = GetTicks();
             int64_t endTime;

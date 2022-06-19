@@ -1,9 +1,8 @@
 #include "headers/WorldChunk.h"
 
-WorldChunk::WorldChunk(std::vector<ID2D1Bitmap*> bitmaps, float x, float y): GameObject(bitmaps, x, y)
+WorldChunk::WorldChunk(Animation* animation, float x, float y): GameObject(animation, x, y)
 {
     // also could use speed, angle, whatever
-    currentBitmap = bitmaps[3];// 3 and 4
     d = 1;
 }
 
@@ -13,5 +12,5 @@ void WorldChunk::update(int64_t timeElapsed, HWND hwnd)
     if(x > 1000 || x < 100) d *= -1;
 }
 
-void WorldChunk::flipBitmap()
-{}
+// void WorldChunk::flipBitmap()
+// {}

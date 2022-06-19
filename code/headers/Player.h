@@ -37,11 +37,11 @@ public:
     void Player::doGravity();
     void Player::jump();
 
-    Player::Player(std::vector<ID2D1Bitmap*> bitmaps, float x, float y);
+    Player::Player(Animation *animation, float x, float y);
     void Player::update(int64_t timeElapsed, HWND hwnd);
     void Player::pointPlayerTowards(POINT mousePosition);
     void Player::moveTowardsZero(DIRECTION direction);   
-    void Player::flipBitmap();
+    // void Player::flipBitmap();
 };
 
 #endif

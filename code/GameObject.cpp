@@ -1,8 +1,10 @@
 #include "headers/GameObject.h"
 
-GameObject::GameObject(std::vector<ID2D1Bitmap*> bitmaps, float x, float y): bitmaps(bitmaps), x(x), y(y)
+GameObject::GameObject(Animation *animation, float x, float y): animation(animation), x(x), y(y)
 {}
 
-// void GameObject::update(int64_t timeElapsed, HWND hwnd)
-// {}
+void GameObject::flipBitmap()
+{
+    animation->currentFrame = (animation->currentFrame + 1) % animation->bitmaps.size();
+}
 
