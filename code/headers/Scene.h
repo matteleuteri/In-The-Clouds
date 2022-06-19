@@ -26,13 +26,11 @@ public:
     // should actually be array or something
     std::unique_ptr<WorldChunk> chunk1;
     std::unique_ptr<WorldChunk> chunk2;
-
     void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
-
 
     void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget);
     void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget);
-    Scene::Scene(int64_t currentTime, bool ia, std::vector<ID2D1Bitmap*> bitmaps);
+    Scene::Scene(int64_t currentTime, bool active, std::vector<ID2D1Bitmap*> bitmaps);
     void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_);
     void Scene::updateState(HWND hwnd, int64_t startTime, int64_t endTime); 
 };

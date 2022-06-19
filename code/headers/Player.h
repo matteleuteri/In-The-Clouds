@@ -7,6 +7,7 @@
 #include <d2d1.h>
 #include <memory>
 #include "GameObject.h"
+#include <vector>
 
 enum DIRECTION
 {
@@ -28,15 +29,15 @@ public:
     bool isActive;
     float leftSpeed;
     float rightSpeed;
-    float upSpeed;
-    float downSpeed;
     float speedScale;// speed boost modifier / scaler/ thingy
     bool goingRight;
     bool goingLeft;
-    bool goingUp;
-    bool goingDown;
 
-    Player::Player(ID2D1Bitmap *bitmap, float x, float y);
+    bool onPlatform;
+    void Player::doGravity();
+    void Player::jump();
+
+    Player::Player(std::vector<ID2D1Bitmap*> bitmaps, float x, float y);
     void Player::update(int64_t timeElapsed, HWND hwnd);
     void Player::pointPlayerTowards(POINT mousePosition);
     void Player::moveTowardsZero(DIRECTION direction);   

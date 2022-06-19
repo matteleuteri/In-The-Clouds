@@ -6,7 +6,7 @@
 class Background : public GameObject
 {
 public:
-    Background::Background(ID2D1Bitmap* bitmap, float x, float y);
+    Background::Background(std::vector<ID2D1Bitmap*> bitmaps, float x, float y);
     void Background::update(int64_t timeElapsed, HWND hwnd);
     void Background::flipBitmap();
 };

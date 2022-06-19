@@ -4,9 +4,7 @@ void Player::moveTowardsZero(DIRECTION direction)
 {
     float* dirSpeed = 0;
 
-    if(direction == UP)         dirSpeed = &upSpeed;
-    else if(direction == DOWN)  dirSpeed = &downSpeed;
-    else if(direction == LEFT)  dirSpeed = &leftSpeed;
+    if(direction == LEFT)  dirSpeed = &leftSpeed;
     else if(direction == RIGHT) dirSpeed = &rightSpeed;
 
     if(*dirSpeed == 0) return;
@@ -20,6 +18,7 @@ void Player::moveTowardsZero(DIRECTION direction)
 
 void Player::update(int64_t timeElapsed, HWND hwnd)
 {
+    doGravity();
     POINT mousePosition;
     BOOL cursorFound = GetCursorPos(&mousePosition);
     BOOL converted = ScreenToClient(hwnd, &mousePosition);
@@ -45,34 +44,11 @@ void Player::update(int64_t timeElapsed, HWND hwnd)
     }
     else moveTowardsZero(LEFT);
 
-    if(goingDown)
-    {
-        (downSpeed) += 0.025f;
-        if(downSpeed > 1.0)
-        {
-            downSpeed = 1.0;
-        }
-    }
-    else moveTowardsZero(DOWN);
-
-    if(goingUp)
-    {
-        (upSpeed) += 0.025f;
-        if(upSpeed > 1.0)
-        {
-            upSpeed = 1.0;
-        }
-    }
-    else moveTowardsZero(UP);
-
     x += (rightSpeed * speedScale * (timeElapsed / 25000));
     x -= (leftSpeed  * speedScale * (timeElapsed / 25000));
 
-    y += (downSpeed  * speedScale * (timeElapsed / 25000));
-    y -= (upSpeed  * speedScale * (timeElapsed / 25000));
-
-    if(x > 1280)    x = 0;
-    else if(x < 0)  x = 1280;
+    if(x > 1440)    x = 0;
+    else if(x < 0)  x = 1440;
 
     if(y > 720)     y = 0;
     else if(y < 0)  y = 720;
@@ -87,23 +63,33 @@ void Player::pointPlayerTowards(POINT mousePosition)
     if(mousePosition.x < x) angle += 180; // not sure why, but this is important
 }
 
-Player::Player(ID2D1Bitmap *bitmap, float x, float y): GameObject(bitmap, x, y)
+Player::Player(std::vector<ID2D1Bitmap*> bitmaps, float x, float y): GameObject(bitmaps, x, y)
 {
     isActive = true;
     goingRight = false;
     goingLeft = false;
-    goingUp = false;
-    goingDown = false;
-    width = 20;
-    height = 20;
+    onPlatform = false;
+    // width = 20;
+    // height = 20;
     speedScale = 1.0f;
     leftSpeed = 0;
     rightSpeed = 0;
-    upSpeed = 0;
-    downSpeed = 0;
+    currentBitmap = bitmaps[0];
 }
 
 void Player::flipBitmap()
 {
     // do nothing until player has more bitmaps to animate with
+}
+
+// can take game object as parameter eventually
+void Player::doGravity()
+{
+    if(!onPlatform)
+    y += 9.8f;//???
+}
+
+void Player::jump()
+{
+    OutputDebugStringA("jump!\n");
 }

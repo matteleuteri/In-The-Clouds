@@ -81,8 +81,12 @@ static void createResources(HWND hwnd, RECT* rc)
     CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pIWICFactory));    
 
     p /= "assets";
-    loadBitmapFile(pIWICFactory, "player.png", &playerBitmap);
+    loadBitmapFile(pIWICFactory, "player_idle_01.png", &playerBitmap_idle_01);
+    loadBitmapFile(pIWICFactory, "player_idle_02.png", &playerBitmap_idle_02);
+    loadBitmapFile(pIWICFactory, "player_idle_03.png", &playerBitmap_idle_03);
+
     loadBitmapFile(pIWICFactory, "CloudLayer1_1.png", &BLayer1_1);
+
     loadBitmapFile(pIWICFactory, "WorldChunk_1.png", &chunk_bm_1);
     loadBitmapFile(pIWICFactory, "WorldChunk_2.png", &chunk_bm_2);
 }
@@ -90,19 +94,11 @@ static void createResources(HWND hwnd, RECT* rc)
 /*  THESE KEY FUNCTIONS BELOW ARE NOT FINAL  */
 static void handleKeyDown(WPARAM wParam)
 {
-    // if(wParam == VK_RETURN) // hitting ENTER starts the game
-    // {
-        // scene->player->isActive = true;
-        // scene->enemyManager->isActive = true;
-        // screenState = SCENE;
-    // }
-
-    if(wParam == VK_UP)    scene->player->goingUp    = true;
     if(wParam == VK_RIGHT) scene->player->goingRight = true;
-    if(wParam == VK_DOWN)  scene->player->goingDown  = true;
-    if(wParam == VK_LEFT)  scene->player->goingLeft  = true;    
+    if(wParam == VK_LEFT)  scene->player->goingLeft = true;    
 
-    // if(wParam == 77) m_Button->execute(scene); // M, main menu right now
+    if(wParam == VK_UP) up_Button->execute(scene); // up
+    // if(wParam == 77) m_Button->execute(scene); // M
     // if(wParam == 80) p_Button->execute(scene); // P
     // if(wParam == 69) e_Button->execute(scene); // E
     // if(wParam == 81) q_Button->execute(scene); // Q
@@ -112,10 +108,8 @@ static void handleKeyDown(WPARAM wParam)
 
 static void handleKeyUp(WPARAM wParam)
 {
-    if(wParam == VK_UP)    scene->player->goingUp    = false;
     if(wParam == VK_RIGHT) scene->player->goingRight = false;
-    if(wParam == VK_DOWN)  scene->player->goingDown  = false;
-    if(wParam == VK_LEFT)  scene->player->goingLeft  = false;
+    if(wParam == VK_LEFT)  scene->player->goingLeft = false;
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -199,11 +193,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             createResources(hwnd, &rc);
 
             std::vector<ID2D1Bitmap*> bitmaps;//= { playerBitmap, BLayer1_1};
-            bitmaps.push_back(playerBitmap);
-            bitmaps.push_back(BLayer1_1);
+            bitmaps.push_back(playerBitmap_idle_01);
+            bitmaps.push_back(playerBitmap_idle_02);
+            bitmaps.push_back(playerBitmap_idle_03);
             bitmaps.push_back(chunk_bm_1);
             bitmaps.push_back(chunk_bm_2);
+            bitmaps.push_back(BLayer1_1);
             scene = std::make_unique<Scene>(GetTicks(), true, bitmaps);
+
+
+
+            up_Button = new JumpButton();
+
+
 
             int64_t startTime = GetTicks();
             int64_t endTime;
