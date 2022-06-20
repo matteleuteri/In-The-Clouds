@@ -39,13 +39,6 @@ static HRESULT LoadBitmapFromFile(IWICImagingFactory *pIWICFactory, LPCWSTR uri,
     return hr;
 }
 
-// static void loadBitmapFile(IWICImagingFactory* pIWICFactory, std::filesystem::path bitmapFileName, ID2D1Bitmap **tBitmap)
-// {
-//     p /= bitmapFileName;
-//     LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, tBitmap);  
-//     p.remove_filename();
-// }
-
 static IWICImagingFactory* createResources(HWND hwnd, RECT* rc)
 {
     ID2D1Factory* pD2DFactory = NULL;
@@ -104,7 +97,7 @@ static void handleKeyDown(WPARAM wParam)
     if(wParam == VK_UP) up_Button->execute(scene); // up
 
     // if(wParam == VK_DOWN);
-    // if(wParam == 77) m_Button->execute(scene); // M
+    if(wParam == 77) scene->player->onPlatform = true; // M
     // if(wParam == 80) p_Button->execute(scene); // P
     // if(wParam == 69) e_Button->execute(scene); // E
     // if(wParam == 81) q_Button->execute(scene); // Q

@@ -20,28 +20,23 @@ enum DIRECTION
 class Player: public GameObject
 {
 public:
-    // ID2D1Bitmap* bitmap;
-    // float x;
-    // float y;
     float angle; 
-    int width;
-    int height;
+    float width;
+    float height;
     bool isActive;
     float leftSpeed;
     float rightSpeed;
-    float speedScale;// speed boost modifier / scaler/ thingy
+    float speedScale;
     bool goingRight;
     bool goingLeft;
-
     bool onPlatform;
-    void Player::doGravity();
-    void Player::jump();
 
     Player::Player(Animation *animation, float x, float y);
+    void Player::doGravity();
+    void Player::jump();
     void Player::update(int64_t timeElapsed, HWND hwnd);
     void Player::pointPlayerTowards(POINT mousePosition);
     void Player::moveTowardsZero(DIRECTION direction);   
-    // void Player::flipBitmap();
 };
 
 #endif

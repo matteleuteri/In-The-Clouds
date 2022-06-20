@@ -12,10 +12,9 @@ class GameObject
 public:
     float x;
     float y;
-    // std::vector<ID2D1Bitmap*> bitmaps;
-    // ID2D1Bitmap *currentBitmap;
+    float width;
+    float height;
     Animation *animation;
-    // ID2D1Bitmap* bitmap;
     GameObject::GameObject(Animation *animation, float x, float y);
     virtual void GameObject::update(int64_t timeElapsed, HWND hwnd) = 0;
     virtual void GameObject::animate(int64_t currentTime);

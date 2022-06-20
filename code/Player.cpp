@@ -6,8 +6,8 @@ Player::Player(Animation *animation, float x, float y): GameObject(animation, x,
     goingRight = false;
     goingLeft = false;
     onPlatform = false;
-    // width = 20;
-    // height = 20;
+    width = animation->bitmaps[0]->GetSize().width;
+    height = animation->bitmaps[0]->GetSize().height;
     speedScale = 1.0f;
     leftSpeed = 0;
     rightSpeed = 0;
@@ -31,11 +31,11 @@ void Player::moveTowardsZero(DIRECTION direction)
 
 void Player::update(int64_t timeElapsed, HWND hwnd)
 {
-    // doGravity();
-    POINT mousePosition;
-    BOOL cursorFound = GetCursorPos(&mousePosition);
-    BOOL converted = ScreenToClient(hwnd, &mousePosition);
-    if(cursorFound && converted) pointPlayerTowards(mousePosition);
+    doGravity();
+    // POINT mousePosition;
+    // BOOL cursorFound = GetCursorPos(&mousePosition);
+    // BOOL converted = ScreenToClient(hwnd, &mousePosition);
+    // if(cursorFound && converted) pointPlayerTowards(mousePosition);
 
     if(goingRight)
     {
@@ -69,20 +69,18 @@ void Player::update(int64_t timeElapsed, HWND hwnd)
 
 void Player::pointPlayerTowards(POINT mousePosition)
 {
-    float xDistance = (mousePosition.x) - (x);
-    float yDistance = (mousePosition.y) - (y);
+    float xDistance = mousePosition.x - x;
+    float yDistance = mousePosition.y - y;
     angle = ((float)atan(yDistance / xDistance) * (180.0f / PI)) + 90.0f; // offset needed to define origin rotation angle 
 
     if(mousePosition.x < x) angle += 180; // not sure why, but this is important
 }
 
-
-
 // can take game object as parameter eventually?
 void Player::doGravity()
 {
     if(!onPlatform)
-    y += 9.8f;//???
+    y += 3.0f;//???
 }
 
 void Player::jump()

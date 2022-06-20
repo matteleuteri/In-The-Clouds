@@ -12,3 +12,5 @@ To Do List:
 3. add multiple animation pointers to each GameObject if they have multiple animations to switch between.
 
 4. fix glitch where platforms get stuck on their transform boundaries
+
+5. represent transforms in matrix form instead of individual components

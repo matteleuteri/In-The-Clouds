@@ -1,7 +1,11 @@
 #include "headers/GameObject.h"
 
 GameObject::GameObject(Animation *animation, float x, float y): animation(animation), x(x), y(y)
-{}
+{
+    D2D1_SIZE_F size = animation->bitmaps[0]->GetSize();
+    width = size.width;
+    height = size.height;
+}
 
 void GameObject::animate(int64_t currentTime) 
 {

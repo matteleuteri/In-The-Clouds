@@ -22,17 +22,17 @@ public:
     bool isActive;
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
-
     // should actually be array or something
     std::unique_ptr<WorldChunk> chunk1;
     std::unique_ptr<WorldChunk> chunk2;
+    Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps);
+    void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g);
     void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
-
     void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget);
     void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget);
-    Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps);
     void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_);
     void Scene::updateState(HWND hwnd, int64_t startTime, int64_t endTime); 
+    void Scene::checkPlatformCollision();
 };
 
 #endif
