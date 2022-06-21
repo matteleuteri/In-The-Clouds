@@ -10,6 +10,7 @@ Player::Player(Animation *animation, float x, float y): GameObject(animation, x,
     height = animation->bitmaps[0]->GetSize().height;
     speedScale = 1.0f;
     leftSpeed = 0;
+    isInAir = false;
     rightSpeed = 0;
 }
 
@@ -86,4 +87,5 @@ void Player::doGravity()
 void Player::jump()
 {
     OutputDebugStringA("jump!\n");
+    isInAir = true;
 }

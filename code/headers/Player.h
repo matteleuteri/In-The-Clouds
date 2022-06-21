@@ -30,6 +30,7 @@ public:
     bool goingRight;
     bool goingLeft;
     bool onPlatform;
+    bool isInAir;
 
     Player::Player(Animation *animation, float x, float y);
     void Player::doGravity();

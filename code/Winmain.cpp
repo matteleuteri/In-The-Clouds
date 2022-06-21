@@ -195,13 +195,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png", "player_idle_02.png" };
             std::vector<ID2D1Bitmap*> playerBitmaps = loadBitmapVector(pIWICFactory, playerAssetNames);
 
-            std::vector<std::string> chunkAssetNames = { "WorldChunk_1.png", "WorldChunk_2.png" };
-            std::vector<ID2D1Bitmap*> chunkBitmaps = loadBitmapVector(pIWICFactory, chunkAssetNames);
+            std::vector<std::string> chunk1AssetNames = { "WorldChunk_1_1.png", "WorldChunk_1_2.png" };
+            std::vector<ID2D1Bitmap*> chunk1Bitmaps = loadBitmapVector(pIWICFactory, chunk1AssetNames);
+
+            std::vector<std::string> chunk2AssetNames = { "WorldChunk_2_1.png", "WorldChunk_2_2.png" };
+            std::vector<ID2D1Bitmap*> chunk2Bitmaps = loadBitmapVector(pIWICFactory, chunk2AssetNames);
 
             std::vector<std::string> backgroundAssetNames = { "CloudLayer1_1.png" };
             std::vector<ID2D1Bitmap*> backgroundBitmaps = loadBitmapVector(pIWICFactory, backgroundAssetNames);
 
-            std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerBitmaps, chunkBitmaps, backgroundBitmaps };
+            std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerBitmaps, chunk1Bitmaps, chunk2Bitmaps, backgroundBitmaps };
             scene = std::make_unique<Scene>(GetTicks(), true, bitmaps);
 
             up_Button = new JumpButton();

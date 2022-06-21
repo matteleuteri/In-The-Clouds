@@ -3,16 +3,16 @@
 Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps) : isActive(active)
 {    
     Animation* playerAnm = new Animation(bitmaps[0], 0, currentTime, 1000000);
-    Animation* chunkAnm = new Animation(bitmaps[1], 0, currentTime, 1000000);
-    Animation* bAnm = new Animation(bitmaps[2], 0, currentTime, 1000000);
+    Animation* chunk1Anm = new Animation(bitmaps[1], 0, currentTime, 1000000);
+    Animation* chunk2Anm = new Animation(bitmaps[2], 0, currentTime, 1000000);
+    Animation* bAnm = new Animation(bitmaps[3], 0, currentTime, 1000000);
 
     player = std::make_unique<Player>(playerAnm, 600.0f, 600.0f);
     background = std::make_unique<Background>(bAnm, 0.0f, 0.0f);
     // make this a function to load all chunks at once
-    chunk1 = std::make_unique<WorldChunk>(chunkAnm, 200.0f, 200.0f);
-    chunk2 = std::make_unique<WorldChunk>(chunkAnm, 600.0f, 600.0f);
+    chunk1 = std::make_unique<WorldChunk>(chunk1Anm, 200.0f, 200.0f);
+    chunk2 = std::make_unique<WorldChunk>(chunk2Anm, 600.0f, 600.0f);
 }
-
 
 void Scene::checkPlatformCollision()
 {
@@ -25,6 +25,7 @@ void Scene::checkPlatformCollision()
         player->rightSpeed = 0.0f;
         player->y = 0.0f;
     }
+
     if(player->onPlatform && (player->x > chunk1->width ))
     {
         // reset origin and current coordinates
@@ -32,13 +33,14 @@ void Scene::checkPlatformCollision()
         player->y = player->y + chunk1->y - player->height + 3;
         player->onPlatform = false;
     }
-    else if(player->onPlatform && (player->x < 4 ))
+    else if(player->onPlatform && (player->x < 4))
     {
         // reset origin and current coordinates
         player->x = chunk1->x - player->width;
         player->y = player->y + chunk1->y - player->height + 3;
         player->onPlatform = false;
     }
+    // else if jump
 }
 
 void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
