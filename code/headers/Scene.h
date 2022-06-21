@@ -32,7 +32,7 @@ public:
     void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget);
     void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_);
     void Scene::updateState(HWND hwnd, int64_t startTime, int64_t endTime); 
-    void Scene::checkPlatformCollision();
+    void Scene::checkPlatformCollision(int64_t currentTime);
 };
 
 #endif

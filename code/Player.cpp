@@ -81,11 +81,16 @@ void Player::pointPlayerTowards(POINT mousePosition)
 void Player::doGravity()
 {
     if(!onPlatform)
-    y += 3.0f;//???
+    y += 3.0f;//??? TIME is what needs to be divide, not result of something times time squared
 }
 
 void Player::jump()
 {
     OutputDebugStringA("jump!\n");
     isInAir = true;
+}
+
+void Player::setCollisionImmunity(int64_t startTime)
+{
+    // create a collision cool down period
 }

@@ -14,10 +14,11 @@ Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitm
     chunk2 = std::make_unique<WorldChunk>(chunk2Anm, 600.0f, 600.0f);
 }
 
-void Scene::checkPlatformCollision()
+void Scene::checkPlatformCollision(int64_t currentTime)
 {
     if(!player->onPlatform && player->x > chunk1->x && player->x < chunk1->x + chunk1->width && std::abs(chunk1->y - (player->y + player->height)) <= 3)
     {
+        if(player->immune) return;
         OutputDebugStringA("collide!\n");
         player->onPlatform = true;
         player->x = player->x - chunk1->x + player->width;
@@ -28,6 +29,7 @@ void Scene::checkPlatformCollision()
 
     if(player->onPlatform && (player->x > chunk1->width ))
     {
+        player->setCollisionImmunity(currentTime);
         // reset origin and current coordinates
         player->x = player->x + chunk1->x - player->width;
         player->y = player->y + chunk1->y - player->height + 3;
@@ -35,6 +37,7 @@ void Scene::checkPlatformCollision()
     }
     else if(player->onPlatform && (player->x < 4))
     {
+        player->setCollisionImmunity(currentTime);
         // reset origin and current coordinates
         player->x = chunk1->x - player->width;
         player->y = player->y + chunk1->y - player->height + 3;
@@ -47,7 +50,7 @@ void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
 {
     int64_t timeElapsed = endTime - startTime;
     
-    checkPlatformCollision();
+    checkPlatformCollision(endTime);
 
     player->update(timeElapsed, hwnd);
     player->animate(endTime);
