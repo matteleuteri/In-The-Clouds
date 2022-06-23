@@ -11,6 +11,7 @@ Player::Player(Animation *animation, float x, float y): GameObject(animation, x,
     speedScale = 1.0f;
     leftSpeed = 0;
     isInAir = false;
+    immune = 0;
     rightSpeed = 0;
 }
 
@@ -66,6 +67,8 @@ void Player::update(int64_t timeElapsed, HWND hwnd)
 
     if(y > 720)     y = 0;
     else if(y < 0)  y = 720;
+
+    if(immune > 0) immune -= 1;
 }
 
 void Player::pointPlayerTowards(POINT mousePosition)
@@ -88,9 +91,4 @@ void Player::jump()
 {
     OutputDebugStringA("jump!\n");
     isInAir = true;
-}
-
-void Player::setCollisionImmunity(int64_t startTime)
-{
-    // create a collision cool down period
 }

@@ -31,13 +31,12 @@ public:
     bool goingLeft;
     bool onPlatform;
     bool isInAir;
-    bool immune;
+    int64_t immune;
 
     Player::Player(Animation *animation, float x, float y);
     void Player::doGravity();
     void Player::jump();
     void Player::update(int64_t timeElapsed, HWND hwnd);
-    void Player::setCollisionImmunity(int64_t startTime);
     void Player::pointPlayerTowards(POINT mousePosition);
     void Player::moveTowardsZero(DIRECTION direction);   
 };
