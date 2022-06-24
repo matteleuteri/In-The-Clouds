@@ -70,9 +70,7 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0,0));
     renderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(0,{0,0}));
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
-    // draw border of window
-    // D2D1_RECT_F border = D2D1::RectF((float)rc->left, (float)rc->top, (float)rc->right, (float)rc->bottom);
-    // renderTarget->DrawRectangle(border, brushes[0]);
+    
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
     drawBackground(renderTarget);
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
@@ -96,18 +94,11 @@ void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 
 void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
 {
-    // D2D1_POINT_2F center = {};
-    // center.x = player->x;
-    // center.y = player->y;
-    // D2D1_SIZE_F size = player->animation->bitmaps[player->animation->currentFrame]->GetSize();
-
     if(player->onPlatform)
     {
         renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(chunk1->x - player->width, chunk1->y - player->height));
     }
-
     drawBM(renderTarget, player.get());
-    // renderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(0, center));
 }
 
 void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
