@@ -34,10 +34,6 @@ void Player::moveTowardsZero(DIRECTION direction)
 void Player::update(int64_t timeElapsed, HWND hwnd)
 {
     doGravity();
-    // POINT mousePosition;
-    // BOOL cursorFound = GetCursorPos(&mousePosition);
-    // BOOL converted = ScreenToClient(hwnd, &mousePosition);
-    // if(cursorFound && converted) pointPlayerTowards(mousePosition);
 
     if(goingRight)
     {

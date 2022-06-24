@@ -3,10 +3,7 @@
 static inline int64_t GetTicks()
 {
     LARGE_INTEGER ticks;
-    if (!QueryPerformanceCounter(&ticks))
-    {
-        // log error
-    }
+    QueryPerformanceCounter(&ticks);
     return ticks.QuadPart;
 }
 

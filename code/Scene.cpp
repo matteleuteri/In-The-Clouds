@@ -5,7 +5,7 @@ Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitm
     Animation* playerAnm = new Animation(bitmaps[0], 0, currentTime, 1000000);
     Animation* chunk1Anm = new Animation(bitmaps[1], 0, currentTime, 1000000);
     Animation* chunk2Anm = new Animation(bitmaps[2], 0, currentTime, 1000000);
-    Animation* bAnm = new Animation(bitmaps[3], 0, currentTime, 1000000);
+    Animation* bAnm      = new Animation(bitmaps[3], 0, currentTime, 1000000);
 
     player = std::make_unique<Player>(playerAnm, 600.0f, 600.0f);
     background = std::make_unique<Background>(bAnm, 0.0f, 0.0f);
@@ -18,6 +18,8 @@ void Scene::checkPlatformCollision(int64_t currentTime)
 {
     if(player->immune > 0) return;
 
+    // do the below for each platform
+
     if(!player->onPlatform && player->x > chunk1->x && player->x < chunk1->x + chunk1->width && std::abs(chunk1->y - (player->y + player->height)) <= 3)
     {
         // if(player->immune) return;
@@ -29,11 +31,11 @@ void Scene::checkPlatformCollision(int64_t currentTime)
         player->y = 0.0f;
     }
 
-    if(player->onPlatform && (player->x > chunk1->width ))
+    if(player->onPlatform && (player->x > chunk1->width))
     {
         player->immune = 100;
         // reset origin and current coordinates
-        player->x = player->x + chunk1->x;
+        player->x = player->x + chunk1->x - player->width;
         player->y = player->y + chunk1->y - player->height;
         player->onPlatform = false;
     }
@@ -41,7 +43,7 @@ void Scene::checkPlatformCollision(int64_t currentTime)
     {
         player->immune = 100;
         // reset origin and current coordinates
-        player->x = chunk1->x - player->width;
+        player->x = chunk1->x;
         player->y = player->y + chunk1->y - player->height;
         player->onPlatform = false;
     }
@@ -52,8 +54,6 @@ void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
 {
     int64_t timeElapsed = endTime - startTime;
     
-    checkPlatformCollision(endTime);
-
     player->update(timeElapsed, hwnd);
     player->animate(endTime);
 
@@ -62,13 +62,15 @@ void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
     
     chunk2->update(timeElapsed, hwnd);
     chunk2->animate(endTime);
+    
+    checkPlatformCollision(endTime);
 }
 
 void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
 {
     renderTarget->BeginDraw();
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0,0));
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(0,{0,0}));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(0, { 0, 0 }));
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
     
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
@@ -77,6 +79,7 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
     drawWorldChunks(renderTarget);
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
     drawPlayer(renderTarget);
+
     renderTarget->EndDraw();  
 }
 
