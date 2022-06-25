@@ -7,6 +7,7 @@
 #include <d2d1.h>
 #include <memory>
 #include "GameObject.h"
+#include "WorldChunk.h"
 #include <vector>
 
 enum DIRECTION
@@ -34,6 +35,7 @@ public:
     bool onPlatform;
     bool isInAir;
     int64_t immune;
+    WorldChunk *chunkCurrentlyOn;
 
     Player::Player(Animation *animation, float x, float y);
     void Player::doGravity();

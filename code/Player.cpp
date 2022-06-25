@@ -17,6 +17,7 @@ Player::Player(Animation *animation, float x, float y): GameObject(animation, x,
     downSpeed = 0;
 }
 
+
 void Player::moveTowardsZero(DIRECTION direction) 
 {
     float* dirSpeed = 0;

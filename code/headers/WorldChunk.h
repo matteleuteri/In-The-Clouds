@@ -12,4 +12,5 @@ public:
     void WorldChunk::update(int64_t timeElapsed, HWND hwnd);
     // void WorldChunk::flipBitmap();
 };
+
 #endif

@@ -88,7 +88,7 @@ static void handleKeyDown(WPARAM wParam)
     if(wParam == VK_RIGHT) scene->player->goingRight = true;
     if(wParam == VK_LEFT)  scene->player->goingLeft = true;    
 
-    if(wParam == VK_UP) up_Button->execute(scene); // up
+    if(wParam == VK_UP) up_Button->execute(scene);
 
     // if(wParam == VK_DOWN);
     // if(wParam == 77) scene->player->onPlatform = true; // M

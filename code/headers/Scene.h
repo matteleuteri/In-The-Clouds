@@ -23,8 +23,13 @@ public:
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
     // should actually be array or something
-    std::unique_ptr<WorldChunk> chunk1;
-    std::unique_ptr<WorldChunk> chunk2;
+
+
+    std::vector<std::unique_ptr<WorldChunk>> worldChunks;
+
+    // std::unique_ptr<WorldChunk> chunk1;
+    // std::unique_ptr<WorldChunk> chunk2;
+    
     Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps);
     void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g);
     void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);

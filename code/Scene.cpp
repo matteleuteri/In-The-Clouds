@@ -9,39 +9,49 @@ Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitm
 
     player = std::make_unique<Player>(playerAnm, 600.0f, 600.0f);
     background = std::make_unique<Background>(bAnm, 0.0f, 0.0f);
-    chunk1 = std::make_unique<WorldChunk>(chunk1Anm, 200.0f, 200.0f);
-    chunk2 = std::make_unique<WorldChunk>(chunk2Anm, 600.0f, 600.0f);
+
+    worldChunks.push_back(std::make_unique<WorldChunk>(chunk1Anm, 200.0f, 200.0f));
+    worldChunks.push_back(std::make_unique<WorldChunk>(chunk2Anm, 600.0f, 600.0f));
 }
 
 void Scene::checkPlatformCollision(int64_t currentTime)
 {
     if(player->immune > 0) return;
 
-    // do the below for each platform
-    if(!player->onPlatform && player->x > chunk1->x && player->x < chunk1->x + chunk1->width && std::abs(chunk1->y - (player->y + player->height)) <= 3)
+
+    for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        player->onPlatform = true;
-        player->x = player->x - chunk1->x + player->width;
-        player->leftSpeed = 0.0f;// maybe dont go straight to 0, but def slow down
-        player->rightSpeed = 0.0f;
-        player->y = 0.0f;
+        // do the below for each platform
+        if(!player->onPlatform && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 3)
+        {
+            player->chunkCurrentlyOn = wc.get();
+            player->onPlatform = true;
+            player->x = player->x - wc->x + player->width;
+            player->leftSpeed = 0.0f;// maybe dont go straight to 0, but def slow down
+            player->rightSpeed = 0.0f;
+            player->y = 0.0f;
+            return;
+        }
     }
 
-    if(player->onPlatform && (player->x > chunk1->width))
+    if(player->onPlatform)
     {
-        player->immune = 100;
-        // reset origin and current coordinates
-        player->x = player->x + chunk1->x - player->width;
-        player->y = player->y + chunk1->y - player->height;
-        player->onPlatform = false;
-    }
-    else if(player->onPlatform && (player->x < player->width))
-    {
-        player->immune = 100;
-        // reset origin and current coordinates
-        player->x = chunk1->x;
-        player->y = player->y + chunk1->y - player->height;
-        player->onPlatform = false;
+        WorldChunk *wc = player->chunkCurrentlyOn;
+
+        if(player->onPlatform && (player->x > wc->width))
+        {
+            player->immune = 100;
+            player->x = player->x + wc->x - player->width;
+            player->y = player->y + wc->y - player->height;
+            player->onPlatform = false;
+        }
+        else if(player->onPlatform && (player->x < player->width))
+        {
+            player->immune = 100;
+            player->x = wc->x;
+            player->y = player->y + wc->y - player->height;
+            player->onPlatform = false;
+        }   
     }
     // else if jump
 }
@@ -53,11 +63,11 @@ void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
     player->update(timeElapsed, hwnd);
     player->animate(endTime);
 
-    chunk1->update(timeElapsed, hwnd);
-    chunk1->animate(endTime);
-    
-    chunk2->update(timeElapsed, hwnd);
-    chunk2->animate(endTime);
+    for(std::unique_ptr<WorldChunk> &wc: worldChunks)
+    {
+        wc->update(timeElapsed, hwnd);
+        wc->animate(endTime);
+    }
     
     checkPlatformCollision(endTime);
 }
@@ -86,16 +96,19 @@ void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 {
-    D2D1_SIZE_F size = chunk1->animation->bitmaps[chunk1->animation->currentFrame]->GetSize();
-    drawBM(renderTarget, chunk1.get());
-    drawBM(renderTarget, chunk2.get());    
+
+    for(std::unique_ptr<WorldChunk> &wc: worldChunks)
+    {
+        D2D1_SIZE_F size = wc->animation->bitmaps[wc->animation->currentFrame]->GetSize();
+        drawBM(renderTarget, wc.get());    
+    }
 }
 
 void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
 {
     if(player->onPlatform)
     {
-        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(chunk1->x - player->width, chunk1->y - player->height));
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width, player->chunkCurrentlyOn->y - player->height));
     }
     drawBM(renderTarget, player.get());
 }
