@@ -9,7 +9,6 @@ Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitm
 
     player = std::make_unique<Player>(playerAnm, 600.0f, 600.0f);
     background = std::make_unique<Background>(bAnm, 0.0f, 0.0f);
-    // make this a function to load all chunks at once
     chunk1 = std::make_unique<WorldChunk>(chunk1Anm, 200.0f, 200.0f);
     chunk2 = std::make_unique<WorldChunk>(chunk2Anm, 600.0f, 600.0f);
 }
@@ -19,11 +18,8 @@ void Scene::checkPlatformCollision(int64_t currentTime)
     if(player->immune > 0) return;
 
     // do the below for each platform
-
     if(!player->onPlatform && player->x > chunk1->x && player->x < chunk1->x + chunk1->width && std::abs(chunk1->y - (player->y + player->height)) <= 3)
     {
-        // if(player->immune) return;
-        OutputDebugStringA("collide!\n");
         player->onPlatform = true;
         player->x = player->x - chunk1->x + player->width;
         player->leftSpeed = 0.0f;// maybe dont go straight to 0, but def slow down

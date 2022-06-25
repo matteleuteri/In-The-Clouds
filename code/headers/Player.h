@@ -24,6 +24,8 @@ public:
     float width;
     float height;
     bool isActive;
+    float upSpeed;
+    float downSpeed;
     float leftSpeed;
     float rightSpeed;
     float speedScale;

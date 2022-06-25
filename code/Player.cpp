@@ -9,10 +9,12 @@ Player::Player(Animation *animation, float x, float y): GameObject(animation, x,
     width = animation->bitmaps[0]->GetSize().width;
     height = animation->bitmaps[0]->GetSize().height;
     speedScale = 1.0f;
-    leftSpeed = 0;
     isInAir = false;
     immune = 0;
     rightSpeed = 0;
+    leftSpeed = 0;
+    upSpeed = 0;
+    downSpeed = 0;
 }
 
 void Player::moveTowardsZero(DIRECTION direction) 
@@ -58,6 +60,8 @@ void Player::update(int64_t timeElapsed, HWND hwnd)
     x += (rightSpeed * speedScale * (timeElapsed / 25000));
     x -= (leftSpeed  * speedScale * (timeElapsed / 25000));
 
+    y -= (upSpeed  * speedScale * (timeElapsed / 25000));
+
     if(x > 1440)    x = 0;
     else if(x < 0)  x = 1440;
 
@@ -87,4 +91,6 @@ void Player::jump()
 {
     OutputDebugStringA("jump!\n");
     isInAir = true;
+    upSpeed += 3;
+    // play the right animation
 }

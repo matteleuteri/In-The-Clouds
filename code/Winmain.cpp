@@ -11,9 +11,7 @@ static HRESULT LoadBitmapFromFile(IWICImagingFactory *pIWICFactory, LPCWSTR uri,
 {
     IWICBitmapDecoder *pDecoder = NULL;
     IWICBitmapFrameDecode *pSource = NULL;
-    // IWICStream *pStream = NULL;
     IWICFormatConverter *pConverter = NULL;
-    // IWICBitmapScaler *pScaler = NULL;
 
     HRESULT hr = pIWICFactory->CreateDecoderFromFilename(uri, NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &pDecoder);
 
@@ -40,7 +38,7 @@ static IWICImagingFactory* createResources(HWND hwnd, RECT* rc)
 {
     ID2D1Factory* pD2DFactory = NULL;
 
-    // both lines below return HRESULT, I should make sure they succeez
+    // both lines below return HRESULT, I should make sure they succeed
     D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
     D2D1_SIZE_U clientSize = D2D1::SizeU(rc->right - rc->left, rc->bottom - rc->top);
     pD2DFactory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hwnd, clientSize), &renderTarget);
@@ -85,7 +83,6 @@ static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFacto
     return bitmapVector;
 }
 
-/*  THESE KEY FUNCTIONS BELOW ARE NOT FINAL  */
 static void handleKeyDown(WPARAM wParam)
 {
     if(wParam == VK_RIGHT) scene->player->goingRight = true;
@@ -94,7 +91,7 @@ static void handleKeyDown(WPARAM wParam)
     if(wParam == VK_UP) up_Button->execute(scene); // up
 
     // if(wParam == VK_DOWN);
-    if(wParam == 77) scene->player->onPlatform = true; // M
+    // if(wParam == 77) scene->player->onPlatform = true; // M
     // if(wParam == 80) p_Button->execute(scene); // P
     // if(wParam == 69) e_Button->execute(scene); // E
     // if(wParam == 81) q_Button->execute(scene); // Q
@@ -189,7 +186,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             IWICImagingFactory* pIWICFactory = createResources(hwnd, &rc);
 
-            std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png", "player_idle_02.png" };
+            std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png", "player_idle_02.png","player_jump_1.png","player_jump_2.png" };
             std::vector<ID2D1Bitmap*> playerBitmaps = loadBitmapVector(pIWICFactory, playerAssetNames);
 
             std::vector<std::string> chunk1AssetNames = { "WorldChunk_1_1.png", "WorldChunk_1_2.png" };
@@ -230,7 +227,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                     
                 startTime = endTime;
             }
-            // game is no longer running here
         }
     }
     return 0;
