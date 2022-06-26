@@ -1,11 +1,11 @@
 #include "headers/Winmain.h"
 
-static inline int64_t GetTicks()
-{
-    LARGE_INTEGER ticks;
-    QueryPerformanceCounter(&ticks);
-    return ticks.QuadPart;
-}
+// static inline int64_t GetTicks()
+// {
+//     LARGE_INTEGER ticks;
+//     QueryPerformanceCounter(&ticks);
+//     return ticks.QuadPart;
+// }
 
 static HRESULT LoadBitmapFromFile(IWICImagingFactory *pIWICFactory, LPCWSTR uri, UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap **ppBitmap)
 {
@@ -199,13 +199,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::vector<ID2D1Bitmap*> backgroundBitmaps = loadBitmapVector(pIWICFactory, backgroundAssetNames);
 
             std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerBitmaps, chunk1Bitmaps, chunk2Bitmaps, backgroundBitmaps };
-            scene = std::make_unique<Scene>(GetTicks(), true, bitmaps);
+            scene = std::make_unique<Scene>(GetTickCount(), true, bitmaps);
 
             up_Button = new JumpButton();
 
-            int64_t startTime = GetTicks();
-            int64_t endTime;
+            int32_t startTime = GetTickCount();
+            int32_t endTime;
             
+            int32_t physicsStartTime = GetTickCount();
+            // int physicsEndTime;
+
             while(isRunning)
             {
                 MSG msg;
@@ -220,7 +223,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                     DispatchMessageA(&msg);
                 }
 
-                endTime = GetTicks();
+                endTime = GetTickCount();
+
+                if(endTime - physicsStartTime >= 20)
+                {
+                    scene->updatePhysics(hwnd, endTime, physicsStartTime);
+                    physicsStartTime = endTime;
+                }
 
                 scene->updateState(hwnd, endTime, startTime);
                 scene->renderState(&rc, hwnd, renderTarget, brushes, pTextFormat_);

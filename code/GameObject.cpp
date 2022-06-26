@@ -7,7 +7,7 @@ GameObject::GameObject(Animation *animation, float x, float y): animation(animat
     height = size.height;
 }
 
-void GameObject::animate(int64_t currentTime) 
+void GameObject::animate(int32_t currentTime) 
 {
     if(currentTime - animation->lastFlipTime >= animation->timeFrame)
     {

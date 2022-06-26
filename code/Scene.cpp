@@ -1,20 +1,20 @@
 #include "headers/Scene.h"
 
-Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps) : isActive(active)
+Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps) : isActive(active)
 {    
-    Animation* playerAnm = new Animation(bitmaps[0], 0, currentTime, 1000000);
-    Animation* chunk1Anm = new Animation(bitmaps[1], 0, currentTime, 1000000);
-    Animation* chunk2Anm = new Animation(bitmaps[2], 0, currentTime, 1000000);
-    Animation* bAnm      = new Animation(bitmaps[3], 0, currentTime, 1000000);
+    Animation* playerAnm = new Animation(bitmaps[0], 0, currentTime, 100);
+    Animation* chunk1Anm = new Animation(bitmaps[1], 0, currentTime, 100);
+    Animation* chunk2Anm = new Animation(bitmaps[2], 0, currentTime, 100);
+    Animation* bAnm      = new Animation(bitmaps[3], 0, currentTime, 100);
 
-    player = std::make_unique<Player>(playerAnm, 600.0f, 600.0f);
+    player = std::make_unique<Player>(playerAnm, 60.0f, 60.0f);
     background = std::make_unique<Background>(bAnm, 0.0f, 0.0f);
 
     worldChunks.push_back(std::make_unique<WorldChunk>(chunk1Anm, 200.0f, 200.0f));
     worldChunks.push_back(std::make_unique<WorldChunk>(chunk2Anm, 600.0f, 600.0f));
 }
 
-void Scene::checkPlatformCollision(int64_t currentTime)
+void Scene::checkPlatformCollision(int32_t currentTime)
 {
     if(player->immune > 0) return;
 
@@ -56,20 +56,26 @@ void Scene::checkPlatformCollision(int64_t currentTime)
     // else if jump
 }
 
-void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
+void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 {
-    int64_t timeElapsed = endTime - startTime;
+    int32_t timeElapsed = endTime - startTime;
     
-    player->update(endTime, timeElapsed, hwnd);
+    player->update(timeElapsed);
     player->animate(endTime);
 
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        wc->update(endTime, timeElapsed, hwnd);
+        wc->update(timeElapsed);
+        // take endtime out of the above function, because naything that depends on endtime should be done elsewhere, right?
         wc->animate(endTime);
     }
     
     checkPlatformCollision(endTime);
+}
+
+void Scene::updatePhysics(HWND hwnd, int32_t endTime, int32_t physicsStartTime)
+{
+    player->doGravity(endTime, physicsStartTime);
 }
 
 void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)

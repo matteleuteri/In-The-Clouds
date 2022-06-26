@@ -22,22 +22,17 @@ public:
     bool isActive;
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
-    // should actually be array or something
-
-
     std::vector<std::unique_ptr<WorldChunk>> worldChunks;
-
-    // std::unique_ptr<WorldChunk> chunk1;
-    // std::unique_ptr<WorldChunk> chunk2;
     
-    Scene::Scene(int64_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps);
+    Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps);
     void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g);
     void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
     void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget);
     void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget);
     void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_);
-    void Scene::updateState(HWND hwnd, int64_t startTime, int64_t endTime); 
-    void Scene::checkPlatformCollision(int64_t currentTime);
+    void Scene::updateState(HWND hwnd, int32_t startTime, int32_t endTime); 
+    void Scene::checkPlatformCollision(int32_t currentTime);
+    void Scene::updatePhysics(HWND hwnd, int32_t endTime, int32_t physicsStartTime);
 };
 
 #endif

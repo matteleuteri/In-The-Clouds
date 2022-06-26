@@ -40,10 +40,9 @@ public:
     WorldChunk *chunkCurrentlyOn;
 
     Player::Player(Animation *animation, float x, float y);
-    void Player::doGravity(int64_t timeElapsed);
+    void Player::doGravity(int32_t endTime, int32_t physicsStartTime);
     void Player::jump();
-    void Player::update(int64_t endTime,int64_t timeElapsed, HWND hwnd);
-    void Player::pointPlayerTowards(POINT mousePosition);
+    void Player::update(int32_t timeElapsed);
     void Player::moveTowardsZero(DIRECTION direction);   
 };
 

@@ -16,8 +16,8 @@ public:
     float height;
     Animation *animation;
     GameObject::GameObject(Animation *animation, float x, float y);
-    virtual void GameObject::update(int64_t endTime, int64_t timeElapsed, HWND hwnd) = 0;
-    virtual void GameObject::animate(int64_t currentTime);
+    virtual void GameObject::update(int32_t timeElapsed) = 0;
+    virtual void GameObject::animate(int32_t currentTime);
 };
 
 #endif
