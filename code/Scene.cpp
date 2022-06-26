@@ -22,10 +22,10 @@ void Scene::checkPlatformCollision(int64_t currentTime)
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
         // do the below for each platform
-        if(!player->onPlatform && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 3)
+        if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 3)
         {
             player->chunkCurrentlyOn = wc.get();
-            player->onPlatform = true;
+            player->isInAir = false;
             player->x = player->x - wc->x + player->width;
             player->leftSpeed = 0.0f;// maybe dont go straight to 0, but def slow down
             player->rightSpeed = 0.0f;
@@ -34,23 +34,23 @@ void Scene::checkPlatformCollision(int64_t currentTime)
         }
     }
 
-    if(player->onPlatform)
+    if(!player->isInAir)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
 
-        if(player->onPlatform && (player->x > wc->width))
+        if(!player->isInAir && (player->x > wc->width))
         {
             player->immune = 100;
             player->x = player->x + wc->x - player->width;
             player->y = player->y + wc->y - player->height;
-            player->onPlatform = false;
+            player->isInAir = true;
         }
-        else if(player->onPlatform && (player->x < player->width))
+        else if(!player->isInAir && (player->x < player->width))
         {
             player->immune = 100;
             player->x = wc->x;
             player->y = player->y + wc->y - player->height;
-            player->onPlatform = false;
+            player->isInAir = true;
         }   
     }
     // else if jump
@@ -60,12 +60,12 @@ void Scene::updateState(HWND hwnd, int64_t endTime, int64_t startTime)
 {
     int64_t timeElapsed = endTime - startTime;
     
-    player->update(timeElapsed, hwnd);
+    player->update(endTime, timeElapsed, hwnd);
     player->animate(endTime);
 
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        wc->update(timeElapsed, hwnd);
+        wc->update(endTime, timeElapsed, hwnd);
         wc->animate(endTime);
     }
     
@@ -106,7 +106,7 @@ void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 
 void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
 {
-    if(player->onPlatform)
+    if(!player->isInAir)
     {
         renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width, player->chunkCurrentlyOn->y - player->height));
     }

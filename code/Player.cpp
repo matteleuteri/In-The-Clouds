@@ -5,18 +5,17 @@ Player::Player(Animation *animation, float x, float y): GameObject(animation, x,
     isActive = true;
     goingRight = false;
     goingLeft = false;
-    onPlatform = false;
+    isInAir = true;
     width = animation->bitmaps[0]->GetSize().width;
     height = animation->bitmaps[0]->GetSize().height;
+    inAirStartTime = animation->lastFlipTime;    
     speedScale = 1.0f;
-    isInAir = false;
     immune = 0;
     rightSpeed = 0;
     leftSpeed = 0;
     upSpeed = 0;
     downSpeed = 0;
 }
-
 
 void Player::moveTowardsZero(DIRECTION direction) 
 {
@@ -34,9 +33,8 @@ void Player::moveTowardsZero(DIRECTION direction)
     }
 }
 
-void Player::update(int64_t timeElapsed, HWND hwnd)
+void Player::update(int64_t endTime,int64_t timeElapsed, HWND hwnd)
 {
-    doGravity();
 
     if(goingRight)
     {
@@ -61,7 +59,10 @@ void Player::update(int64_t timeElapsed, HWND hwnd)
     x += (rightSpeed * speedScale * (timeElapsed / 25000));
     x -= (leftSpeed  * speedScale * (timeElapsed / 25000));
 
-    y -= (upSpeed  * speedScale * (timeElapsed / 25000));
+    if(isInAir)
+    {
+        doGravity(endTime);
+    }
 
     if(x > 1440)    x = 0;
     else if(x < 0)  x = 1440;
@@ -82,10 +83,9 @@ void Player::pointPlayerTowards(POINT mousePosition)
 }
 
 // can take game object as parameter eventually?
-void Player::doGravity()
+void Player::doGravity(int64_t currentTime)
 {
-    if(!onPlatform)
-    y += 3.0f;//??? TIME is what needs to be divide, not result of something times time squared
+    y += (currentTime - inAirStartTime)*(currentTime - inAirStartTime) / 100000000000000;
 }
 
 void Player::jump()

@@ -7,7 +7,7 @@ class Background : public GameObject
 {
 public:
     Background::Background(Animation* animation, float x, float y);
-    void Background::update(int64_t timeElapsed, HWND hwnd);
+    void Background::update(int64_t endTime, int64_t timeElapsed, HWND hwnd);
 };
 
 #endif

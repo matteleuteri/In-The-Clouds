@@ -6,7 +6,7 @@ WorldChunk::WorldChunk(Animation* animation, float x, float y): GameObject(anima
     d = 1;
 }
 
-void WorldChunk::update(int64_t timeElapsed, HWND hwnd)
+void WorldChunk::update(int64_t endTime, int64_t timeElapsed, HWND hwnd)
 {
     x += (d * timeElapsed / 30000);
     if(x > 1000 || x < 100) d *= -1;

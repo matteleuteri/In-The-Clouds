@@ -32,15 +32,17 @@ public:
     float speedScale;
     bool goingRight;
     bool goingLeft;
-    bool onPlatform;
+    
     bool isInAir;
+    int64_t inAirStartTime;
+
     int64_t immune;
     WorldChunk *chunkCurrentlyOn;
 
     Player::Player(Animation *animation, float x, float y);
-    void Player::doGravity();
+    void Player::doGravity(int64_t timeElapsed);
     void Player::jump();
-    void Player::update(int64_t timeElapsed, HWND hwnd);
+    void Player::update(int64_t endTime,int64_t timeElapsed, HWND hwnd);
     void Player::pointPlayerTowards(POINT mousePosition);
     void Player::moveTowardsZero(DIRECTION direction);   
 };
