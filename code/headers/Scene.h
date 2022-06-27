@@ -11,9 +11,10 @@
 #include <wincodec.h>
 #include <combaseapi.h>
 #include <Objbase.h>
-
+#include <map>
 #include "Player.h"
 #include "WorldChunk.h"
+#include "AnimationController.h"
 #include "../background/Background.h"
 
 class Scene

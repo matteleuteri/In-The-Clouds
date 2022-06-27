@@ -1,6 +1,6 @@
 #include "headers/WorldChunk.h"
 
-WorldChunk::WorldChunk(Animation* animation, float x, float y): GameObject(animation, x, y)
+WorldChunk::WorldChunk(AnimationController *animationController, float x, float y): GameObject(animationController, x, y)
 {
     // also could use speed, angle, whatever
     d = 1;

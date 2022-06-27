@@ -4,18 +4,31 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitm
 {    
     Animation* playerIdleAnm = new Animation(bitmaps[0], 0, currentTime, 100);
     Animation* playerJumpAnm = new Animation(bitmaps[1], 0, currentTime, 100);
-
     Animation* chunk1Anm = new Animation(bitmaps[2], 0, currentTime, 100);
     Animation* chunk2Anm = new Animation(bitmaps[3], 0, currentTime, 100);
-    Animation* bAnm      = new Animation(bitmaps[4], 0, currentTime, 100);
 
-    player = std::make_unique<Player>(playerIdleAnm, 60.0f, 60.0f);
-    player->jumpAnimation = playerJumpAnm;
+    std::map<int, Animation*> playerAnimations;
+    playerAnimations[0] = playerIdleAnm;
+    playerAnimations[1] = playerJumpAnm;
+    AnimationController *playerAnimationController = new AnimationController(playerAnimations);
 
-    background = std::make_unique<Background>(bAnm, 0.0f, 0.0f);
+    std::map<int, Animation*> chunk1Animations;
+    chunk1Animations[0] = chunk1Anm;
+    AnimationController *chunk1AnimationController = new AnimationController(chunk1Animations);
 
-    worldChunks.push_back(std::make_unique<WorldChunk>(chunk1Anm, 200.0f, 200.0f));
-    worldChunks.push_back(std::make_unique<WorldChunk>(chunk2Anm, 600.0f, 600.0f));
+    std::map<int, Animation*> chunk2Animations;
+    chunk2Animations[0] = chunk2Anm;
+    AnimationController *chunk2AnimationController = new AnimationController(chunk2Animations);
+    
+    Animation* bAnm = new Animation(bitmaps[4], 0, currentTime, 100);
+    std::map<int, Animation*> backgroundAnimations;
+    backgroundAnimations[0] = bAnm;
+    AnimationController *backgroundAnimationController = new AnimationController(backgroundAnimations);
+    
+    player = std::make_unique<Player>(playerAnimationController, 60.0f, 60.0f);
+    background = std::make_unique<Background>(backgroundAnimationController, 0.0f, 0.0f);
+    worldChunks.push_back(std::make_unique<WorldChunk>(chunk1AnimationController, 200.0f, 200.0f));
+    worldChunks.push_back(std::make_unique<WorldChunk>(chunk2AnimationController, 600.0f, 600.0f));
 }
 
 void Scene::checkPlatformCollision(int32_t currentTime)

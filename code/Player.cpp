@@ -1,11 +1,12 @@
 #include "headers/Player.h"
 
-Player::Player(Animation *animation, float x, float y): GameObject(animation, x, y)
+Player::Player(AnimationController *animationController, float x, float y): GameObject(animationController, x, y)
 {
     isActive = true;
     goingRight = false;
     goingLeft = false;
     isInAir = true;
+    animation = animationController->animations[0];
     width = animation->bitmaps[0]->GetSize().width;
     height = animation->bitmaps[0]->GetSize().height;
     inAirStartTime = GetTickCount();
@@ -86,4 +87,10 @@ void Player::jump()
     isInAir = true;
     inAirStartTime = GetTickCount();
     upSpeed = 3;
+    animation = animationController->animations[1];// only for a short time
+    immune = 100;
+    x = x + chunkCurrentlyOn->x - width;
+    y = y + chunkCurrentlyOn->y - height;
+    isInAir = true;
+    inAirStartTime = GetTickCount();
 }

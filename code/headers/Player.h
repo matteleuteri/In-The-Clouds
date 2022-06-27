@@ -6,8 +6,10 @@
 #include <stdint.h>
 #include <d2d1.h>
 #include <memory>
+#include <map>
 #include "GameObject.h"
 #include "WorldChunk.h"
+#include "AnimationController.h"
 #include <vector>
 
 enum DIRECTION
@@ -41,7 +43,7 @@ public:
 
     Animation *jumpAnimation;
 
-    Player::Player(Animation *animation, float x, float y);
+    Player::Player(AnimationController *animationController, float x, float y);
     void Player::doGravity(int32_t currentTime);
     void Player::jump();
     void Player::update(int32_t timeElapsed);

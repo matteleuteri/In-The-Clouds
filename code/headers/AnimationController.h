@@ -2,6 +2,7 @@
 #define _ANIMATIONCONTROLLER
 
 #include "Animation.h"
+#include <map>
 
 enum ANIMATIONTYPE
 {
@@ -12,8 +13,8 @@ enum ANIMATIONTYPE
 class AnimationController
 {
 public:
-    std::vector<Animation*> animations;
-    AnimationController::AnimationController(std::vector<Animation*> animations);
+    std::map<int, Animation*> animations;
+    AnimationController::AnimationController(std::map<int, Animation*> animations);
     void AnimationController::setAnimation(ANIMATIONTYPE animationType);
 };
 
