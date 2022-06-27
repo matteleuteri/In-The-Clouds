@@ -39,6 +39,8 @@ public:
     int32_t immune;
     WorldChunk *chunkCurrentlyOn;
 
+    Animation *jumpAnimation;
+
     Player::Player(Animation *animation, float x, float y);
     void Player::doGravity(int32_t currentTime);
     void Player::jump();

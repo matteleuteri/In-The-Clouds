@@ -182,10 +182,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             // std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png", 
             //             "player_idle_02.png","player_jump_1.png","player_jump_2.png" };
 
-            std::vector<std::string> playerAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png",
-            "player2_jump_01.png", "player2_jump_02.png", "player2_jump_03.png", "player2_jump_04"};
+            std::vector<std::string> playerIdleAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png" };
+            std::vector<std::string> playerJumpAssetNames = { "player2_jump_01.png", "player2_jump_02.png", "player2_jump_03.png", "player2_jump_04"};
 
-            std::vector<ID2D1Bitmap*> playerBitmaps = loadBitmapVector(pIWICFactory, playerAssetNames);
+            std::vector<ID2D1Bitmap*> playerIdleBitmaps = loadBitmapVector(pIWICFactory, playerIdleAssetNames);
+            std::vector<ID2D1Bitmap*> playerJumpBitmaps = loadBitmapVector(pIWICFactory, playerJumpAssetNames);
 
             std::vector<std::string> chunk1AssetNames = { "WorldChunk_1_1.png", "WorldChunk_1_2.png" };
             std::vector<ID2D1Bitmap*> chunk1Bitmaps = loadBitmapVector(pIWICFactory, chunk1AssetNames);
@@ -196,7 +197,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::vector<std::string> backgroundAssetNames = { "CloudLayer1_1.png" };
             std::vector<ID2D1Bitmap*> backgroundBitmaps = loadBitmapVector(pIWICFactory, backgroundAssetNames);
 
-            std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerBitmaps, chunk1Bitmaps, chunk2Bitmaps, backgroundBitmaps };
+            std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerIdleBitmaps, playerJumpBitmaps, chunk1Bitmaps, chunk2Bitmaps, backgroundBitmaps };
             scene = std::make_unique<Scene>(GetTickCount(), true, bitmaps);
 
             up_Button = new JumpButton();
@@ -219,7 +220,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                     DispatchMessageA(&msg);
                 }
                 endTime = GetTickCount();
-                if(endTime - physicsStartTime >= 20)
+                if(endTime - physicsStartTime >= 10)
                 {
                     scene->updatePhysics(endTime);
                     physicsStartTime = endTime;

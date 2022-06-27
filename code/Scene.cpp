@@ -2,12 +2,16 @@
 
 Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps) : isActive(active)
 {    
-    Animation* playerAnm = new Animation(bitmaps[0], 0, currentTime, 100);
-    Animation* chunk1Anm = new Animation(bitmaps[1], 0, currentTime, 100);
-    Animation* chunk2Anm = new Animation(bitmaps[2], 0, currentTime, 100);
-    Animation* bAnm      = new Animation(bitmaps[3], 0, currentTime, 100);
+    Animation* playerIdleAnm = new Animation(bitmaps[0], 0, currentTime, 100);
+    Animation* playerJumpAnm = new Animation(bitmaps[1], 0, currentTime, 100);
 
-    player = std::make_unique<Player>(playerAnm, 60.0f, 60.0f);
+    Animation* chunk1Anm = new Animation(bitmaps[2], 0, currentTime, 100);
+    Animation* chunk2Anm = new Animation(bitmaps[3], 0, currentTime, 100);
+    Animation* bAnm      = new Animation(bitmaps[4], 0, currentTime, 100);
+
+    player = std::make_unique<Player>(playerIdleAnm, 60.0f, 60.0f);
+    player->jumpAnimation = playerJumpAnm;
+
     background = std::make_unique<Background>(bAnm, 0.0f, 0.0f);
 
     worldChunks.push_back(std::make_unique<WorldChunk>(chunk1Anm, 200.0f, 200.0f));

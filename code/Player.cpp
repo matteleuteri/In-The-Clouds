@@ -63,7 +63,11 @@ void Player::update(int32_t timeElapsed)
     if(x > 1440)    x = 0;
     else if(x < 0)  x = 1440;
 
-    if(y > 720)     y = 0;
+    if(y > 720)
+    {
+        y = 20;
+        inAirStartTime = GetTickCount();
+    }
     else if(y < 0)  y = 720;
 
     if(immune > 0) immune -= 1;
@@ -73,7 +77,7 @@ void Player::doGravity(int32_t currentTime)
 {
     if(!isInAir) return;
     int32_t timeElapsed = (currentTime - inAirStartTime);
-    y += (timeElapsed * timeElapsed) / 1000000;
+    y += (timeElapsed * timeElapsed) / 100000;
 }
 
 void Player::jump()
