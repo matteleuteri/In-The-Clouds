@@ -76,9 +76,12 @@ void Player::update(int32_t timeElapsed)
 void Player::doGravity(int32_t endTime, int32_t physicsStartTime)
 {
     // this happens once every 0.02 seconds
-    int32_t timeElapsed = (endTime - physicsStartTime);
+    int32_t timeElapsed = (endTime - inAirStartTime);
+    // y += timeElapsed;
 
-    y += timeElapsed;
+    y += (timeElapsed * timeElapsed) / 100000;
+
+
     // y += (timeElapsed * timeElapsed * 9.8 );
     // y += (GetTickCount() / 1000 - inAirStartTime) * (GetTickCount() / 1000 - inAirStartTime) * 9.8f;
 }
