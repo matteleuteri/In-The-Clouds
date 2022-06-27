@@ -34,13 +34,13 @@ public:
     bool goingLeft;
     
     bool isInAir;
-    int64_t inAirStartTime;
+    int32_t inAirStartTime;
 
-    int64_t immune;
+    int32_t immune;
     WorldChunk *chunkCurrentlyOn;
 
     Player::Player(Animation *animation, float x, float y);
-    void Player::doGravity(int32_t endTime, int32_t physicsStartTime);
+    void Player::doGravity(int32_t currentTime);
     void Player::jump();
     void Player::update(int32_t timeElapsed);
     void Player::moveTowardsZero(DIRECTION direction);   

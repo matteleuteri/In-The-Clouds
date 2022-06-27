@@ -18,10 +18,8 @@ void Scene::checkPlatformCollision(int32_t currentTime)
 {
     if(player->immune > 0) return;
 
-
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        // do the below for each platform
         if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 3)
         {
             player->chunkCurrentlyOn = wc.get();
@@ -44,6 +42,7 @@ void Scene::checkPlatformCollision(int32_t currentTime)
             player->x = player->x + wc->x - player->width;
             player->y = player->y + wc->y - player->height;
             player->isInAir = true;
+            player->inAirStartTime = GetTickCount();
         }
         else if(!player->isInAir && (player->x < player->width))
         {
@@ -51,9 +50,9 @@ void Scene::checkPlatformCollision(int32_t currentTime)
             player->x = wc->x;
             player->y = player->y + wc->y - player->height;
             player->isInAir = true;
+            player->inAirStartTime = GetTickCount();
         }   
     }
-    // else if jump
 }
 
 void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
@@ -73,9 +72,9 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
     checkPlatformCollision(endTime);
 }
 
-void Scene::updatePhysics(HWND hwnd, int32_t endTime, int32_t physicsStartTime)
+void Scene::updatePhysics(int32_t currentTime)
 {
-    player->doGravity(endTime, physicsStartTime);
+    player->doGravity(currentTime);
 }
 
 void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
@@ -102,7 +101,6 @@ void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 {
-
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
         D2D1_SIZE_F size = wc->animation->bitmaps[wc->animation->currentFrame]->GetSize();

@@ -13,5 +13,7 @@ void GameObject::animate(int32_t currentTime)
     {
         animation->currentFrame = (animation->currentFrame + 1) % animation->bitmaps.size();
         animation->lastFlipTime = currentTime;
+        width = animation->bitmaps[animation->currentFrame]->GetSize().width;
+        height = animation->bitmaps[animation->currentFrame]->GetSize().height;
     }
 }

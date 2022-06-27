@@ -32,7 +32,7 @@ public:
     void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_);
     void Scene::updateState(HWND hwnd, int32_t startTime, int32_t endTime); 
     void Scene::checkPlatformCollision(int32_t currentTime);
-    void Scene::updatePhysics(HWND hwnd, int32_t endTime, int32_t physicsStartTime);
+    void Scene::updatePhysics(int32_t currentTime);
 };
 
 #endif

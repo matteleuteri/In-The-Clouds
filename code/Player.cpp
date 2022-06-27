@@ -35,7 +35,6 @@ void Player::moveTowardsZero(DIRECTION direction)
 
 void Player::update(int32_t timeElapsed)
 {
-
     if(goingRight)
     {
         rightSpeed += 0.025f;
@@ -59,10 +58,7 @@ void Player::update(int32_t timeElapsed)
     x += (rightSpeed * speedScale * (timeElapsed / 2));
     x -= (leftSpeed  * speedScale * (timeElapsed / 2));
 
-    // if(isInAir)
-    // {
-    //     doGravity(endTime);
-    // }
+    y -= upSpeed;
 
     if(x > 1440)    x = 0;
     else if(x < 0)  x = 1440;
@@ -73,22 +69,17 @@ void Player::update(int32_t timeElapsed)
     if(immune > 0) immune -= 1;
 }
 
-void Player::doGravity(int32_t endTime, int32_t physicsStartTime)
+void Player::doGravity(int32_t currentTime)
 {
-    // this happens once every 0.02 seconds
-    int32_t timeElapsed = (endTime - inAirStartTime);
-    // y += timeElapsed;
-
-    y += (timeElapsed * timeElapsed) / 100000;
-
-
-    // y += (timeElapsed * timeElapsed * 9.8 );
-    // y += (GetTickCount() / 1000 - inAirStartTime) * (GetTickCount() / 1000 - inAirStartTime) * 9.8f;
+    if(!isInAir) return;
+    int32_t timeElapsed = (currentTime - inAirStartTime);
+    y += (timeElapsed * timeElapsed) / 1000000;
 }
 
 void Player::jump()
 {
     OutputDebugStringA("jump!\n");
     isInAir = true;
-    upSpeed += 3;
+    inAirStartTime = GetTickCount();
+    upSpeed = 3;
 }

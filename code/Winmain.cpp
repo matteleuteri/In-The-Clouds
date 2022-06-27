@@ -1,12 +1,5 @@
 #include "headers/Winmain.h"
 
-// static inline int64_t GetTicks()
-// {
-//     LARGE_INTEGER ticks;
-//     QueryPerformanceCounter(&ticks);
-//     return ticks.QuadPart;
-// }
-
 static HRESULT LoadBitmapFromFile(IWICImagingFactory *pIWICFactory, LPCWSTR uri, UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap **ppBitmap)
 {
     IWICBitmapDecoder *pDecoder = NULL;
@@ -186,7 +179,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             IWICImagingFactory* pIWICFactory = createResources(hwnd, &rc);
 
-            std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png", "player_idle_02.png","player_jump_1.png","player_jump_2.png" };
+            // std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png", 
+            //             "player_idle_02.png","player_jump_1.png","player_jump_2.png" };
+
+            std::vector<std::string> playerAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png",
+            "player2_jump_01.png", "player2_jump_02.png", "player2_jump_03.png", "player2_jump_04"};
+
             std::vector<ID2D1Bitmap*> playerBitmaps = loadBitmapVector(pIWICFactory, playerAssetNames);
 
             std::vector<std::string> chunk1AssetNames = { "WorldChunk_1_1.png", "WorldChunk_1_2.png" };
@@ -204,10 +202,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             up_Button = new JumpButton();
 
             int32_t startTime = GetTickCount();
-            int32_t endTime;
-            
+            int32_t endTime;            
             int32_t physicsStartTime = GetTickCount();
-            // int physicsEndTime;
 
             while(isRunning)
             {
@@ -222,18 +218,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                     TranslateMessage(&msg);
                     DispatchMessageA(&msg);
                 }
-
                 endTime = GetTickCount();
-
                 if(endTime - physicsStartTime >= 20)
                 {
-                    scene->updatePhysics(hwnd, endTime, physicsStartTime);
+                    scene->updatePhysics(endTime);
                     physicsStartTime = endTime;
                 }
-
                 scene->updateState(hwnd, endTime, startTime);
-                scene->renderState(&rc, hwnd, renderTarget, brushes, pTextFormat_);
-                    
+                scene->renderState(&rc, hwnd, renderTarget, brushes, pTextFormat_);                    
                 startTime = endTime;
             }
         }
