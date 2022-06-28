@@ -23,17 +23,17 @@ enum DIRECTION
 class Player: public GameObject
 {
 public:
-    float angle; 
+    // float angle; 
     float width;
     float height;
     bool isActive;
-    float upSpeed;
-    float downSpeed;
-    float leftSpeed;
-    float rightSpeed;
-    float speedScale;
-    bool goingRight;
-    bool goingLeft;
+    // float upSpeed;
+    // float downSpeed;
+    // float leftSpeed;
+    // float rightSpeed;
+    // float speedScale;
+    // bool goingRight;
+    // bool goingLeft;
     
     bool isInAir;
     int32_t inAirStartTime;
@@ -47,7 +47,7 @@ public:
     void Player::doGravity(int32_t currentTime);
     void Player::jump();
     void Player::update(int32_t timeElapsed);
-    void Player::moveTowardsZero(DIRECTION direction);   
+    // void Player::moveTowardsZero(DIRECTION direction);   
 };
 
 #endif

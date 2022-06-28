@@ -8,6 +8,6 @@ WorldChunk::WorldChunk(AnimationController *animationController, float x, float 
 
 void WorldChunk::update(int32_t timeElapsed)
 {
-    x += (d * timeElapsed / 2);
+    x += (d * timeElapsed / 5);
     if(x > 1000 || x < 100) d *= -1;
 }

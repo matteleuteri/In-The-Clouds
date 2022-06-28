@@ -78,8 +78,8 @@ static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFacto
 
 static void handleKeyDown(WPARAM wParam)
 {
-    if(wParam == VK_RIGHT) scene->player->goingRight = true;
-    if(wParam == VK_LEFT)  scene->player->goingLeft = true;    
+    // if(wParam == VK_RIGHT) scene->player->goingRight = true;
+    // if(wParam == VK_LEFT)  scene->player->goingLeft = true;    
 
     if(wParam == VK_UP) up_Button->execute(scene);
 
@@ -94,8 +94,8 @@ static void handleKeyDown(WPARAM wParam)
 
 static void handleKeyUp(WPARAM wParam)
 {
-    if(wParam == VK_RIGHT) scene->player->goingRight = false;
-    if(wParam == VK_LEFT)  scene->player->goingLeft = false;
+    // if(wParam == VK_RIGHT) scene->player->goingRight = false;
+    // if(wParam == VK_LEFT)  scene->player->goingLeft = false;
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -178,9 +178,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             // GetModuleFileName(NULL, fnameBuffer, MAX_PATH);
 
             IWICImagingFactory* pIWICFactory = createResources(hwnd, &rc);
-
-            // std::vector<std::string> playerAssetNames = { "player_idle_01.png", "player_idle_02.png", "player_idle_03.png", 
-            //             "player_idle_02.png","player_jump_1.png","player_jump_2.png" };
 
             std::vector<std::string> playerIdleAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png" };
             std::vector<std::string> playerJumpAssetNames = { "player2_jump_01.png", "player2_jump_02.png", "player2_jump_03.png", "player2_jump_04"};
