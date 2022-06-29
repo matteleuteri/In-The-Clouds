@@ -75,13 +75,6 @@ void Player::update(int32_t timeElapsed)
     // if(immune > 0) immune -= 1;
 }
 
-void Player::doGravity(int32_t currentTime)
-{
-    // if(!isInAir) return;
-    // int32_t timeElapsed = (currentTime - inAirStartTime);
-    // y += (timeElapsed * timeElapsed) / 100000;
-}
-
 void Player::jump()
 {
     // OutputDebugStringA("jump!\n");

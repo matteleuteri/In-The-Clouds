@@ -40,8 +40,8 @@ void Scene::checkPlatformCollision(int32_t currentTime)
             player->chunkCurrentlyOn = wc.get();
             player->isInAir = false;
             player->x = player->x - wc->x + player->width;
-            player->leftSpeed = 0.0f;// maybe dont go straight to 0, but def slow down
-            player->rightSpeed = 0.0f;
+            // player->leftSpeed = 0.0f;// maybe dont go straight to 0, but def slow down
+            // player->rightSpeed = 0.0f;
             player->y = 0.0f;
             return;
         }
@@ -89,8 +89,15 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 
 void Scene::updatePhysics(int32_t currentTime)
 {
-    player->doGravity(currentTime);
+    doGravity(currentTime);
 }
+
+void Scene::doGravity(int32_t currentTime)
+{
+    // for each gameobject
+    // if it is affected by gravity, set the force
+}
+
 
 void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
 {

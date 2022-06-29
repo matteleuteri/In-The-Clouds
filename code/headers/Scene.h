@@ -34,6 +34,7 @@ public:
     void Scene::updateState(HWND hwnd, int32_t startTime, int32_t endTime); 
     void Scene::checkPlatformCollision(int32_t currentTime);
     void Scene::updatePhysics(int32_t currentTime);
+    void Scene::doGravity(int32_t currentTime);
 };
 
 #endif
