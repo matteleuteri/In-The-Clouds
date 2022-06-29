@@ -35,6 +35,7 @@ public:
     void Scene::checkPlatformCollision(int32_t currentTime);
     void Scene::updatePhysics(int32_t currentTime);
     void Scene::doGravity(int32_t currentTime);
+    void Scene::addForce(GameObject* gameObject, DIRECTION direction, float speed);
 };
 
 #endif

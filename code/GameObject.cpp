@@ -6,6 +6,8 @@ GameObject::GameObject(AnimationController *animationController, float x, float 
     D2D1_SIZE_F size = animation->bitmaps[0]->GetSize();
     width = size.width;
     height = size.height;
+    xSpeed = 0;
+    ySpeed = 0;
 }
 
 void GameObject::animate(int32_t currentTime) 

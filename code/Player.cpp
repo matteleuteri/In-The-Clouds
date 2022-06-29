@@ -36,6 +36,8 @@ Player::Player(AnimationController *animationController, float x, float y): Game
 
 void Player::update(int32_t timeElapsed)
 {
+    x += xSpeed * timeElapsed;
+
     // if(goingRight)
     // {
     //     rightSpeed += 0.025f;

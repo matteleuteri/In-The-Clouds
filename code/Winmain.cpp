@@ -78,8 +78,8 @@ static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFacto
 
 static void handleKeyDown(WPARAM wParam)
 {
-    // if(wParam == VK_RIGHT) scene->player->goingRight = true;
-    // if(wParam == VK_LEFT)  scene->player->goingLeft = true;    
+    if(wParam == VK_RIGHT) scene->addForce(scene->player.get(), RIGHT, 0.5);
+    if(wParam == VK_LEFT) scene->addForce(scene->player.get(), LEFT, 0.5f);
 
     if(wParam == VK_UP) up_Button->execute(scene);
 
@@ -94,8 +94,8 @@ static void handleKeyDown(WPARAM wParam)
 
 static void handleKeyUp(WPARAM wParam)
 {
-    // if(wParam == VK_RIGHT) scene->player->goingRight = false;
-    // if(wParam == VK_LEFT)  scene->player->goingLeft = false;
+    if(wParam == VK_RIGHT) scene->addForce(scene->player.get(), RIGHT, 0);
+    if(wParam == VK_LEFT) scene->addForce(scene->player.get(), LEFT, 0);
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -171,7 +171,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             RECT rc;
             GetClientRect(hwnd, &rc);
 
-            // this is a cpp17 feature, try to get rid of it
             p = std::filesystem::current_path().remove_filename();
             p /= "assets";    
             // wchar_t fnameBuffer[MAX_PATH];

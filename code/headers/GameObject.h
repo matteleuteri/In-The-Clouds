@@ -13,6 +13,8 @@ class GameObject
 public:
     float x;
     float y;
+    float xSpeed;
+    float ySpeed;
     float width;
     float height;
     Animation *animation;

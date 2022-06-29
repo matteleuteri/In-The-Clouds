@@ -98,6 +98,14 @@ void Scene::doGravity(int32_t currentTime)
     // if it is affected by gravity, set the force
 }
 
+void Scene::addForce(GameObject* gameObject, DIRECTION direction, float speed) 
+{
+    if(direction == RIGHT)
+        gameObject->xSpeed = speed;
+    else if(direction == LEFT)
+        gameObject->xSpeed = -1 * speed;
+}
+
 
 void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
 {
