@@ -3,60 +3,35 @@
 Player::Player(AnimationController *animationController, float x, float y): GameObject(animationController, x, y)
 {
     isActive = true;
-    // goingRight = false;
-    // goingLeft = false;
     isInAir = true;
     animation = animationController->animations[0];
     width = animation->bitmaps[0]->GetSize().width;
     height = animation->bitmaps[0]->GetSize().height;
     inAirStartTime = GetTickCount();
-    // speedScale = 1.0f;
     immune = 0;
-    // rightSpeed = 0;
-    // leftSpeed = 0;
-    // upSpeed = 0;
-    // downSpeed = 0;
+    ySpeed = 0;
 }
 
-// void Player::moveTowardsZero(DIRECTION direction) 
-// {
-//     float* dirSpeed = 0;
 
-//     if(direction == LEFT)  dirSpeed = &leftSpeed;
-//     else if(direction == RIGHT) dirSpeed = &rightSpeed;
-
-//     if(*dirSpeed == 0) return;
-    
-//     if(*dirSpeed > 0) 
-//     {
-//         *dirSpeed -= 0.01f;
-//         if(*dirSpeed < 0) *dirSpeed = 0;
-//     }
-// }
-
-void Player::update(int32_t timeElapsed)
+void Player::update(int32_t timeElapsed, int32_t currentTime)
 {
     x += xSpeed * timeElapsed;
 
-    // if(goingRight)
-    // {
-    //     rightSpeed += 0.025f;
-    //     if(rightSpeed > 1.0)
-    //     {
-    //         rightSpeed = 1.0;
-    //     }
-    // }
-    // else moveTowardsZero(RIGHT);
 
-    // if(goingLeft)
-    // {
-    //     (leftSpeed) += 0.025f;
-    //     if(leftSpeed > 1.0)
-    //     {
-    //         leftSpeed = 1.0;
-    //     }
-    // }
-    // else moveTowardsZero(LEFT);
+    if(isInAir)
+    {
+        int dTime = currentTime - inAirStartTime;
+        ySpeed += (dTime * 9.8f) / 100000;
+        y += timeElapsed * ySpeed;
+    }
+
+    if(y > 720)
+    {
+        y = 75;
+        ySpeed = 0;
+        inAirStartTime = GetTickCount();
+    }
+
 
     // x += (rightSpeed * speedScale * (timeElapsed / 2));
     // x -= (leftSpeed  * speedScale * (timeElapsed / 2));

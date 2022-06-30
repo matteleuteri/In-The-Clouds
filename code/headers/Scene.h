@@ -21,6 +21,7 @@ class Scene
 {
 public:
     bool isActive;
+    int32_t lastTimestamp;
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
     std::vector<std::unique_ptr<WorldChunk>> worldChunks;
@@ -33,8 +34,6 @@ public:
     void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_);
     void Scene::updateState(HWND hwnd, int32_t startTime, int32_t endTime); 
     void Scene::checkPlatformCollision(int32_t currentTime);
-    void Scene::updatePhysics(int32_t currentTime);
-    void Scene::doGravity(int32_t currentTime);
     void Scene::addForce(GameObject* gameObject, DIRECTION direction, float speed);
 };
 

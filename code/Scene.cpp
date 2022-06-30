@@ -27,22 +27,21 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitm
     backgroundAnimations[0] = bAnm;
     AnimationController *backgroundAnimationController = new AnimationController(backgroundAnimations);
     background = std::make_unique<Background>(backgroundAnimationController, 0.0f, 0.0f);    
+    lastTimestamp = GetTickCount();
 }
 
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
-    if(player->immune > 0) return;
-
+    // if(player->immune > 0) return;
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 3)
+        if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
         {
             player->chunkCurrentlyOn = wc.get();
             player->isInAir = false;
             player->x = player->x - wc->x + player->width;
-            // player->leftSpeed = 0.0f;// maybe dont go straight to 0, but def slow down
-            // player->rightSpeed = 0.0f;
             player->y = 0.0f;
+            player->ySpeed = 0.0f;
             return;
         }
     }
@@ -50,7 +49,6 @@ void Scene::checkPlatformCollision(int32_t currentTime)
     if(!player->isInAir)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
-
         if(!player->isInAir && (player->x > wc->width))
         {
             player->immune = 100;
@@ -74,28 +72,17 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 {
     int32_t timeElapsed = endTime - startTime;
     
-    player->update(timeElapsed);
+    player->update(timeElapsed, endTime);
     player->animate(endTime);
 
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        wc->update(timeElapsed);
+        wc->update(timeElapsed, endTime);
         // take endtime out of the above function, because naything that depends on endtime should be done elsewhere, right?
         wc->animate(endTime);
     }
     
     checkPlatformCollision(endTime);
-}
-
-void Scene::updatePhysics(int32_t currentTime)
-{
-    doGravity(currentTime);
-}
-
-void Scene::doGravity(int32_t currentTime)
-{
-    // for each gameobject
-    // if it is affected by gravity, set the force
 }
 
 void Scene::addForce(GameObject* gameObject, DIRECTION direction, float speed) 

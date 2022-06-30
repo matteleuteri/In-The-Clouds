@@ -197,11 +197,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             scene = std::make_unique<Scene>(GetTickCount(), true, bitmaps);
 
             up_Button = new JumpButton();
-
+            
             int32_t startTime = GetTickCount();
             int32_t endTime;            
-            int32_t physicsStartTime = GetTickCount();
-
             while(isRunning)
             {
                 MSG msg;
@@ -216,14 +214,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                     DispatchMessageA(&msg);
                 }
                 endTime = GetTickCount();
-                if(endTime - physicsStartTime >= 10)
+                if(endTime - startTime >= 10)
                 {
-                    scene->updatePhysics(endTime);
-                    physicsStartTime = endTime;
+                    scene->updateState(hwnd, endTime, startTime);
+                    scene->renderState(&rc, hwnd, renderTarget, brushes, pTextFormat_);                    
+                    startTime = endTime;
                 }
-                scene->updateState(hwnd, endTime, startTime);
-                scene->renderState(&rc, hwnd, renderTarget, brushes, pTextFormat_);                    
-                startTime = endTime;
             }
         }
     }

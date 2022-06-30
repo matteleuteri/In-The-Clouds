@@ -34,7 +34,7 @@ public:
     // float speedScale;
     // bool goingRight;
     // bool goingLeft;
-    
+    float ySpeed;
     bool isInAir;
     int32_t inAirStartTime;
 
@@ -45,7 +45,7 @@ public:
 
     Player::Player(AnimationController *animationController, float x, float y);
     void Player::jump();
-    void Player::update(int32_t timeElapsed);
+    void Player::update(int32_t timeElapsed, int32_t currentTime);
     // void Player::moveTowardsZero(DIRECTION direction);   
 };
 

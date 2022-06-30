@@ -6,7 +6,7 @@ WorldChunk::WorldChunk(AnimationController *animationController, float x, float 
     d = 1;
 }
 
-void WorldChunk::update(int32_t timeElapsed)
+void WorldChunk::update(int32_t timeElapsed, int32_t currentTime)
 {
     x += (d * timeElapsed / 5);
     if(x > 1000 || x < 100) d *= -1;
