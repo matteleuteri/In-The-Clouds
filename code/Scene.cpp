@@ -37,11 +37,7 @@ void Scene::checkPlatformCollision(int32_t currentTime)
     {
         if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
         {
-            player->chunkCurrentlyOn = wc.get();
-            player->isInAir = false;
-            player->x = player->x - wc->x + player->width;
-            player->y = 0.0f;
-            player->ySpeed = 0.0f;
+            player->landOn(wc.get());
             return;
         }
     }
@@ -51,19 +47,12 @@ void Scene::checkPlatformCollision(int32_t currentTime)
         WorldChunk *wc = player->chunkCurrentlyOn;
         if(!player->isInAir && (player->x > wc->width))
         {
-            player->immune = 100;
-            player->x = player->x + wc->x - player->width;
-            player->y = player->y + wc->y - player->height;
-            player->isInAir = true;
-            player->inAirStartTime = GetTickCount();
+            player->fallOff(1);
         }
         else if(!player->isInAir && (player->x < player->width))
         {
-            player->immune = 100;
-            player->x = wc->x;
-            player->y = player->y + wc->y - player->height;
-            player->isInAir = true;
-            player->inAirStartTime = GetTickCount();
+            player->fallOff(-1);
+            
         }   
     }
 }

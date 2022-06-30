@@ -21,7 +21,8 @@ void Player::update(int32_t timeElapsed, int32_t currentTime)
     if(isInAir)
     {
         int dTime = currentTime - inAirStartTime;
-        ySpeed += (dTime * 9.8f) / 100000;
+        ySpeed = ySpeed  + ((dTime * 9.8f) / 100000);
+        // ySpeed -= jumpSpeed;
         y += timeElapsed * ySpeed;
     }
 
@@ -52,16 +53,44 @@ void Player::update(int32_t timeElapsed, int32_t currentTime)
     // if(immune > 0) immune -= 1;
 }
 
+void Player::landOn(WorldChunk *wc)
+{
+    chunkCurrentlyOn = wc;
+    isInAir = false;
+    x = x - wc->x + width;
+    y = 0.0f;
+    ySpeed = 0.0f;
+}
+
+void Player::fallOff(int i)
+{
+    if(1 == 1)
+    {
+        immune = 100;
+        x = x +  chunkCurrentlyOn->x - width;
+        y = y + chunkCurrentlyOn->y - height;
+        isInAir = true;
+        inAirStartTime = GetTickCount();
+    }
+    else if(i == -1)
+    {
+        immune = 100;
+        x = chunkCurrentlyOn->x;
+        y = y + chunkCurrentlyOn->y - height;
+        isInAir = true;
+        inAirStartTime = GetTickCount();
+    }
+}
+
 void Player::jump()
 {
-    // OutputDebugStringA("jump!\n");
-    // isInAir = true;
-    // inAirStartTime = GetTickCount();
-    // upSpeed = 3;
-    // animation = animationController->animations[1];// only for a short time
-    // immune = 100;
-    // x = x + chunkCurrentlyOn->x - width;
-    // y = y + chunkCurrentlyOn->y - height;
-    // isInAir = true;
-    // inAirStartTime = GetTickCount();
+    OutputDebugStringA("jump!\n");
+    isInAir = true;
+    inAirStartTime = GetTickCount();
+    animation = animationController->animations[1];// only for a short time
+    immune = 100;
+    x = x + chunkCurrentlyOn->x - width;
+    y = y + chunkCurrentlyOn->y - height;
+    isInAir = true;
+    ySpeed = -1.3;
 }
