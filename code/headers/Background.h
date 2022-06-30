@@ -1,7 +1,7 @@
 #ifndef _BACKGROUND
 #define _BACKGROUND
 
-#include "../headers/GameObject.h"
+#include "GameObject.h"
 
 class Background : public GameObject
 {

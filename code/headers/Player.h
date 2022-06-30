@@ -23,7 +23,6 @@ enum DIRECTION
 class Player: public GameObject
 {
 public:
-    // float angle; 
     float width;
     float height;
     bool isActive;

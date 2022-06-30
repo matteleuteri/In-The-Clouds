@@ -1,7 +1,7 @@
 #ifndef _BUTTONACTION
 #define _BUTTONACTION
 
-#include "../../headers/Scene.h"
+#include "Scene.h"
 
 class ButtonAction
 {

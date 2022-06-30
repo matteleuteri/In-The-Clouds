@@ -1,4 +1,4 @@
-#include "Background.h"
+#include "../headers/Background.h"
 
 Background::Background(AnimationController *animationController, float x, float y): GameObject(animationController, x, y)
 {}

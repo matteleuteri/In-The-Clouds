@@ -15,7 +15,8 @@
 #include "Player.h"
 #include "WorldChunk.h"
 #include "AnimationController.h"
-#include "../background/Background.h"
+#include "Background.h"
+#include "CloudLayer.h"
 
 class Scene
 {
@@ -24,8 +25,10 @@ public:
     int32_t lastTimestamp;
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
-    std::vector<std::unique_ptr<WorldChunk>> worldChunks;
     
+    std::unique_ptr<CloudLayer> cloudLayer1;
+
+    std::vector<std::unique_ptr<WorldChunk>> worldChunks;
     Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps);
     void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g);
     void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
@@ -35,6 +38,7 @@ public:
     void Scene::updateState(HWND hwnd, int32_t startTime, int32_t endTime); 
     void Scene::checkPlatformCollision(int32_t currentTime);
     void Scene::addForce(GameObject* gameObject, DIRECTION direction, float speed);
+    void Scene::drawCloudLayer1(ID2D1HwndRenderTarget* renderTarget);
 };
 
 #endif

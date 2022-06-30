@@ -27,7 +27,13 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitm
     backgroundAnimations[0] = bAnm;
     AnimationController *backgroundAnimationController = new AnimationController(backgroundAnimations);
     background = std::make_unique<Background>(backgroundAnimationController, 0.0f, 0.0f);    
-    lastTimestamp = GetTickCount();
+
+    // Animation* cloudLayer1Anm = new Animation(bitmaps[5], 0, currentTime, 100);
+    // std::map<int, Animation*> cloudLayer1Animations;
+    // cloudLayer1Animations[0] = bAnm;
+    // AnimationController *cloudLayer1AnimationController = new AnimationController(cloudLayer1Animations);
+    // cloudLayer1 = std::make_unique<CloudLayer>(cloudLayer1AnimationController, 0.0f, 0.0f);    
+    // lastTimestamp = GetTickCount();
 }
 
 void Scene::checkPlatformCollision(int32_t currentTime)
@@ -87,7 +93,6 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
 {
     renderTarget->BeginDraw();
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Rotation(0, { 0, 0 }));
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
     
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
@@ -96,6 +101,9 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
     drawWorldChunks(renderTarget);
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
     drawPlayer(renderTarget);
+    
+    // renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
+    // drawCloudLayer1(renderTarget);
 
     renderTarget->EndDraw();  
 }
@@ -103,6 +111,11 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
 void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 {
     drawBM(renderTarget, background.get());
+}
+
+void Scene::drawCloudLayer1(ID2D1HwndRenderTarget* renderTarget)
+{
+    drawBM(renderTarget, cloudLayer1.get());
 }
 
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)

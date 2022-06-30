@@ -86,10 +86,6 @@ static void handleKeyDown(WPARAM wParam)
     // if(wParam == VK_DOWN);
     // if(wParam == 77) scene->player->onPlatform = true; // M
     // if(wParam == 80) p_Button->execute(scene); // P
-    // if(wParam == 69) e_Button->execute(scene); // E
-    // if(wParam == 81) q_Button->execute(scene); // Q
-    // if(wParam == 82) r_Button->execute(scene); // R
-    // if(wParam == 87) w_Button->execute(scene); // W
 }
 
 static void handleKeyUp(WPARAM wParam)
@@ -190,7 +186,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::vector<std::string> chunk2AssetNames = { "WorldChunk_2_1.png", "WorldChunk_2_2.png" };
             std::vector<ID2D1Bitmap*> chunk2Bitmaps = loadBitmapVector(pIWICFactory, chunk2AssetNames);
 
-            std::vector<std::string> backgroundAssetNames = { "CloudLayer1_1.png" };
+            std::vector<std::string> backgroundAssetNames = { "background.png" };
             std::vector<ID2D1Bitmap*> backgroundBitmaps = loadBitmapVector(pIWICFactory, backgroundAssetNames);
 
             std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerIdleBitmaps, playerJumpBitmaps, chunk1Bitmaps, chunk2Bitmaps, backgroundBitmaps };

@@ -10,8 +10,8 @@
 #include <dwrite.h>
 
 #include "Scene.h"
-#include "input/headers/ButtonAction.h"
-#include "input/headers/JumpButton.h"
+#include "ButtonAction.h"
+#include "JumpButton.h"
 
 static bool isRunning;
 std::filesystem::path p;

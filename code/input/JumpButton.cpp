@@ -1,4 +1,4 @@
-#include "headers/JumpButton.h"
+#include "../headers/JumpButton.h"
 
 void JumpButton::execute(std::unique_ptr<Scene>& scene)
 {

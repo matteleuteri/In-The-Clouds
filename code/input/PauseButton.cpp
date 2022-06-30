@@ -1,4 +1,4 @@
-#include "headers/PauseButton.h"
+#include "../headers/PauseButton.h"
 
 void PauseButton::execute(std::unique_ptr<Scene>& scene)
 {
