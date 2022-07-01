@@ -18,7 +18,7 @@ void Player::update(int32_t timeElapsed, int32_t currentTime)
     if(isInAir)
     {
         int dTime = currentTime - inAirStartTime;
-        ySpeed = ySpeed  + ((dTime * 9.8f) / 100000);
+        ySpeed += ((dTime * 9.8f) / 100000);
         y += timeElapsed * ySpeed;
     }
     if(y > 720)
@@ -29,7 +29,7 @@ void Player::update(int32_t timeElapsed, int32_t currentTime)
     }
     if(x > 1440)    x = 0;
     else if(x < 0)  x = 1440;
-    if(immune > 0) immune -= 1;
+    if(immune > 0)  immune -= 1;
 }
 
 void Player::landOn(WorldChunk *wc)
@@ -43,7 +43,7 @@ void Player::landOn(WorldChunk *wc)
 
 void Player::fallOff(int i)
 {
-    if(i == 1) // are th3ese conditions really needed?
+    if(i == 1) // are these conditions really needed?
     {
         immune = 100;
         x = x +  chunkCurrentlyOn->x - width;
@@ -63,12 +63,12 @@ void Player::fallOff(int i)
 
 void Player::jump()
 {
+    // OutputDebugStringA("jumping\n");
     isInAir = true;
     inAirStartTime = GetTickCount();
     animation = animationController->animations[1];// only for a short time!!!
     immune = 100;
     x = x + chunkCurrentlyOn->x - width;
     y = y + chunkCurrentlyOn->y - height;
-    isInAir = true;
     ySpeed = -1.3f;
 }

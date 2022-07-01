@@ -14,3 +14,5 @@ To Do List:
 4. fix glitch where platforms get stuck on their transform boundaries
 
 5. represent transforms in matrix form instead of individual components
+
+6. create an interface for timed events

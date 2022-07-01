@@ -26,7 +26,7 @@ public:
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
     
-    std::unique_ptr<CloudLayer> cloudLayer1;
+    std::unique_ptr<CloudLayer> cloudLayers;
 
     std::vector<std::unique_ptr<WorldChunk>> worldChunks;
     Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps);

@@ -28,12 +28,12 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitm
     AnimationController *backgroundAnimationController = new AnimationController(backgroundAnimations);
     background = std::make_unique<Background>(backgroundAnimationController, 0.0f, 0.0f);    
 
-    // Animation* cloudLayer1Anm = new Animation(bitmaps[5], 0, currentTime, 100);
-    // std::map<int, Animation*> cloudLayer1Animations;
-    // cloudLayer1Animations[0] = bAnm;
-    // AnimationController *cloudLayer1AnimationController = new AnimationController(cloudLayer1Animations);
-    // cloudLayer1 = std::make_unique<CloudLayer>(cloudLayer1AnimationController, 0.0f, 0.0f);    
-    // lastTimestamp = GetTickCount();
+    Animation* cloudLayersAnm = new Animation(bitmaps[5], 0, currentTime, 100);
+    std::map<int, Animation*> cloudLayersAnimations;
+    cloudLayersAnimations[0] = cloudLayersAnm;
+    AnimationController *cloudLayersAnimationController = new AnimationController(cloudLayersAnimations);
+    cloudLayers = std::make_unique<CloudLayer>(cloudLayersAnimationController, 0.0f, 0.0f);    
+    lastTimestamp = GetTickCount();
 }
 
 void Scene::checkPlatformCollision(int32_t currentTime)
@@ -58,7 +58,6 @@ void Scene::checkPlatformCollision(int32_t currentTime)
         else if(!player->isInAir && (player->x < player->width))
         {
             player->fallOff(-1);
-            
         }   
     }
 }
@@ -88,7 +87,6 @@ void Scene::addForce(GameObject* gameObject, DIRECTION direction, float speed)
         gameObject->xSpeed = -1 * speed;
 }
 
-
 void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
 {
     renderTarget->BeginDraw();
@@ -102,8 +100,8 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
     drawPlayer(renderTarget);
     
-    // renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
-    // drawCloudLayer1(renderTarget);
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
+    drawCloudLayer1(renderTarget);
 
     renderTarget->EndDraw();  
 }
@@ -115,7 +113,7 @@ void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 
 void Scene::drawCloudLayer1(ID2D1HwndRenderTarget* renderTarget)
 {
-    drawBM(renderTarget, cloudLayer1.get());
+    drawBM(renderTarget, cloudLayers.get());
 }
 
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
