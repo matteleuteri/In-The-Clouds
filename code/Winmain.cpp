@@ -85,7 +85,10 @@ static void handleKeyDown(WPARAM wParam)
 
     // if(wParam == VK_DOWN);
     // if(wParam == 77) scene->player->onPlatform = true; // M
-    // if(wParam == 80) p_Button->execute(scene); // P
+    if(wParam == 80) 
+    {
+        scene->x += 5;
+    } // P
 }
 
 static void handleKeyUp(WPARAM wParam)
@@ -189,14 +192,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::vector<std::string> backgroundAssetNames = { "background.png" };
             std::vector<ID2D1Bitmap*> backgroundBitmaps = loadBitmapVector(pIWICFactory, backgroundAssetNames);
 
-
             std::vector<std::string> cloudLayersAssetNames = { "cloudLayer_1.png" };
             std::vector<ID2D1Bitmap*> cloudLayersBitmaps = loadBitmapVector(pIWICFactory, cloudLayersAssetNames);
 
-
-
             std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerIdleBitmaps, playerJumpBitmaps, chunk1Bitmaps, chunk2Bitmaps, backgroundBitmaps, cloudLayersBitmaps };
-            scene = std::make_unique<Scene>(GetTickCount(), true, bitmaps);
+            scene = std::make_unique<Scene>(GetTickCount(), true, bitmaps, 0.0f, 0.0f);
 
             up_Button = new JumpButton();
             

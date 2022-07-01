@@ -22,6 +22,8 @@ class Scene
 {
 public:
     bool isActive;
+    float x;
+    float y;
     int32_t lastTimestamp;
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
@@ -29,7 +31,7 @@ public:
     std::unique_ptr<CloudLayer> cloudLayers;
 
     std::vector<std::unique_ptr<WorldChunk>> worldChunks;
-    Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps);
+    Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps, float x, float y);
     void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g);
     void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
     void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget);

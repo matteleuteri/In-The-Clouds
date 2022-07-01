@@ -1,6 +1,6 @@
 #include "headers/Scene.h"
 
-Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps) : isActive(active)
+Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps, float x, float y) : isActive(active), x(x), y(y)
 {    
     Animation* playerIdleAnm = new Animation(bitmaps[0], 0, currentTime, 100);
     Animation* playerJumpAnm = new Animation(bitmaps[1], 0, currentTime, 100);
@@ -33,6 +33,7 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitm
     cloudLayersAnimations[0] = cloudLayersAnm;
     AnimationController *cloudLayersAnimationController = new AnimationController(cloudLayersAnimations);
     cloudLayers = std::make_unique<CloudLayer>(cloudLayersAnimationController, 0.0f, 0.0f);    
+    
     lastTimestamp = GetTickCount();
 }
 
@@ -90,17 +91,16 @@ void Scene::addForce(GameObject* gameObject, DIRECTION direction, float speed)
 void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
 {
     renderTarget->BeginDraw();
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
     
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
     drawBackground(renderTarget);
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawWorldChunks(renderTarget);
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawPlayer(renderTarget);
     
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawCloudLayer1(renderTarget);
 
     renderTarget->EndDraw();  
