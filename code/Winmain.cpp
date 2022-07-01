@@ -179,24 +179,47 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             std::vector<std::string> playerIdleAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png" };
             std::vector<std::string> playerJumpAssetNames = { "player2_jump_01.png", "player2_jump_02.png", "player2_jump_03.png", "player2_jump_04"};
-
             std::vector<ID2D1Bitmap*> playerIdleBitmaps = loadBitmapVector(pIWICFactory, playerIdleAssetNames);
             std::vector<ID2D1Bitmap*> playerJumpBitmaps = loadBitmapVector(pIWICFactory, playerJumpAssetNames);
+            Animation* playerIdleAnm = new Animation(playerIdleBitmaps, 0, GetTickCount(), 100);
+            Animation* playerJumpAnm = new Animation(playerJumpBitmaps, 0, GetTickCount(), 100);
+            std::map<int, Animation*> playerAnimations;
+            playerAnimations[0] = playerIdleAnm;
+            playerAnimations[1] = playerJumpAnm;
+            AnimationController *playerAnimationController = new AnimationController(playerAnimations);
 
             std::vector<std::string> chunk1AssetNames = { "WorldChunk_1_1.png", "WorldChunk_1_2.png" };
             std::vector<ID2D1Bitmap*> chunk1Bitmaps = loadBitmapVector(pIWICFactory, chunk1AssetNames);
+            Animation* chunk1Anm = new Animation(chunk1Bitmaps, 0, GetTickCount(), 100);
+            std::map<int, Animation*> chunk1Animations;
+            chunk1Animations[0] = chunk1Anm;
+            AnimationController *chunk1AnimationController = new AnimationController(chunk1Animations);
 
             std::vector<std::string> chunk2AssetNames = { "WorldChunk_2_1.png", "WorldChunk_2_2.png" };
             std::vector<ID2D1Bitmap*> chunk2Bitmaps = loadBitmapVector(pIWICFactory, chunk2AssetNames);
+            Animation* chunk2Anm = new Animation(chunk2Bitmaps, 0, GetTickCount(), 100);
+            std::map<int, Animation*> chunk2Animations;
+            chunk2Animations[0] = chunk2Anm;
+            AnimationController *chunk2AnimationController = new AnimationController(chunk1Animations);
 
             std::vector<std::string> backgroundAssetNames = { "background.png" };
             std::vector<ID2D1Bitmap*> backgroundBitmaps = loadBitmapVector(pIWICFactory, backgroundAssetNames);
+            Animation* backgroundAnm = new Animation(backgroundBitmaps, 0, GetTickCount(), 100);
+            std::map<int, Animation*> backgroundAnimations;
+            backgroundAnimations[0] = backgroundAnm;
+            AnimationController *backgroundAnimationController = new AnimationController(backgroundAnimations);
 
-            std::vector<std::string> cloudLayersAssetNames = { "cloudLayer_1.png" };
+            std::vector<std::string> cloudLayersAssetNames = { "cloudLayer_1_2.png", "cloudLayer_1_1.png","cloudLayer_1_3.png","cloudLayer_1_1.png" };
             std::vector<ID2D1Bitmap*> cloudLayersBitmaps = loadBitmapVector(pIWICFactory, cloudLayersAssetNames);
+            Animation* cloudLayersAnm = new Animation(cloudLayersBitmaps, 0, GetTickCount(), 100);
+            std::map<int, Animation*> cloudLayersAnimations;
+            cloudLayersAnimations[0] = cloudLayersAnm;
+            AnimationController *cloudLayersAnimationController = new AnimationController(cloudLayersAnimations);
 
-            std::vector<std::vector<ID2D1Bitmap*>> bitmaps = { playerIdleBitmaps, playerJumpBitmaps, chunk1Bitmaps, chunk2Bitmaps, backgroundBitmaps, cloudLayersBitmaps };
-            scene = std::make_unique<Scene>(GetTickCount(), true, bitmaps, 0.0f, 0.0f);
+            std::vector<AnimationController*> animationControllers = { playerAnimationController, chunk1AnimationController, chunk2AnimationController, 
+                        backgroundAnimationController, cloudLayersAnimationController };
+
+            scene = std::make_unique<Scene>(GetTickCount(), true, animationControllers, 0.0f, 0.0f);
 
             up_Button = new JumpButton();
             

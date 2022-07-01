@@ -31,7 +31,7 @@ public:
     std::unique_ptr<CloudLayer> cloudLayers;
 
     std::vector<std::unique_ptr<WorldChunk>> worldChunks;
-    Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps, float x, float y);
+    Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y);
     void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g);
     void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
     void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget);

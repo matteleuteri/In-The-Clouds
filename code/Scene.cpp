@@ -1,38 +1,16 @@
 #include "headers/Scene.h"
 
-Scene::Scene(int32_t currentTime, bool active, std::vector<std::vector<ID2D1Bitmap*>> bitmaps, float x, float y) : isActive(active), x(x), y(y)
+Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y) : isActive(active), x(x), y(y)
 {    
-    Animation* playerIdleAnm = new Animation(bitmaps[0], 0, currentTime, 100);
-    Animation* playerJumpAnm = new Animation(bitmaps[1], 0, currentTime, 100);
-    std::map<int, Animation*> playerAnimations;
-    playerAnimations[0] = playerIdleAnm;
-    playerAnimations[1] = playerJumpAnm;
-    AnimationController *playerAnimationController = new AnimationController(playerAnimations);
-    player = std::make_unique<Player>(playerAnimationController, 60.0f, 60.0f);
 
-    Animation* chunk1Anm = new Animation(bitmaps[2], 0, currentTime, 100);
-    std::map<int, Animation*> chunk1Animations;
-    chunk1Animations[0] = chunk1Anm;
-    AnimationController *chunk1AnimationController = new AnimationController(chunk1Animations);
-    worldChunks.push_back(std::make_unique<WorldChunk>(chunk1AnimationController, 200.0f, 200.0f));
+    player = std::make_unique<Player>(animationControllers[0], 60.0f, 60.0f);
 
-    Animation* chunk2Anm = new Animation(bitmaps[3], 0, currentTime, 100);
-    std::map<int, Animation*> chunk2Animations;
-    chunk2Animations[0] = chunk2Anm;
-    AnimationController *chunk2AnimationController = new AnimationController(chunk2Animations);
-    worldChunks.push_back(std::make_unique<WorldChunk>(chunk2AnimationController, 600.0f, 600.0f));
+    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[1], 200.0f, 200.0f));
+    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f));
     
-    Animation* bAnm = new Animation(bitmaps[4], 0, currentTime, 100);
-    std::map<int, Animation*> backgroundAnimations;
-    backgroundAnimations[0] = bAnm;
-    AnimationController *backgroundAnimationController = new AnimationController(backgroundAnimations);
-    background = std::make_unique<Background>(backgroundAnimationController, 0.0f, 0.0f);    
+    background = std::make_unique<Background>(animationControllers[3], 0.0f, 0.0f);    
 
-    Animation* cloudLayersAnm = new Animation(bitmaps[5], 0, currentTime, 100);
-    std::map<int, Animation*> cloudLayersAnimations;
-    cloudLayersAnimations[0] = cloudLayersAnm;
-    AnimationController *cloudLayersAnimationController = new AnimationController(cloudLayersAnimations);
-    cloudLayers = std::make_unique<CloudLayer>(cloudLayersAnimationController, 0.0f, 0.0f);    
+    cloudLayers = std::make_unique<CloudLayer>(animationControllers[4], 0.0f, 0.0f);    
     
     lastTimestamp = GetTickCount();
 }
@@ -67,8 +45,16 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 {
     int32_t timeElapsed = endTime - startTime;
     
+    // abstract this, this is trouble
+    if(player->x > 1200)
+    {
+        x = 150;
+    }
+
     player->update(timeElapsed, endTime);
     player->animate(endTime);
+
+    cloudLayers->animate(endTime);
 
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
@@ -95,8 +81,10 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
     
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
     drawBackground(renderTarget);
+    
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawWorldChunks(renderTarget);
+    
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawPlayer(renderTarget);
     
