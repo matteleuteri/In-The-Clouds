@@ -36,9 +36,9 @@ static IWICImagingFactory* createResources(HWND hwnd, RECT* rc)
     D2D1_SIZE_U clientSize = D2D1::SizeU(rc->right - rc->left, rc->bottom - rc->top);
     pD2DFactory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hwnd, clientSize), &renderTarget);
   
-    renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red),   &brushes[0]); 
-    renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Green), &brushes[1]); 
-    renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Pink),  &brushes[2]); 
+    // renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red),   &brushes[0]); 
+    // renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Green), &brushes[1]); 
+    // renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Pink),  &brushes[2]); 
 
     HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&pDWriteFactory_));
 
@@ -78,23 +78,23 @@ static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFacto
 
 static void handleKeyDown(WPARAM wParam)
 {
-    if(wParam == VK_RIGHT) scene->addForce(scene->player.get(), RIGHT, 0.5);
-    if(wParam == VK_LEFT) scene->addForce(scene->player.get(), LEFT, 0.5f);
+    if(wParam == VK_RIGHT) scene->movePlayer(scene->player.get(), 0.5);
+    if(wParam == VK_LEFT) scene->movePlayer(scene->player.get(), -0.5f);
 
-    if(wParam == VK_UP) up_Button->execute(scene);
+    if(wParam == VK_UP) up_Button->execute(scene);  
 
     // if(wParam == VK_DOWN);
     // if(wParam == 77) scene->player->onPlatform = true; // M
-    if(wParam == 80) 
-    {
-        scene->x += 5;
-    } // P
+    // if(wParam == 80) 
+    // {
+    //     scene->x += 5;
+    // } // P
 }
 
 static void handleKeyUp(WPARAM wParam)
 {
-    if(wParam == VK_RIGHT) scene->addForce(scene->player.get(), RIGHT, 0);
-    if(wParam == VK_LEFT) scene->addForce(scene->player.get(), LEFT, 0);
+    if(wParam == VK_RIGHT) scene->movePlayer(scene->player.get(), 0);
+    if(wParam == VK_LEFT) scene->movePlayer(scene->player.get(), 0);
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -219,7 +219,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::vector<AnimationController*> animationControllers = { playerAnimationController, chunk1AnimationController, chunk2AnimationController, 
                         backgroundAnimationController, cloudLayersAnimationController };
 
-            scene = std::make_unique<Scene>(GetTickCount(), true, animationControllers, 0.0f, 0.0f);
+            scene = std::make_unique<Scene>(GetTickCount(), true, animationControllers, 0.0f, 0.0f, &rc);
+            
 
             up_Button = new JumpButton();
             
@@ -242,7 +243,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                 if(endTime - startTime >= 10)
                 {
                     scene->updateState(hwnd, endTime, startTime);
-                    scene->renderState(&rc, hwnd, renderTarget, brushes, pTextFormat_);                    
+                    scene->renderState(hwnd, renderTarget, brushes, pTextFormat_);                    
                     startTime = endTime;
                 }
             }

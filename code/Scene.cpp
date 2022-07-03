@@ -1,44 +1,39 @@
 #include "headers/Scene.h"
 
-Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y) : isActive(active), x(x), y(y)
+Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc) : isActive(active), x(x), y(y), rc(rc)
 {    
-
-    player = std::make_unique<Player>(animationControllers[0], 60.0f, 60.0f);
-
+    player = std::make_unique<Player>(animationControllers[0], 600.0f, 60.0f);
     worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[1], 200.0f, 200.0f));
     worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f));
-    
     background = std::make_unique<Background>(animationControllers[3], 0.0f, 0.0f);    
-
     cloudLayers = std::make_unique<CloudLayer>(animationControllers[4], 0.0f, 0.0f);    
-    
     lastTimestamp = GetTickCount();
 }
 
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
     // if(player->immune > 0) return;
-    for(std::unique_ptr<WorldChunk> &wc: worldChunks)
-    {
-        if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
-        {
-            player->landOn(wc.get());
-            return;
-        }
-    }
+    // for(std::unique_ptr<WorldChunk> &wc: worldChunks)
+    // {
+    //     if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
+    //     {
+    //         player->landOn(wc.get());
+    //         return;
+    //     }
+    // }
 
-    if(!player->isInAir)
-    {
-        WorldChunk *wc = player->chunkCurrentlyOn;
-        if(!player->isInAir && (player->x > wc->width))
-        {
-            player->fallOff(1);
-        }
-        else if(!player->isInAir && (player->x < player->width))
-        {
-            player->fallOff(-1);
-        }   
-    }
+    // if(!player->isInAir)
+    // {
+    //     WorldChunk *wc = player->chunkCurrentlyOn;
+    //     if(!player->isInAir && (player->x > wc->width))
+    //     {
+    //         player->fallOff(1);
+    //     }
+    //     else if(!player->isInAir && (player->x < player->width))
+    //     {
+    //         player->fallOff(-1);
+    //     }   
+    // }
 }
 
 void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
@@ -46,10 +41,14 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
     int32_t timeElapsed = endTime - startTime;
     
     // abstract this, this is trouble
-    if(player->x > 1200)
-    {
-        x = 150;
-    }
+    // if(player->x > 1200)
+    // {
+    //     x = 150;
+    // }
+    // updateGlobalPosition();
+
+    x += (xSpeed * timeElapsed);
+
 
     player->update(timeElapsed, endTime);
     player->animate(endTime);
@@ -66,20 +65,24 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
     checkPlatformCollision(endTime);
 }
 
-void Scene::addForce(GameObject* gameObject, DIRECTION direction, float speed) 
+void Scene::movePlayer(GameObject* gameObject, float speed) 
 {
-    if(direction == RIGHT)
-        gameObject->xSpeed = speed;
-    else if(direction == LEFT)
-        gameObject->xSpeed = -1 * speed;
+    if((rc->right - x) - gameObject->x < 200 && speed > 0 || (gameObject->x - (rc->left - x) < 200 && speed < 0))
+    {
+        xSpeed = -1 * speed;
+    }
+    else
+    {
+        xSpeed = 0.0f;
+    }
+    gameObject->xSpeed = speed;
 }
 
-void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
+void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
 {
     renderTarget->BeginDraw();
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
     
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawBackground(renderTarget);
     
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
@@ -96,6 +99,7 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
 
 void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 {
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, 0));
     drawBM(renderTarget, background.get());
 }
 
@@ -115,10 +119,10 @@ void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 
 void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
 {
-    if(!player->isInAir)
-    {
-        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width, player->chunkCurrentlyOn->y - player->height));
-    }
+    // if(!player->isInAir)
+    // {
+    //     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width, player->chunkCurrentlyOn->y - player->height));
+    // }
     drawBM(renderTarget, player.get());
 }
 

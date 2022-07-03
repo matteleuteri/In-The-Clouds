@@ -13,6 +13,8 @@ class GameObject
 public:
     float x;
     float y;
+    float xOrigin;
+    float yOrigin;
     float xSpeed;
     float ySpeed;
     float width;
@@ -20,6 +22,7 @@ public:
     Animation *animation;
     AnimationController *animationController;
     GameObject::GameObject(AnimationController *animationController, float x, float y);
+    GameObject::GameObject(AnimationController *animationController, float x1, float y1, float x2, float y2);
     virtual void GameObject::update(int32_t timeElapsed, int32_t currentTime) = 0;
     virtual void GameObject::animate(int32_t currentTime);
 };

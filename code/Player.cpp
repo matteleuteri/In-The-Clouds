@@ -27,8 +27,8 @@ void Player::update(int32_t timeElapsed, int32_t currentTime)
         ySpeed = 0;
         inAirStartTime = GetTickCount();
     }
-    if(x > 1440)    x = 0;
-    else if(x < 0)  x = 1440;
+    // if(x > 1440)    x = 0;
+    // else if(x < 0)  x = 1440;
     if(immune > 0)  immune -= 1;
 }
 
