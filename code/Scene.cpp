@@ -79,7 +79,7 @@ void Scene::renderState(RECT* rc, HWND hwnd, ID2D1HwndRenderTarget* renderTarget
     renderTarget->BeginDraw();
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
     
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0, 0));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawBackground(renderTarget);
     
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
