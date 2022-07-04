@@ -6,5 +6,5 @@ CloudLayer::CloudLayer(AnimationController *animationController, float x, float 
 void CloudLayer::moveLayer()
 {}
 
-void CloudLayer::update(int32_t timeDiff, int32_t currentTime)
+void CloudLayer::update(int32_t timeDiff)
 {}

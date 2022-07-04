@@ -32,14 +32,12 @@ public:
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
     std::unique_ptr<CloudLayer> cloudLayers;
-
     std::vector<std::unique_ptr<WorldChunk>> worldChunks;
     Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc);
-    void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g);
     void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
     void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget);
     void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget);
-    void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_);
+    void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteTextFormat* pTextFormat_);
     void Scene::updateState(HWND hwnd, int32_t startTime, int32_t endTime); 
     void Scene::checkPlatformCollision(int32_t currentTime);
     void Scene::movePlayer(GameObject* gameObject, float speed);

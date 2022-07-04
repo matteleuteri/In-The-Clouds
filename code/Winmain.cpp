@@ -36,10 +36,6 @@ static IWICImagingFactory* createResources(HWND hwnd, RECT* rc)
     D2D1_SIZE_U clientSize = D2D1::SizeU(rc->right - rc->left, rc->bottom - rc->top);
     pD2DFactory->CreateHwndRenderTarget(D2D1::RenderTargetProperties(), D2D1::HwndRenderTargetProperties(hwnd, clientSize), &renderTarget);
   
-    // renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red),   &brushes[0]); 
-    // renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Green), &brushes[1]); 
-    // renderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Pink),  &brushes[2]); 
-
     HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&pDWriteFactory_));
 
     hr = pDWriteFactory_->CreateTextFormat(L"Gabriola", NULL, DWRITE_FONT_WEIGHT_REGULAR, 
@@ -220,7 +216,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                         backgroundAnimationController, cloudLayersAnimationController };
 
             scene = std::make_unique<Scene>(GetTickCount(), true, animationControllers, 0.0f, 0.0f, &rc);
-            
 
             up_Button = new JumpButton();
             
@@ -243,7 +238,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                 if(endTime - startTime >= 10)
                 {
                     scene->updateState(hwnd, endTime, startTime);
-                    scene->renderState(hwnd, renderTarget, brushes, pTextFormat_);                    
+                    scene->renderState(hwnd, renderTarget, pTextFormat_);                    
                     startTime = endTime;
                 }
             }

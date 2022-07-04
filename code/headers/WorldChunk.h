@@ -9,7 +9,7 @@ public:
     int chunkID;
     int d;
     WorldChunk::WorldChunk(AnimationController *animationController, float x, float y);
-    void WorldChunk::update(int32_t timeElapsed, int32_t currentTime);
+    void WorldChunk::update(int32_t timeElapsed);
     // void WorldChunk::flipBitmap();
 };
 

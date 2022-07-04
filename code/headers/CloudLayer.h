@@ -10,7 +10,7 @@ public:
     int xSpeedOffset;
     int ySpeedOffset;
     CloudLayer::CloudLayer(AnimationController *animationController, float x, float y);
-    void CloudLayer::update(int32_t timeDiff, int32_t currentTime);
+    void CloudLayer::update(int32_t timeDiff);
     void CloudLayer::moveLayer();
 };
 

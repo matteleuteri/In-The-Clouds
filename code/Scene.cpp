@@ -10,64 +10,65 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
     lastTimestamp = GetTickCount();
 }
 
+static void drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
+{
+    renderTarget->DrawBitmap(g->animation->bitmaps[g->animation->currentFrame], 
+                D2D1::RectF(g->x, g->y, g->x + g->width, g->y + g->height));
+}
+
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
-    // if(player->immune > 0) return;
-    // for(std::unique_ptr<WorldChunk> &wc: worldChunks)
-    // {
-    //     if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
-    //     {
-    //         player->landOn(wc.get());
-    //         return;
-    //     }
-    // }
+    if(player->immune > 0) return;
 
-    // if(!player->isInAir)
-    // {
-    //     WorldChunk *wc = player->chunkCurrentlyOn;
-    //     if(!player->isInAir && (player->x > wc->width))
-    //     {
-    //         player->fallOff(1);
-    //     }
-    //     else if(!player->isInAir && (player->x < player->width))
-    //     {
-    //         player->fallOff(-1);
-    //     }   
-    // }
+    if(!player->isInAir)
+    {
+        WorldChunk *wc = player->chunkCurrentlyOn;
+        if(!player->isInAir && (player->x > wc->width))
+        {
+            player->fallOff(1);
+        }
+        else if(!player->isInAir && (player->x < player->width))
+        {
+            player->fallOff(-1);
+        }   
+    }
+
+    for(std::unique_ptr<WorldChunk> &wc: worldChunks)
+    {
+        if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
+        {
+            float newx = player->x - wc->x + player->width;
+            player->landOn(wc.get(), newx, wc->y);
+            return;
+        }
+    }
+
+
 }
 
 void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 {
     int32_t timeElapsed = endTime - startTime;
-    
-    // abstract this, this is trouble
-    // if(player->x > 1200)
-    // {
-    //     x = 150;
-    // }
-    // updateGlobalPosition();
 
+    // the scene itself must also be updated
     x += (xSpeed * timeElapsed);
 
-
-    player->update(timeElapsed, endTime);
+    player->update(timeElapsed);
     player->animate(endTime);
 
     cloudLayers->animate(endTime);
 
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        wc->update(timeElapsed, endTime);
-        // take endtime out of the above function, because naything that depends on endtime should be done elsewhere, right?
+        wc->update(timeElapsed);
         wc->animate(endTime);
-    }
-    
+    }    
     checkPlatformCollision(endTime);
 }
 
 void Scene::movePlayer(GameObject* gameObject, float speed) 
 {
-    if((rc->right - x) - gameObject->x < 200 && speed > 0 || (gameObject->x - (rc->left - x) < 200 && speed < 0))
+    if(((rc->right - x) - (gameObject->x + gameObject->width) < 200 && speed > 0) || (gameObject->x - (rc->left - x) < 200 && speed < 0))
     {
         xSpeed = -1 * speed;
     }
@@ -78,20 +79,14 @@ void Scene::movePlayer(GameObject* gameObject, float speed)
     gameObject->xSpeed = speed;
 }
 
-void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, ID2D1SolidColorBrush* brushes[3], IDWriteTextFormat* pTextFormat_)
+void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteTextFormat* pTextFormat_)
 {
     renderTarget->BeginDraw();
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
     
     drawBackground(renderTarget);
-    
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawWorldChunks(renderTarget);
-    
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawPlayer(renderTarget);
-    
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawCloudLayer1(renderTarget);
 
     renderTarget->EndDraw();  
@@ -105,11 +100,13 @@ void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 
 void Scene::drawCloudLayer1(ID2D1HwndRenderTarget* renderTarget)
 {
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     drawBM(renderTarget, cloudLayers.get());
 }
 
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 {
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
         D2D1_SIZE_F size = wc->animation->bitmaps[wc->animation->currentFrame]->GetSize();
@@ -119,18 +116,18 @@ void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 
 void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
 {
-    // if(!player->isInAir)
-    // {
-    //     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width, player->chunkCurrentlyOn->y - player->height));
-    // }
+    if(player->isInAir)
+    {
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
+    }
+    else
+    {
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width, player->chunkCurrentlyOn->y - player->height));
+    }
     drawBM(renderTarget, player.get());
 }
 
-void Scene::drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
-{
-    renderTarget->DrawBitmap(g->animation->bitmaps[g->animation->currentFrame], 
-                D2D1::RectF(g->x, g->y, g->x + g->width, g->y + g->height));
-}
+
 
 // D2D1_RECT_F layoutRect = D2D1::RectF(
 // static_cast<FLOAT>(rc->left),
