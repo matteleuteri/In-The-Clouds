@@ -11,6 +11,7 @@
 #include "WorldChunk.h"
 #include "AnimationController.h"
 #include <vector>
+#include <array>
 
 enum DIRECTION
 {
@@ -35,12 +36,13 @@ public:
     WorldChunk *chunkCurrentlyOn;
 
     Animation *jumpAnimation;
-    void Player::fallOff(int direction);
+    void Player::fallOff();
     void Player::setPosition(float x2, float y2);
     Player::Player(AnimationController *animationController, float x, float y);
     void Player::jump();
     void Player::update(int32_t timeElapsed);
     void Player::landOn(WorldChunk *wc, float newX, float newY);
+    std::array<float, 2> Player::getAbsoluteCoordinates();
 };
 
 #endif

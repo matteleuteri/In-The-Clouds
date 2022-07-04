@@ -8,11 +8,10 @@ class WorldChunk: public GameObject
 public:
     int chunkID;
     int d;
-    int xMax;
-    int xMin;
+    float xMax;
+    float xMin;
     WorldChunk::WorldChunk(AnimationController *animationController, float x, float y);
     void WorldChunk::update(int32_t timeElapsed);
-    // void WorldChunk::flipBitmap();
 };
 
 #endif

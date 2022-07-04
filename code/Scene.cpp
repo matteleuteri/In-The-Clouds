@@ -24,13 +24,11 @@ void Scene::checkPlatformCollision(int32_t currentTime)
     if(!player->isInAir)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
-        if(player->x > wc->width)
+        if(player->x < (player->width / 2) || player->x - (player->width / 2) > wc->width)
         {
-            player->fallOff(1);
-        }
-        else if(player->x < player->width)
-        {
-            player->fallOff(-1);
+            OutputDebugStringA("fall\n");
+            player->fallOff();
+            return;
         }   
     }
 
@@ -68,9 +66,11 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 void Scene::movePlayer(GameObject* gameObject, float speed) 
 {
     // try to get ????
+    // float playerOnScreenX = 0;
+    // float playerOnScreenY = 0;
     if(((rc->right - x) - (gameObject->x + gameObject->width) < 200 && speed > 0) || (gameObject->x - (rc->left - x) < 200 && speed < 0))
     {
-       if(player->isInAir) // use xorigin instead
+       if(player->isInAir) // use xorigin instead?
         xSpeed = -1 * speed;
     }
     else

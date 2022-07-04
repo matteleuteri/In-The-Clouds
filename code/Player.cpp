@@ -4,8 +4,8 @@ Player::Player(AnimationController *animationController, float x, float y): Game
 {
     isActive = true;
     isInAir = true;
-    xOrigin = 0;
-    yOrigin = 0;
+    // xOrigin = 0;
+    // yOrigin = 0;
     animation = animationController->animations[0];
     width = animation->bitmaps[0]->GetSize().width;
     height = animation->bitmaps[0]->GetSize().height;
@@ -13,6 +13,29 @@ Player::Player(AnimationController *animationController, float x, float y): Game
     immune = 0;
     ySpeed = 0;
 }
+
+std::array<float, 2> Player::getAbsoluteCoordinates()
+{
+    float c1;
+    float c2;
+
+    if(isInAir)
+    {
+        c1 = x;
+        c2 = y;
+    }
+    else
+    {
+        // we need to get the players coordinates wrt the screen, 
+        // using the coordinates wrt a world chunk 
+        c1 = chunkCurrentlyOn->x + x - width;
+        c2 = chunkCurrentlyOn->y - height;
+    }
+
+    std::array<float, 2> a = { c1, c2 };
+    return a;
+}
+
 
 void Player::update(int32_t timeElapsed)
 {
@@ -37,8 +60,7 @@ void Player::landOn(WorldChunk *wc, float newX, float newY)
     chunkCurrentlyOn = wc;
     isInAir = false;
     ySpeed = 0.0f;
-    x = newX;
-    y = 0;
+    setPosition(newX, 0);
 }
 
 void Player::setPosition(float x2, float y2)
@@ -47,29 +69,22 @@ void Player::setPosition(float x2, float y2)
     y = y2;
 }
 
-void Player::fallOff(int i)
+void Player::fallOff()
 {
-    immune = 100;
-    isInAir = true;
+    immune = 20;
     timeInAir = 0;
-    if(i == 1) // are these conditions really needed?
-    {
-        setPosition(x +  chunkCurrentlyOn->x - width, y + chunkCurrentlyOn->y - height);
-    }
-    else if(i == -1)
-    {
-        setPosition(chunkCurrentlyOn->x, y + chunkCurrentlyOn->y - height);
-    }
+    std::array<float, 2> a = getAbsoluteCoordinates();
+    setPosition(a[0], a[1]);
+    isInAir = true;
 }
 
 void Player::jump()
 {
-    // OutputDebugStringA("jumping\n");
-    isInAir = true;
     timeInAir = 0;
     animation = animationController->animations[1];// only for a short time!!!
     immune = 20;
-    x = x + chunkCurrentlyOn->x - width;
-    y = y + chunkCurrentlyOn->y - height;
+    std::array<float, 2> a = getAbsoluteCoordinates();
+    isInAir = true;
+    setPosition(a[0], a[1]);
     ySpeed = -1.3f;
 }
