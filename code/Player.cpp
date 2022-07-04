@@ -16,7 +16,6 @@ Player::Player(AnimationController *animationController, float x, float y): Game
 
 void Player::update(int32_t timeElapsed)
 {
-    x += xSpeed * timeElapsed;
     if(isInAir)
     {
         timeInAir += timeElapsed;
@@ -30,6 +29,7 @@ void Player::update(int32_t timeElapsed)
         timeInAir = 0;
     }
     if(immune > 0)  immune -= 1;
+    x += xSpeed * timeElapsed;
 }
 
 void Player::landOn(WorldChunk *wc, float newX, float newY)
@@ -41,23 +41,24 @@ void Player::landOn(WorldChunk *wc, float newX, float newY)
     y = 0;
 }
 
+void Player::setPosition(float x2, float y2)
+{
+    x = x2;
+    y = y2;
+}
+
 void Player::fallOff(int i)
 {
+    immune = 100;
+    isInAir = true;
+    timeInAir = 0;
     if(i == 1) // are these conditions really needed?
     {
-        immune = 100;
-        x = x +  chunkCurrentlyOn->x - width;
-        y = y + chunkCurrentlyOn->y - height;
-        isInAir = true;
-        timeInAir = 0;
+        setPosition(x +  chunkCurrentlyOn->x - width, y + chunkCurrentlyOn->y - height);
     }
     else if(i == -1)
     {
-        immune = 100;
-        x = chunkCurrentlyOn->x;
-        y = y + chunkCurrentlyOn->y - height;
-        isInAir = true;
-        timeInAir = 0;
+        setPosition(chunkCurrentlyOn->x, y + chunkCurrentlyOn->y - height);
     }
 }
 
@@ -67,7 +68,7 @@ void Player::jump()
     isInAir = true;
     timeInAir = 0;
     animation = animationController->animations[1];// only for a short time!!!
-    immune = 100;
+    immune = 20;
     x = x + chunkCurrentlyOn->x - width;
     y = y + chunkCurrentlyOn->y - height;
     ySpeed = -1.3f;

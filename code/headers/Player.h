@@ -36,6 +36,7 @@ public:
 
     Animation *jumpAnimation;
     void Player::fallOff(int direction);
+    void Player::setPosition(float x2, float y2);
     Player::Player(AnimationController *animationController, float x, float y);
     void Player::jump();
     void Player::update(int32_t timeElapsed);

@@ -5,8 +5,9 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
     player = std::make_unique<Player>(animationControllers[0], 600.0f, 60.0f);
     worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[1], 200.0f, 200.0f));
     worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f));
-    background = std::make_unique<Background>(animationControllers[3], 0.0f, 0.0f);    
-    cloudLayers = std::make_unique<CloudLayer>(animationControllers[4], 0.0f, 0.0f);    
+    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[3], 1000.0f, 500.0f));
+    background = std::make_unique<Background>(animationControllers[4], 0.0f, 0.0f);    
+    cloudLayers = std::make_unique<CloudLayer>(animationControllers[5], 0.0f, 0.0f);    
     lastTimestamp = GetTickCount();
 }
 
@@ -23,11 +24,11 @@ void Scene::checkPlatformCollision(int32_t currentTime)
     if(!player->isInAir)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
-        if(!player->isInAir && (player->x > wc->width))
+        if(player->x > wc->width)
         {
             player->fallOff(1);
         }
-        else if(!player->isInAir && (player->x < player->width))
+        else if(player->x < player->width)
         {
             player->fallOff(-1);
         }   
@@ -42,8 +43,6 @@ void Scene::checkPlatformCollision(int32_t currentTime)
             return;
         }
     }
-
-
 }
 
 void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
@@ -68,8 +67,10 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 
 void Scene::movePlayer(GameObject* gameObject, float speed) 
 {
+    // try to get ????
     if(((rc->right - x) - (gameObject->x + gameObject->width) < 200 && speed > 0) || (gameObject->x - (rc->left - x) < 200 && speed < 0))
     {
+       if(player->isInAir) // use xorigin instead
         xSpeed = -1 * speed;
     }
     else
@@ -126,8 +127,6 @@ void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
     }
     drawBM(renderTarget, player.get());
 }
-
-
 
 // D2D1_RECT_F layoutRect = D2D1::RectF(
 // static_cast<FLOAT>(rc->left),

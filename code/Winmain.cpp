@@ -196,7 +196,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             Animation* chunk2Anm = new Animation(chunk2Bitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> chunk2Animations;
             chunk2Animations[0] = chunk2Anm;
-            AnimationController *chunk2AnimationController = new AnimationController(chunk1Animations);
+            AnimationController *chunk2AnimationController = new AnimationController(chunk2Animations);
+
+            std::vector<std::string> chunk3AssetNames = { "WorldChunk_2_1.png", "WorldChunk_2_2.png" };
+            std::vector<ID2D1Bitmap*> chunk3Bitmaps = loadBitmapVector(pIWICFactory, chunk3AssetNames);
+            Animation* chunk3Anm = new Animation(chunk3Bitmaps, 0, GetTickCount(), 100);
+            std::map<int, Animation*> chunk3Animations;
+            chunk3Animations[0] = chunk3Anm;
+            AnimationController *chunk3AnimationController = new AnimationController(chunk3Animations);
 
             std::vector<std::string> backgroundAssetNames = { "background.png" };
             std::vector<ID2D1Bitmap*> backgroundBitmaps = loadBitmapVector(pIWICFactory, backgroundAssetNames);
@@ -213,7 +220,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             AnimationController *cloudLayersAnimationController = new AnimationController(cloudLayersAnimations);
 
             std::vector<AnimationController*> animationControllers = { playerAnimationController, chunk1AnimationController, chunk2AnimationController, 
-                        backgroundAnimationController, cloudLayersAnimationController };
+                        chunk3AnimationController, backgroundAnimationController, cloudLayersAnimationController };
 
             scene = std::make_unique<Scene>(GetTickCount(), true, animationControllers, 0.0f, 0.0f, &rc);
 
@@ -235,12 +242,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                     DispatchMessageA(&msg);
                 }
                 endTime = GetTickCount();
-                if(endTime - startTime >= 10)
-                {
-                    scene->updateState(hwnd, endTime, startTime);
-                    scene->renderState(hwnd, renderTarget, pTextFormat_);                    
-                    startTime = endTime;
-                }
+                scene->updateState(hwnd, endTime, startTime);
+                scene->renderState(hwnd, renderTarget, pTextFormat_);                    
+                startTime = endTime;
             }
         }
     }
