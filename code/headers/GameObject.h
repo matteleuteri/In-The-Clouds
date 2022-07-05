@@ -13,8 +13,6 @@ class GameObject
 public:
     float x;
     float y;
-    // float xOrigin;
-    // float yOrigin;
     float xSpeed;
     float ySpeed;
     float width;

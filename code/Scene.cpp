@@ -26,7 +26,6 @@ void Scene::checkPlatformCollision(int32_t currentTime)
         WorldChunk *wc = player->chunkCurrentlyOn;
         if(player->x < (player->width / 2) || player->x - (player->width / 2) > wc->width)
         {
-            OutputDebugStringA("fall\n");
             player->fallOff();
             return;
         }   
@@ -34,7 +33,7 @@ void Scene::checkPlatformCollision(int32_t currentTime)
 
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        if(player->isActive && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
+        if(player->ySpeed > 0 && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
         {
             float newx = player->x - wc->x + player->width;
             player->landOn(wc.get(), newx, wc->y);
@@ -65,10 +64,9 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 
 void Scene::movePlayer(GameObject* gameObject, float speed) 
 {
-    // try to get ????
-    // float playerOnScreenX = 0;
-    // float playerOnScreenY = 0;
-    if(((rc->right - x) - (gameObject->x + gameObject->width) < 200 && speed > 0) || (gameObject->x - (rc->left - x) < 200 && speed < 0))
+    std::array<float, 2> a = player->getAbsoluteCoordinates();
+    float playerOnScreenX = a[0];
+    if(((rc->right - x) - (playerOnScreenX + gameObject->width) < 200 && speed > 0) || (playerOnScreenX - (rc->left - x) < 200 && speed < 0))
     {
        if(player->isInAir) // use xorigin instead?
         xSpeed = -1 * speed;
@@ -123,7 +121,7 @@ void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
     }
     else
     {
-        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width, player->chunkCurrentlyOn->y - player->height));
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width - x, player->chunkCurrentlyOn->y - player->height));
     }
     drawBM(renderTarget, player.get());
 }

@@ -10,6 +10,7 @@
 #include <dwrite.h>
 
 #include "Scene.h"
+#include "JsonParser.h"
 #include "ButtonAction.h"
 #include "JumpButton.h"
 
