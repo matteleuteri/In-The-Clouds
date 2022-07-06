@@ -19,7 +19,7 @@ static void drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
 
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
-    if(player->immune > 0) return;
+    if(player->immune > 0) return; 
 
     if(!player->isInAir)
     {
@@ -65,7 +65,7 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 void Scene::movePlayer(GameObject* gameObject, float speed) 
 {
     std::array<float, 2> a = player->getAbsoluteCoordinates();
-    float playerOnScreenX = a[0];
+    float playerOnScreenX = a[0] ;
     if(((rc->right - x) - (playerOnScreenX + gameObject->width) < 200 && speed > 0) || (playerOnScreenX - (rc->left - x) < 200 && speed < 0))
     {
        if(player->isInAir) // use xorigin instead?

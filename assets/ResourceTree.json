@@ -1,0 +1,82 @@
+{
+    "playerAnimationController" : {
+        "playerAnimationMap" : [
+            {
+                "name": "idle",
+                "bitmaps": [
+                    "player_1_1.png",
+                    "player_1_2.png",
+                    "player_1_3.png"
+                ]
+            },
+            {
+                "name": "jump",
+                "bitmaps": [
+                    "player_2_1.png",
+                    "player_2_2.png",
+                    "player_2_3.png"
+                ]
+            }
+        ]
+    },
+
+    "chunk1AnimationController" : {
+        "chunk1AnimationMap" : [
+            {
+                "name": "idle",
+                "bitmaps": [
+                    "WorldChunk_1_1.png",
+                    "WorldChunk_1_2.png",
+                    "WorldChunk_1_3.png"
+                ]
+            }
+        ]
+    },
+    "chunk2AnimationController" : {
+        "chunk2AnimationMap" : [
+            {
+                "name": "idle",
+                "bitmaps": [
+                    "WorldChunk_2_1.png",
+                    "WorldChunk_2_2.png",
+                    "WorldChunk_2_3.png"
+                ]
+            }
+        ]
+    },
+    "chunk3AnimationController" : {
+        "chunk1AnimationMap" : [
+            {
+                "name": "idle",
+                "bitmaps": [
+                    "WorldChunk_1_1.png",
+                    "WorldChunk_1_2.png",
+                    "WorldChunk_1_3.png"
+                ]
+            }
+        ]
+    },
+    "backgroundAnimationController" : {
+        "backgroundAnimationMap" : [
+            {
+                "name": "idle",
+                "bitmaps": [
+                    "background.png"
+                ]
+            }
+        ]
+    },
+    "cloudLayerAnimationController" : {
+        "cloudLayerAnimationMap" : [
+            {
+                "name": "idle",
+                "bitmaps": [
+                    "cloudLayer_1_2.png",
+                    "cloudLayer_1_1.png",
+                    "cloudLayer_1_3.png",
+                    "cloudLayer_1_1.png"
+                ]
+            }
+        ]
+    }        
+}
