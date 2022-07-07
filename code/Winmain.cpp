@@ -74,8 +74,8 @@ static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFacto
 
 static void handleKeyDown(WPARAM wParam)
 {
-    if(wParam == VK_RIGHT) scene->movePlayer(scene->player.get(), 0.5);
-    if(wParam == VK_LEFT) scene->movePlayer(scene->player.get(), -0.5f);
+    if(wParam == VK_RIGHT) scene->player->xSpeed = 0.5f;
+    if(wParam == VK_LEFT) scene->player->xSpeed = -0.5f;
 
     if(wParam == VK_UP) up_Button->execute(scene);  
 
@@ -89,8 +89,8 @@ static void handleKeyDown(WPARAM wParam)
 
 static void handleKeyUp(WPARAM wParam)
 {
-    if(wParam == VK_RIGHT) scene->movePlayer(scene->player.get(), 0);
-    if(wParam == VK_LEFT) scene->movePlayer(scene->player.get(), 0);
+    if(wParam == VK_RIGHT) scene->player->xSpeed = 0.0f;
+    if(wParam == VK_LEFT) scene->player->xSpeed = -0.0f;
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -229,6 +229,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                         chunk3AnimationController, backgroundAnimationController, cloudLayersAnimationController };
 
             scene = std::make_unique<Scene>(GetTickCount(), true, animationControllers, 0.0f, 0.0f, &rc);
+            scene->width = (float)rc.right - rc.left;
+
 
             up_Button = new JumpButton();
             

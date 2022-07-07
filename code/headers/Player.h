@@ -26,12 +26,11 @@ class Player: public GameObject
 public:
     float width;
     float height;
-    bool isActive;
     float ySpeed;
+    bool isActive;
     bool isInAir;
 
     int32_t timeInAir;
-
     int32_t immune;
     WorldChunk *chunkCurrentlyOn;
 

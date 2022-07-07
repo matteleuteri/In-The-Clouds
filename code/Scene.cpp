@@ -4,7 +4,7 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
 {    
     player = std::make_unique<Player>(animationControllers[0], 600.0f, 60.0f);
     worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[1], 200.0f, 200.0f));
-    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f));
+    // worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f));
     worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[3], 1000.0f, 500.0f));
     background = std::make_unique<Background>(animationControllers[4], 0.0f, 0.0f);    
     cloudLayers = std::make_unique<CloudLayer>(animationControllers[5], 0.0f, 0.0f);    
@@ -47,6 +47,7 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
     int32_t timeElapsed = endTime - startTime;
 
     // the scene itself must also be updated
+    scrollScreen();
     x += (xSpeed * timeElapsed);
 
     player->update(timeElapsed);
@@ -62,20 +63,39 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
     checkPlatformCollision(endTime);
 }
 
-void Scene::movePlayer(GameObject* gameObject, float speed) 
+void Scene::scrollScreen() 
 {
     std::array<float, 2> a = player->getAbsoluteCoordinates();
     float playerOnScreenX = a[0] ;
-    if(((rc->right - x) - (playerOnScreenX + gameObject->width) < 200 && speed > 0) || (playerOnScreenX - (rc->left - x) < 200 && speed < 0))
+    if(playerOnScreenX + x >= width - 200)
     {
-       if(player->isInAir) // use xorigin instead?
-        xSpeed = -1 * speed;
+        if(player->isInAir)
+        {
+            if(player->xSpeed >= 0)
+            xSpeed = -1 * player->xSpeed;
+        }
+        else
+        {
+            xSpeed =  player->chunkCurrentlyOn->speed * -1.0f;
+        }
+    }
+    else if( playerOnScreenX + x <= 200)
+    {
+        if(player->isInAir)
+        {
+            if(player->xSpeed <= 0)
+            xSpeed = -1 * player->xSpeed;
+        }
+        else
+        {
+            xSpeed = player->chunkCurrentlyOn->speed * -1.0f;
+        }   
     }
     else
     {
         xSpeed = 0.0f;
     }
-    gameObject->xSpeed = speed;
+
 }
 
 void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteTextFormat* pTextFormat_)
@@ -121,7 +141,7 @@ void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
     }
     else
     {
-        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width - x, player->chunkCurrentlyOn->y - player->height));
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width + x, player->chunkCurrentlyOn->y - player->height + y));
     }
     drawBM(renderTarget, player.get());
 }

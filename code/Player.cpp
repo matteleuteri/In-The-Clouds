@@ -4,8 +4,6 @@ Player::Player(AnimationController *animationController, float x, float y): Game
 {
     isActive = true;
     isInAir = true;
-    // xOrigin = 0;
-    // yOrigin = 0;
     animation = animationController->animations[0];
     width = animation->bitmaps[0]->GetSize().width;
     height = animation->bitmaps[0]->GetSize().height;

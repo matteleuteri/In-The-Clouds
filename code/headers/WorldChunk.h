@@ -7,7 +7,7 @@ class WorldChunk: public GameObject
 {
 public:
     int chunkID;
-    int d;
+    int speed;
     float xMax;
     float xMin;
     WorldChunk::WorldChunk(AnimationController *animationController, float x, float y);
