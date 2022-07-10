@@ -180,11 +180,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::vector<std::string> playerIdleAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png" };
             std::vector<ID2D1Bitmap*> playerIdleBitmaps = loadBitmapVector(pIWICFactory, playerIdleAssetNames);
             Animation* playerIdleAnm = new Animation(playerIdleBitmaps, 0, GetTickCount(), 100);
-
             std::vector<std::string> playerJumpAssetNames = { "player2_jump_01.png", "player2_jump_02.png", "player2_jump_03.png", "player2_jump_04"};
             std::vector<ID2D1Bitmap*> playerJumpBitmaps = loadBitmapVector(pIWICFactory, playerJumpAssetNames);
             Animation* playerJumpAnm = new Animation(playerJumpBitmaps, 0, GetTickCount(), 100);
-
             std::map<int, Animation*> playerAnimations;
             playerAnimations[0] = playerIdleAnm;
             playerAnimations[1] = playerJumpAnm;
