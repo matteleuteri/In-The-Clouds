@@ -40,7 +40,6 @@ public:
     void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteTextFormat* pTextFormat_);
     void Scene::updateState(HWND hwnd, int32_t startTime, int32_t endTime); 
     void Scene::checkPlatformCollision(int32_t currentTime);
-    void Scene::scrollScreen();
     void Scene::drawCloudLayer1(ID2D1HwndRenderTarget* renderTarget);
 };
 

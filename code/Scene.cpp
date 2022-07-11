@@ -4,7 +4,7 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
 {    
     player = std::make_unique<Player>(animationControllers[0], 600.0f, 60.0f);
     worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[1], 200.0f, 200.0f));
-    // worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f));
+    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f));
     worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[3], 1000.0f, 500.0f));
     background = std::make_unique<Background>(animationControllers[4], 0.0f, 0.0f);    
     cloudLayers = std::make_unique<CloudLayer>(animationControllers[5], 0.0f, 0.0f);    
@@ -45,14 +45,6 @@ void Scene::checkPlatformCollision(int32_t currentTime)
 void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 {
     int32_t timeElapsed = endTime - startTime;
-
-    // the scene itself must also be updated
-    scrollScreen();
-    x += (xSpeed * timeElapsed);
-
-    player->update(timeElapsed);
-    player->animate(endTime);
-
     cloudLayers->animate(endTime);
 
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
@@ -60,42 +52,11 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
         wc->update(timeElapsed);
         wc->animate(endTime);
     }    
+
+    player->update(timeElapsed);
+    player->animate(endTime);
+
     checkPlatformCollision(endTime);
-}
-
-void Scene::scrollScreen() 
-{
-    std::array<float, 2> a = player->getAbsoluteCoordinates();
-    float playerOnScreenX = a[0] ;
-    if(playerOnScreenX + x >= width - 200)
-    {
-        if(player->isInAir)
-        {
-            if(player->xSpeed >= 0)
-            xSpeed = -1 * player->xSpeed;
-        }
-        else
-        {
-            xSpeed =  player->chunkCurrentlyOn->speed * -1.0f;
-        }
-    }
-    else if( playerOnScreenX + x <= 200)
-    {
-        if(player->isInAir)
-        {
-            if(player->xSpeed <= 0)
-            xSpeed = -1 * player->xSpeed;
-        }
-        else
-        {
-            xSpeed = player->chunkCurrentlyOn->speed * -1.0f;
-        }   
-    }
-    else
-    {
-        xSpeed = 0.0f;
-    }
-
 }
 
 void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteTextFormat* pTextFormat_)
@@ -104,9 +65,9 @@ void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteT
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
     
     drawBackground(renderTarget);
+    drawCloudLayer1(renderTarget);
     drawWorldChunks(renderTarget);
     drawPlayer(renderTarget);
-    drawCloudLayer1(renderTarget);
 
     renderTarget->EndDraw();  
 }

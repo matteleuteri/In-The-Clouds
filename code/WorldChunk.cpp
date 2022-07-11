@@ -3,7 +3,7 @@
 WorldChunk::WorldChunk(AnimationController *animationController, float x, float y): GameObject(animationController, x, y)
 {
     // also could use speed, angle, whatever
-    speed = 1;
+    speed = 0.5f;
     xMax = x + 400;
     xMin = x - 300;
 }
