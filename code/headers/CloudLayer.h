@@ -9,7 +9,7 @@ public:
     // std::vector<>
     int xSpeedOffset;
     int ySpeedOffset;
-    CloudLayer::CloudLayer(AnimationController *animationController, float x, float y);
+    CloudLayer::CloudLayer(AnimationController *animationController, float x, float y, float xSpeed);
     void CloudLayer::update(int32_t timeDiff);
     void CloudLayer::moveLayer();
 };

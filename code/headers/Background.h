@@ -6,7 +6,7 @@
 class Background : public GameObject
 {
 public:
-    Background::Background(AnimationController *animationController, float x, float y);
+    Background::Background(AnimationController *animationController, float x, float y, float xSpeed);
     void Background::update(int32_t timeElapsed);
 };
 

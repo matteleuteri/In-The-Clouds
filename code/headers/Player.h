@@ -37,7 +37,7 @@ public:
     Animation *jumpAnimation;
     void Player::fallOff();
     void Player::setPosition(float x2, float y2);
-    Player::Player(AnimationController *animationController, float x, float y);
+    Player::Player(AnimationController *animationController, float x, float y, float xSpeed);
     void Player::jump();
     void Player::update(int32_t timeElapsed);
     void Player::landOn(WorldChunk *wc, float newX, float newY);

@@ -1,6 +1,6 @@
 #include "headers/Player.h"
 
-Player::Player(AnimationController *animationController, float x, float y): GameObject(animationController, x, y)
+Player::Player(AnimationController *animationController, float x, float y, float xSpeed): GameObject(animationController, x, y, xSpeed)
 {
     isActive = true;
     isInAir = true;

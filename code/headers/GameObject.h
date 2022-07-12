@@ -19,7 +19,7 @@ public:
     float height;
     Animation *animation;
     AnimationController *animationController;
-    GameObject::GameObject(AnimationController *animationController, float x, float y);
+    GameObject::GameObject(AnimationController *animationController, float x, float y, float xSpeed);
     virtual void GameObject::update(int32_t timeElapsed) = 0;
     virtual void GameObject::animate(int32_t currentTime);
 };

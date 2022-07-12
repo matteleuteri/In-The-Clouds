@@ -10,9 +10,9 @@ public:
     int y;
     int width;
     int height;
+    float speed;
     GameObject* following;
-    Camera::Camera();
+    Camera::Camera(GameObject* following, int width, int height);
 };
-
 
 #endif

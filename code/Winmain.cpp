@@ -215,15 +215,22 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             backgroundAnimations[0] = backgroundAnm;
             AnimationController *backgroundAnimationController = new AnimationController(backgroundAnimations);
 
-            std::vector<std::string> cloudLayersAssetNames = { "cloudLayer_1_2.png", "cloudLayer_1_1.png","cloudLayer_1_3.png","cloudLayer_1_1.png" };
-            std::vector<ID2D1Bitmap*> cloudLayersBitmaps = loadBitmapVector(pIWICFactory, cloudLayersAssetNames);
-            Animation* cloudLayersAnm = new Animation(cloudLayersBitmaps, 0, GetTickCount(), 100);
-            std::map<int, Animation*> cloudLayersAnimations;
-            cloudLayersAnimations[0] = cloudLayersAnm;
-            AnimationController *cloudLayersAnimationController = new AnimationController(cloudLayersAnimations);
+            std::vector<std::string> cloudLayer1AssetNames = { "cloudLayer_1_2.png", "cloudLayer_1_1.png","cloudLayer_1_3.png","cloudLayer_1_1.png" };
+            std::vector<ID2D1Bitmap*> cloudLayer1Bitmaps = loadBitmapVector(pIWICFactory, cloudLayer1AssetNames);
+            Animation* cloudLayer1Anm = new Animation(cloudLayer1Bitmaps, 0, GetTickCount(), 100);
+            std::map<int, Animation*> cloudLayer1Animations;
+            cloudLayer1Animations[0] = cloudLayer1Anm;
+            AnimationController *cloudLayer1AnimationController = new AnimationController(cloudLayer1Animations);
+
+            std::vector<std::string> cloudLayer2AssetNames = { "cloudLayer_2_2.png", "cloudLayer_2_1.png","cloudLayer_2_3.png","cloudLayer_2_1.png" };
+            std::vector<ID2D1Bitmap*> cloudLayer2Bitmaps = loadBitmapVector(pIWICFactory, cloudLayer2AssetNames);
+            Animation* cloudLayer2Anm = new Animation(cloudLayer2Bitmaps, 0, GetTickCount(), 100);
+            std::map<int, Animation*> cloudLayer2Animations;
+            cloudLayer2Animations[0] = cloudLayer2Anm;
+            AnimationController *cloudLayer2AnimationController = new AnimationController(cloudLayer2Animations);
 
             std::vector<AnimationController*> animationControllers = { playerAnimationController, chunk1AnimationController, chunk2AnimationController, 
-                        chunk3AnimationController, backgroundAnimationController, cloudLayersAnimationController };
+                        chunk3AnimationController, backgroundAnimationController, cloudLayer1AnimationController, cloudLayer2AnimationController };
 
             scene = std::make_unique<Scene>(GetTickCount(), true, animationControllers, 0.0f, 0.0f, &rc);
             scene->width = (float)rc.right - rc.left;
