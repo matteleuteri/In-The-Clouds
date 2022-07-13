@@ -4,9 +4,9 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
 {
     player = std::make_unique<Player>(animationControllers[0], 600.0f, 60.0f, 0.0f);
     camera = std::make_unique<Camera>(player.get(), 1280, 720);
-    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[1], 200.0f, 200.0f, 1.0f));
-    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f, 1.0f));
-    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[3], 1000.0f, 500.0f, 1.0f));
+    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[1], 200.0f, 200.0f, 0.5f));
+    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f, 0.5f));
+    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[3], 1000.0f, 500.0f, 0.5f));
     background = std::make_unique<Background>(animationControllers[4], 0.0f, 0.0f, 0.0f);
     cloudLayer1 = std::make_unique<CloudLayer>(animationControllers[5], 400.0f, 0.0f, 1.0f);
     cloudLayer2 = std::make_unique<CloudLayer>(animationControllers[6], 0.0f, 0.0f, 0.5f);
@@ -81,19 +81,19 @@ void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteT
 
 void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, 0));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(camera->x, camera->y));
     drawBM(renderTarget, background.get());
 }
 
 void Scene::drawCloudLayer(ID2D1HwndRenderTarget* renderTarget, CloudLayer *cloundLayer)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(camera->x, camera->y));
     drawBM(renderTarget, cloundLayer);
 }
 
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(camera->x, camera->y));
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
         // D2D1_SIZE_F size = wc->animation->bitmaps[wc->animation->currentFrame]->GetSize();
@@ -105,7 +105,7 @@ void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
 {
     if(player->isInAir)
     {
-        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(x, y));
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(camera->x, camera->y));
     }
     else
     {

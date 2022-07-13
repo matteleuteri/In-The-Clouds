@@ -8,7 +8,7 @@ WorldChunk::WorldChunk(AnimationController *animationController, float x, float 
 
 void WorldChunk::update(int32_t timeElapsed)
 {
-    x += (xSpeed * timeElapsed / 5); // whats going on here
+    x += (xSpeed * timeElapsed / 15); // whats going on here
     if(x > xMax || x < xMin) 
     {
         xSpeed *= -1;
