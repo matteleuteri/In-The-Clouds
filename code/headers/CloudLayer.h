@@ -6,7 +6,6 @@
 class CloudLayer: public GameObject 
 {
 public:
-    // std::vector<>
     int xSpeedOffset;
     int ySpeedOffset;
     CloudLayer::CloudLayer(AnimationController *animationController, float x, float y, float xSpeed);

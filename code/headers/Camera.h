@@ -6,8 +6,8 @@
 class Camera 
 {
 public:
-    int x;
-    int y;
+    float x;
+    float y;
     int width;
     int height;
     float speed;

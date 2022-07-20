@@ -9,22 +9,22 @@ void JsonParser::readIn(char *fileContents, LPCSTR fname)
                 NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL , NULL);
     
     ReadFile(fileHandle, fileContents, 100, NULL, NULL);
-    // if(fileHandle == INVALID_HANDLE_VALUE)
-    // {
-        // OutputDebugStringA("invalid handle name\n");
-    // }
-    // else
-    // {
-        // OutputDebugStringA("good handle name\n");
-    // }
-    // if(ReadFile(fileHandle, fileContents, 100, NULL, NULL) == 0)
-    // {
-        // OutputDebugStringA("file could not be read\n");
-    // }
-    // else 
-    // {
-        // OutputDebugStringA("file successfully read\n");
-    // }
+    if(fileHandle == INVALID_HANDLE_VALUE)
+    {
+        OutputDebugStringA("invalid handle name\n");
+    }
+    else
+    {
+        OutputDebugStringA("good handle name\n");
+    }
+    if(ReadFile(fileHandle, fileContents, 100, NULL, NULL) == 0)
+    {
+        OutputDebugStringA("file could not be read\n");
+    }
+    else 
+    {
+        OutputDebugStringA("file successfully read\n");
+    }
 }
 
 void JsonParser::parse()

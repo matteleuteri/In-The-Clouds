@@ -173,8 +173,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             IWICImagingFactory* pIWICFactory = createResources(hwnd, &rc);
 
-            // JsonParser *jp = new JsonParser("ResourceTree.json");
-            // jp->parse();
+            JsonParser *jp = new JsonParser("ResourceTree.json");
+            jp->parse();
 
             std::vector<std::string> playerIdleAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png" };
             std::vector<ID2D1Bitmap*> playerIdleBitmaps = loadBitmapVector(pIWICFactory, playerIdleAssetNames);
