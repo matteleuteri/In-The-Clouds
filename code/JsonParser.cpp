@@ -21,7 +21,7 @@ void JsonParser::readIn(char *fileContents, LPCSTR fname)
     {
         OutputDebugStringA("file could not be read\n");
     }
-    else 
+    else
     {
         OutputDebugStringA("file successfully read\n");
     }
