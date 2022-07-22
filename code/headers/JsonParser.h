@@ -13,7 +13,8 @@ class JsonParser
 {
 public:
     std::filesystem::path p;
-    JsonParser::JsonParser(std::filesystem::path p);    
+    JsonParser::JsonParser(std::filesystem::path p);   
+    std::vector<AnimationController*> controllers;
     void JsonParser::parse();
     void JsonParser::readIn(char *fileContents, LPCSTR fname);
     int JsonParser::findCorrespondingBracket(char fileContents[1000000], int i);

@@ -1,7 +1,12 @@
 #include "headers/JsonParser.h"
+#include "headers/Token.h"
+#include "headers/Animation.h"
+#include "headers/AnimationController.h"
 
 JsonParser::JsonParser(std::filesystem::path): p(p)
-{}
+{
+    controllers = { };
+}
 
 void JsonParser::readIn(char *fileContents, LPCSTR fname)
 {
@@ -27,30 +32,27 @@ void JsonParser::readIn(char *fileContents, LPCSTR fname)
     }
 }
 
+
+
 void JsonParser::parse()
 {
     LPCSTR fname = "C:\\Users\\meleu\\OneDrive\\Desktop\\In-The-Clouds\\assets\\ResourceTree.json";
     char fileContents[1000000];
     readIn(fileContents, fname);
-    std::vector<AnimationController*> animationControllers = getControllers(fileContents);
+    //std::vector<Token*> tokens = tokenizeFileContents(fileContents);
 }
 
-int JsonParser::findCorrespondingBracket(char fileContents[1000000], int i)
-{
-    return 1;
-}
-
-std::vector<AnimationController*> JsonParser::getControllers(char fileContents[1000000])
-{
-    std::vector<AnimationController*> res = { };
+// std::vector<AnimationController*> JsonParser::getControllers(char fileContents[1000000])
+// {
+//     std::vector<AnimationController*> res = { };
     
-    for(int i = 0; i < sizeof(fileContents) / sizeof(fileContents[0]); i++)
-    {
-        if(fileContents[i] == '{')
-        {
-            // int j = findCorrespondingBracket(fileContents, i);
-            // createObjects(i+1);
-        }
-    }
-    return res;
-}
+//     for(int i = 0; i < sizeof(fileContents) / sizeof(fileContents[0]); i++)
+//     {
+//         if(fileContents[i] == '{')
+//         {
+//             // int j = findCorrespondingBracket(fileContents, i);
+//             // createObjects(i+1);
+//         }
+//     }
+//     return res;
+// }
