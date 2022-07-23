@@ -32,16 +32,20 @@ void JsonParser::readIn(char *fileContents, LPCSTR fname)
     }
 }
 
-
-
 void JsonParser::parse()
 {
     LPCSTR fname = "C:\\Users\\meleu\\OneDrive\\Desktop\\In-The-Clouds\\assets\\ResourceTree.json";
     char fileContents[1000000];
     readIn(fileContents, fname);
-    //std::vector<Token*> tokens = tokenizeFileContents(fileContents);
+    std::vector<Token*> tokens = tokenizeFileContents(fileContents);
 }
 
+std::vector<Token*> JsonParser::tokenizeFileContents(char fileContents[1000000])
+{
+    std::vector<Token*> tokens = { };
+    
+    
+}
 // std::vector<AnimationController*> JsonParser::getControllers(char fileContents[1000000])
 // {
 //     std::vector<AnimationController*> res = { };
