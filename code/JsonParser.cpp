@@ -43,6 +43,10 @@ void JsonParser::parse()
 std::vector<Token*> JsonParser::tokenizeFileContents(char fileContents[1000000])
 {
     std::vector<Token*> tokens = { };
+    for(int i = 0; i < sizeof(fileContents) / sizeof(fileContents[0]); i++)
+    {
+        // std::cout << fileContents[i] << "\n"
+    }
     
     
 }
