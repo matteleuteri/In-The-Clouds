@@ -46,6 +46,10 @@ std::vector<Token*> JsonParser::tokenizeFileContents(char fileContents[1000000])
     for(int i = 0; i < sizeof(fileContents) / sizeof(fileContents[0]); i++)
     {
         // std::cout << fileContents[i] << "\n"
+        if(fileContents[i] == '\"')
+        {
+            OutputDebugStringA("found double quote\n");
+        }
     }
     
     

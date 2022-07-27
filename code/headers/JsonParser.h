@@ -8,6 +8,7 @@
 
 #include "AnimationController.h"
 #include "Animation.h"
+#include "Token.h"
 
 class JsonParser
 {
