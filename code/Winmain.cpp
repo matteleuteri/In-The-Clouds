@@ -234,8 +234,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
             scene = std::make_unique<Scene>(GetTickCount(), true, animationControllers, 0.0f, 0.0f, &rc);
             
-            
-            
             // here is where I can mess with screen resolution stuff
             scene->width = (float)rc.right - rc.left;
 

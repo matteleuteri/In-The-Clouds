@@ -1,3 +1,6 @@
+#ifndef _TOKEN
+#define _TOKEN
+
 #include <string>
 
 class Token 
@@ -14,6 +17,9 @@ public:
         ATTRIBUTE,
         VALUE
     };
+    Token::Token(char c);
     TokenType tokenType;
-    std::string tokenValue;
+    char tokenValue;
 };
+
+#endif
