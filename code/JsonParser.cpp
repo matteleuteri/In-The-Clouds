@@ -45,8 +45,11 @@ std::vector<Token*> JsonParser::tokenizeFileContents(char fileContents[1000000])
     std::vector<Token*> tokens = { };
     for(int i = 0; i < sizeof(fileContents) / sizeof(fileContents[0]); i++)
     {
-        // std::cout << fileContents[i] << "\n"
-        if(fileContents[i] == '\"')
+        // use a 'level' enum to determine what type of object is being instantiated
+
+
+        // figure out wat chaacters should trigger a response
+        if(fileContents[i] == ' ' || fileContents[i] == '\n')
         {
             OutputDebugStringA("found double quote\n");
         }
