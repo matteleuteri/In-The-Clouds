@@ -58,6 +58,7 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
         wc->update(timeElapsed);
         wc->animate(endTime);
     }
+
     player->update(timeElapsed);
     player->animate(endTime);
 
