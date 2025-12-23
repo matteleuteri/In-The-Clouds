@@ -21,21 +21,23 @@ static void drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
 
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
-    if(player->immune > 0) return; 
+    if (player->immune > 0) {
+        return;
+    }
 
-    if(!player->isInAir)
+    if (!player->isInAir)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
-        if(player->x < (player->width / 2) || player->x - (player->width / 2) > wc->width)
+        if (player->x < (player->width / 2) || player->x - (player->width / 2) > wc->width)
         {
             player->fallOff();
             return;
         }   
     }
 
-    for(std::unique_ptr<WorldChunk> &wc: worldChunks)
+    for (std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        if(player->ySpeed > 0 && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
+        if (player->ySpeed > 0 && player->x > wc->x && player->x < wc->x + wc->width && std::abs(wc->y - (player->y + player->height)) <= 20)
         {
             float newx = player->x - wc->x + player->width;
             player->landOn(wc.get(), newx, wc->y);
@@ -53,7 +55,7 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
     cloudLayer2->update(endTime);
     cloudLayer2->animate(endTime);
 
-    for(std::unique_ptr<WorldChunk> &wc: worldChunks)
+    for (std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
         wc->update(timeElapsed);
         wc->animate(endTime);
