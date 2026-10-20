@@ -25,11 +25,14 @@ Either:
    C:\Users\meleu\Desktop\In-The-Clouds\code\build.bat
    ```
 
-   From WSL:
+   From WSL (run from this repository's directory — note the backslash):
 
    ```sh
-   cmd.exe /c 'C:\Users\meleu\Desktop\In-The-Clouds\code\build.bat'
+   cmd.exe /c 'code\build.bat'
    ```
+
+   > Do **not** run `./code/build.bat` in the shell — `.bat` files are Windows
+   > `cmd.exe` scripts and will only produce errors under bash.
 
 The script locates the MSVC toolchain (via `vswhere`, with fallbacks), loads
 the compiler environment, compiles every source file, and links the game.
