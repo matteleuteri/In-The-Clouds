@@ -1,9 +1,92 @@
 # In-The-Clouds
 
-This is another game I am making to learn c++ and game development.
+A 2D platformer written in C++ using Win32 and Direct2D. This is a game I am
+making to learn C++ and game development.
 
+## Requirements
 
-To Do List:
+- Windows 10/11
+- **Visual Studio 2022** (the free Community edition is fine) **or** the
+  standalone *Build Tools for Visual Studio 2022*, installed with the
+  workload **"Desktop development with C++"** — this provides `cl.exe`
+  (the MSVC compiler) and the Windows SDK.
+
+You do **not** need to open a "Developer Command Prompt" — the build script
+sets up the compiler environment itself.
+
+## How to build
+
+Either:
+
+1. **Double-click `code\build.bat`** in File Explorer, or
+2. run it from any normal Command Prompt / PowerShell:
+
+   ```bat
+   C:\Users\meleu\Desktop\In-The-Clouds\code\build.bat
+   ```
+
+   From WSL:
+
+   ```sh
+   cmd.exe /c 'C:\Users\meleu\Desktop\In-The-Clouds\code\build.bat'
+   ```
+
+The script locates the MSVC toolchain (via `vswhere`, with fallbacks), loads
+the compiler environment, compiles every source file, and links the game.
+A successful run ends with:
+
+```
+BUILD OK: build\In-The-Clouds.exe
+```
+
+## How to start the game
+
+**Double-click `build\In-The-Clouds.exe`** — or, from a terminal:
+
+```bat
+cd build
+In-The-Clouds.exe
+```
+
+> **Important:** start the game from inside the `build\` folder. It looks for
+> the `assets\` folder in the *parent* directory of its working directory, so
+> launching the exe from anywhere else will not find the sprites (and it will
+> crash — see `ISSUES.txt`, issue #3).
+
+## Controls
+
+| Key        | Action |
+|------------|--------|
+| Left / Right arrows | move |
+| Up arrow   | jump |
+| Close window | quit |
+
+## Project layout
+
+```
+code\
+  Winmain.cpp        entry point: window, game loop, asset loading
+  Scene.cpp          the world: level layout, physics, collision, rendering
+  Player.cpp         the player: jump, fall, chunk-relative coordinates
+  WorldChunk.cpp     moving platforms
+  Animation*.cpp     frame-based animation + controller
+  Camera.cpp         camera (not active yet)
+  JsonParser.cpp     unused JSON loader (see ISSUES.txt)
+  headers\           class declarations
+  background\        Background and CloudLayer (parallax scrolling)
+  input\             input commands (JumpButton, PauseButton)
+  build.bat          build script (see above)
+assets\              sprites, backgrounds, ResourceTree.json
+build\               build output — created by build.bat, not committed
+ISSUES.txt           known issues found during a full code review
+```
+
+## Known issues
+
+A full review of the code turned up a list of bugs, crash risks, and
+tech-debt items — see **[ISSUES.txt](ISSUES.txt)**.
+
+## To Do List:
 
 1. Add eyeball to the palyer character that follows the mouse
 
@@ -19,6 +102,6 @@ To Do List:
 
 8. use a camera object to define what region is rendered with respect to the scene
 
-done list:
+## Done list:
 
 1. add multiple animation pointers to each GameObject if they have multiple animations to switch between.

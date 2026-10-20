@@ -1,0 +1,140 @@
+IN THE CLOUDS — KNOWN ISSUES
+============================
+Spotted during a full code review, Oct 2026. Ordered by severity.
+Line numbers are approximate.
+
+--- CRASH RISKS ----------------------------------------------------------
+
+1. Missing ".png" extension -> uninitialized bitmap pointer
+   code/Winmain.cpp:182
+   The jump animation list contains "player2_jump_04" (no extension), so
+   LoadBitmapFromFile() fails and never writes the output pointer — but the
+   uninitialized ID2D1Bitmap* is pushed into the vector anyway. Rendering any
+   frame of the jump animation reads a garbage pointer = crash.
+
+2. Failed asset loads are never detected
+   code/Winmain.cpp (LoadBitmapFromFile / loadBitmapVector)
+   The HRESULT from LoadBitmapFromFile() is ignored, and its
+   destinationWidth/destinationHeight parameters are accepted but unused.
+   Every failure produces a garbage pointer like issue #1, with no error
+   message — the game just crashes or draws nothing.
+
+3. Assets are resolved from the current working directory
+   code/Winmain.cpp:169
+   p = current_path().remove_filename() / "assets"
+   The exe must be started from build\ so the parent folder contains assets\.
+   Double-clicking build\In-The-Clouds.exe works; launching the exe from any
+   other directory does not find the assets and then crashes via issue #2.
+
+--- LOGIC / BEHAVIOR BUGS ------------------------------------------------
+
+4. Mouse-click message falls through to keyboard handler
+   code/Winmain.cpp:118-127
+   case WM_LBUTTONDOWN: has an empty body with no break, so it falls through
+   into case WM_KEYDOWN: and calls handleKeyDown() with mouse-button flags.
+
+5. Player never returns to the idle animation
+   Player::jump() assigns animations[1] (jump) and nothing ever switches
+   back. AnimationController::setAnimation() is an empty stub, so animation
+   switching is done by raw assignment. Player::jumpAnimation and the
+   JUMP/CRUMBLE enum are unused.
+
+6. Frame-rate dependent movement
+   - CloudLayer::update() adds xSpeed per *call*, not per millisecond, so
+     cloud speed depends on FPS. moveLayer() is empty so clouds never wrap
+     and eventually drift off screen forever.
+   - Player::immune (post-fall "no collision" window) also decrements per
+     frame, so its real duration varies with FPS.
+   WorldChunk::update() does this correctly (uses timeElapsed).
+
+7. Gravity formula is non-physical
+   Player::update(): ySpeed += (timeInAir * 9.8) / 100000 each tick, where
+   timeInAir is cumulative — acceleration grows the longer you fall, giving a
+   super-quadratic fall speed instead of constant acceleration.
+
+8. landOn() ignores its newY parameter
+   Scene::checkPlatformCollision() passes a landing Y, but landOn() hard-
+   codes setPosition(newX, 0). Grounded state relies on the magic invariant
+   player->y == 0, compensated at draw time by a special-case camera
+   transform. Fragile and confusing.
+
+9. Member shadowing in Player
+   headers/Player.h redeclares width, height, ySpeed (and isActive) that
+   already exist in GameObject. Base-class animate() updates
+   GameObject::width/height while collision/render code reads
+   Player::width/height — they diverge whenever frames differ in size.
+
+10. Camera never moves
+    Camera.cpp has no update method; x/y stay 0 forever (README todo #8).
+    Additionally drawPlayer()'s grounded branch omits the camera translation
+    entirely — harmless today, but once the camera follows the player, a
+    standing player will visually detach from its platform.
+
+11. Chunk 3 loads the wrong textures (copy/paste)
+    code/Winmain.cpp:204 loads WorldChunk_2_* (same as chunk 2);
+    assets/ResourceTree.json says chunk3 should use WorldChunk_1_*.
+    The two (disagreeing) sources can't both be right.
+
+12. handleKeyUp sets -0.0f instead of 0.0f for VK_LEFT
+    code/Winmain.cpp:93 — cosmetic, but clearly a typo.
+
+--- PERFORMANCE / HYGIENE ------------------------------------------------
+
+13. No frame limiter
+    The main loop renders flat-out with PeekMessage — 100% CPU busy spin,
+    no vsync, no sleep. Timing uses GetTickCount() (1 ms resolution).
+
+14. Everything is leaked
+    Animations, AnimationControllers, buttons, COM factories (D2D/DWrite/WIC),
+    and bitmaps are new'd/created and never released. No cleanup on exit.
+
+15. COM/HRESULT results mostly unchecked
+    D2D1CreateFactory, CreateHwndRenderTarget, CoCreateInstance etc. are not
+    checked (the code even has a comment admitting this). Render-target loss
+    (D2DERR_RECREATE_TARGET, e.g. after fullscreen/resize) is not handled.
+
+16. Globals defined in a header
+    code/headers/Winmain.h defines non-static globals (scene, renderTarget,
+    p, up_Button, ...). Works only because a single .cpp includes it — an
+    ODR landmine waiting for a second include.
+
+17. MSVC-only syntax in headers
+    Class-qualified declarations inside the class body (e.g.
+    "void Scene::drawWorldChunks(...)") only compile under MSVC. Also,
+    Scene::updateState's parameter names are swapped between header and
+    source. Non-portable and confusing.
+
+18. DirectWrite is set up but no text is ever drawn
+    The factory/text format are created and passed into renderState(), but
+    the only DrawText call is commented out.
+
+19. MSVC-only build script (fixed)
+    code/build.bat used to require a "Developer Command Prompt" (manual
+    vcvarsall.bat first). It now configures the MSVC environment itself —
+    see README.md.
+
+--- DEAD CODE ------------------------------------------------------------
+
+20. JsonParser / Token are unused and non-functional
+    The only call site (Winmain.cpp:176) is commented out. The parser itself:
+      - constructor takes an unnamed parameter: "p(p)" self-initializes from
+        uninitialized memory,
+      - readIn() hard-codes C:\Users\meleu\OneDrive\Desktop\In-The-Clouds\
+        assets\ResourceTree.json and reads only 100 bytes,
+      - tokenizeFileContents(char fileContents[1000000]) decays to char*, so
+        sizeof(...) == 8: it would tokenize only 8 bytes,
+      - getControllers() / findCorrespondingBracket() are declared but never
+        defined (would be link errors if referenced).
+
+21. assets/ResourceTree.json is stale
+    References player_1_1.png, WorldChunk_*_3.png — files that don't exist in
+    assets/. It documents the intended data-driven design that wWinMain()
+    currently does by hand.
+
+22. Other unused scaffolding
+    PauseButton (never instantiated), Player::isActive (only checked in
+    commented-out code), WorldChunk::chunkID (never assigned),
+    Scene::isActive/width/height/xSpeed/rc, Camera::speed/following,
+    CloudLayer xSpeedOffset/ySpeedOffset, and C4100 is disabled in the build
+    to hide unused-parameter warnings (e.g. checkPlatformCollision's
+    currentTime).
