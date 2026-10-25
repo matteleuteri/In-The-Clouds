@@ -7,6 +7,7 @@
 #include <profileapi.h>
 #include <filesystem>
 #include <array>
+#include <cstdio>
 #include <dwrite.h>
 
 #include "Scene.h"

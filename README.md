@@ -51,10 +51,9 @@ cd build
 In-The-Clouds.exe
 ```
 
-> **Important:** start the game from inside the `build\` folder. It looks for
-> the `assets\` folder in the *parent* directory of its working directory, so
-> launching the exe from anywhere else will not find the sprites (and it will
-> crash — see `ISSUES.txt`, issue #3).
+> The game finds its sprites relative to the executable's own location
+> (`build\..\assets\`), so you can now launch it from any working directory.
+> If you move the `.exe` out of `build\`, keep it next to an `assets\` folder.
 
 ## Controls
 
@@ -87,7 +86,9 @@ ISSUES.txt           known issues found during a full code review
 ## Known issues
 
 A full review of the code turned up a list of bugs, crash risks, and
-tech-debt items — see **[ISSUES.txt](ISSUES.txt)**.
+tech-debt items — see **[ISSUES.txt](ISSUES.txt)**. Issues #1–#4 (the
+crash-risk trio and the mouse-click fall-through) are fixed; the rest remain
+open.
 
 ## To Do List:
 

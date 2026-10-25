@@ -2,6 +2,11 @@
 
 static HRESULT LoadBitmapFromFile(IWICImagingFactory *pIWICFactory, LPCWSTR uri, UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap **ppBitmap)
 {
+    if(pIWICFactory == NULL || ppBitmap == NULL || renderTarget == NULL)
+    {
+        return E_POINTER;
+    }
+
     IWICBitmapDecoder *pDecoder = NULL;
     IWICBitmapFrameDecode *pSource = NULL;
     IWICFormatConverter *pConverter = NULL;
@@ -64,8 +69,18 @@ static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFacto
     for(auto& asset : assetNames)
     {
         p /= asset;
-        ID2D1Bitmap *currBitmap;
-        LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, &currBitmap);  
+        ID2D1Bitmap *currBitmap = NULL;
+        HRESULT hr = LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, &currBitmap);
+        if(FAILED(hr) || currBitmap == NULL)
+        {
+            // Log the failure and skip this frame instead of pushing a garbage
+            // pointer into the animation (which would crash on render).
+            char message[512];
+            snprintf(message, sizeof(message), "Failed to load asset '%ls' (hr=0x%08lX)\n", p.c_str(), (unsigned long)hr);
+            OutputDebugStringA(message);
+            p.remove_filename();
+            continue;
+        }
         p.remove_filename();
         bitmapVector.push_back(currBitmap);
     }
@@ -120,6 +135,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             // if(!scene->player->isActive) break;
             // Projectile proj(lParam, scene->player->x,  scene->player->y, projectile1Bitmap); // dont forget to free
             // scene->projectiles.push_back(proj);
+            break;
         }
         case WM_KEYDOWN:
         {
@@ -166,7 +182,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             RECT rc;
             GetClientRect(hwnd, &rc);
 
-            p = std::filesystem::current_path().remove_filename();
+            // Resolve the assets folder relative to the executable, not the
+            // current working directory, so the game can be launched from
+            // anywhere (the exe lives in build\, so ../assets is correct).
+            wchar_t modulePath[MAX_PATH];
+            if(GetModuleFileNameW(NULL, modulePath, MAX_PATH) > 0)
+            {
+                p = std::filesystem::path(modulePath).parent_path();
+            }
+            else
+            {
+                p = std::filesystem::current_path();
+            }
+            p /= "..";
             p /= "assets";
             // wchar_t fnameBuffer[MAX_PATH];
             // GetModuleFileName(NULL, fnameBuffer, MAX_PATH);
@@ -179,7 +207,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             std::vector<std::string> playerIdleAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png" };
             std::vector<ID2D1Bitmap*> playerIdleBitmaps = loadBitmapVector(pIWICFactory, playerIdleAssetNames);
             Animation* playerIdleAnm = new Animation(playerIdleBitmaps, 0, GetTickCount(), 100);
-            std::vector<std::string> playerJumpAssetNames = { "player2_jump_01.png", "player2_jump_02.png", "player2_jump_03.png", "player2_jump_04"};
+            std::vector<std::string> playerJumpAssetNames = { "player2_jump_01.png", "player2_jump_02.png", "player2_jump_03.png", "player2_jump_04.png"};
             std::vector<ID2D1Bitmap*> playerJumpBitmaps = loadBitmapVector(pIWICFactory, playerJumpAssetNames);
             Animation* playerJumpAnm = new Animation(playerJumpBitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> playerAnimations;

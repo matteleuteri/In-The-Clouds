@@ -3,35 +3,44 @@ IN THE CLOUDS — KNOWN ISSUES
 Spotted during a full code review, Oct 2026. Ordered by severity.
 Line numbers are approximate.
 
+FIXED (see note below each item): #1, #2, #3, #4.
+
 --- CRASH RISKS ----------------------------------------------------------
 
-1. Missing ".png" extension -> uninitialized bitmap pointer
+1. [FIXED] Missing ".png" extension -> uninitialized bitmap pointer
    code/Winmain.cpp:182
    The jump animation list contains "player2_jump_04" (no extension), so
    LoadBitmapFromFile() fails and never writes the output pointer — but the
    uninitialized ID2D1Bitmap* is pushed into the vector anyway. Rendering any
    frame of the jump animation reads a garbage pointer = crash.
+   Fix: added the ".png" extension.
 
-2. Failed asset loads are never detected
+2. [FIXED] Failed asset loads are never detected
    code/Winmain.cpp (LoadBitmapFromFile / loadBitmapVector)
    The HRESULT from LoadBitmapFromFile() is ignored, and its
    destinationWidth/destinationHeight parameters are accepted but unused.
    Every failure produces a garbage pointer like issue #1, with no error
    message — the game just crashes or draws nothing.
+   Fix: loadBitmapVector() now checks the HRESULT and skips failed frames
+   (logging the asset name + code via OutputDebugStringA); LoadBitmapFromFile()
+   also rejects NULL factory/renderTarget. (destinationWidth/Height still unused.)
 
-3. Assets are resolved from the current working directory
+3. [FIXED] Assets are resolved from the current working directory
    code/Winmain.cpp:169
    p = current_path().remove_filename() / "assets"
    The exe must be started from build\ so the parent folder contains assets\.
    Double-clicking build\In-The-Clouds.exe works; launching the exe from any
    other directory does not find the assets and then crashes via issue #2.
+   Fix: assets path is now derived from GetModuleFileNameW(...)/../assets, so
+   the game can be launched from any working directory.
 
 --- LOGIC / BEHAVIOR BUGS ------------------------------------------------
 
-4. Mouse-click message falls through to keyboard handler
+4. [FIXED] Mouse-click message falls through to keyboard handler
    code/Winmain.cpp:118-127
    case WM_LBUTTONDOWN: has an empty body with no break, so it falls through
    into case WM_KEYDOWN: and calls handleKeyDown() with mouse-button flags.
+   Fix: added the missing break.
 
 5. Player never returns to the idle animation
    Player::jump() assigns animations[1] (jump) and nothing ever switches

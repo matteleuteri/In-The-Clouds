@@ -39,12 +39,14 @@ powershell.exe -ExecutionPolicy Bypass -File "C:\Users\meleu\Desktop\In-The-Clou
 
 ## Known Issues (Critical)
 
-See `ISSUES.txt` for the full list (22 items). The most important ones to be aware of before making changes:
+See `ISSUES.txt` for the full list (22 items). Items **#1–#4** have been fixed as of 2026-10-21:
 
-1. **CRASH RISK: `Winmain.cpp:182`** — `"player2_jump_04"` is missing `.png`. `LoadBitmapFromFile()` fails and pushes an **uninitialized `ID2D1Bitmap*`** into the animation vector → garbage-pointer crash when that frame renders. Fix this first if you touch asset loading.
-2. **Asset load failures are ignored** everywhere (HRESULTs unchecked). Failed loads produce garbage pointers. When modifying loading code, add proper HRESULT checks and handle errors gracefully.
-3. **CWD-dependent assets** (issue #3) — must run from `build\`; the helper scripts above do this correctly.
-4. **Mouse click falls through** to `WM_KEYDOWN` (`Winmain.cpp:118-127`, missing `break`).
+1. **[FIXED] CRASH RISK: `Winmain.cpp:182`** — added `.png` extension to `"player2_jump_04"`.
+2. **[FIXED] Asset load failures ignored** — `loadBitmapVector()` now checks HRESULTs and skips failed frames (logs via `OutputDebugStringA`); `LoadBitmapFromFile()` guards against NULL factory/render target.
+3. **[FIXED] CWD-dependent assets** — asset path is now derived from `GetModuleFileNameW()`/`../assets`, so the game can launch from any working directory.
+4. **[FIXED] Mouse click falls through** to `WM_KEYDOWN` — added missing `break` in `WindowProc()`.
+
+The most important remaining ones:
 5. **Player never returns to idle** after jumping (`AnimationController::setAnimation()` stub; `Player::jump()` only switches to jump anim).
 6. **Frame-rate dependent motion** for clouds and `immune` timer (uses per-frame increments; `WorldChunk` correctly uses `timeElapsed`).
 7. **`landOn()` ignores `newY`** parameter (hardcodes Y=0) — the grounded coordinate system is a bit of a hack (chunk-relative coords at draw time).
