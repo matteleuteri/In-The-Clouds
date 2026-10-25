@@ -35,6 +35,9 @@ std::array<float, 2> Player::getAbsoluteCoordinates()
 }
 
 
+#include "headers/Player.h"
+#include <cmath>
+
 void Player::update(int32_t timeElapsed)
 {
     if(isInAir)
@@ -49,7 +52,13 @@ void Player::update(int32_t timeElapsed)
         ySpeed = 0;
         timeInAir = 0;
     }
-    if(immune > 0)  immune -= 1;
+    if(immune > 0)
+    {
+        int delta = (int)(timeElapsed / 16.666f);
+        if(delta < 1) delta = 1;
+        immune -= (int32_t)delta;
+    }
+    if(immune < 0) immune = 0;
     x += xSpeed * timeElapsed;
 }
 
@@ -58,7 +67,12 @@ void Player::landOn(WorldChunk *wc, float newX, float newY)
     chunkCurrentlyOn = wc;
     isInAir = false;
     ySpeed = 0.0f;
-    setPosition(newX, 0);
+    timeInAir = 0;
+    if(animationController != NULL && animationController->animations.count(0) > 0)
+    {
+        animation = animationController->animations[0];
+    }
+    setPosition(newX, 0.0f);
 }
 
 void Player::setPosition(float x2, float y2)
@@ -71,6 +85,10 @@ void Player::fallOff()
 {
     immune = 20;
     timeInAir = 0;
+    if(animationController != NULL && animationController->animations.count(0) > 0)
+    {
+        animation = animationController->animations[0];
+    }
     std::array<float, 2> a = getAbsoluteCoordinates();
     setPosition(a[0], a[1]);
     isInAir = true;
@@ -79,7 +97,10 @@ void Player::fallOff()
 void Player::jump()
 {
     timeInAir = 0;
-    animation = animationController->animations[1];// only for a short time!!!
+    if(animationController != NULL && animationController->animations.count(1) > 0)
+    {
+        animation = animationController->animations[1];
+    }
     immune = 20;
     std::array<float, 2> a = getAbsoluteCoordinates();
     isInAir = true;

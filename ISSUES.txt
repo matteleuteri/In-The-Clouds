@@ -3,89 +3,60 @@ IN THE CLOUDS — KNOWN ISSUES
 Spotted during a full code review, Oct 2026. Ordered by severity.
 Line numbers are approximate.
 
-FIXED (see note below each item): #1, #2, #3, #4.
+FIXED: #1, #2, #3, #4, #5, #6, #8, #9, #11, #12. #7 and #10 reverted due to regressions.
 
 --- CRASH RISKS ----------------------------------------------------------
 
 1. [FIXED] Missing ".png" extension -> uninitialized bitmap pointer
-   code/Winmain.cpp:182
-   The jump animation list contains "player2_jump_04" (no extension), so
-   LoadBitmapFromFile() fails and never writes the output pointer — but the
-   uninitialized ID2D1Bitmap* is pushed into the vector anyway. Rendering any
-   frame of the jump animation reads a garbage pointer = crash.
-   Fix: added the ".png" extension.
+   Fix: added the ".png" extension to "player2_jump_04.png".
 
 2. [FIXED] Failed asset loads are never detected
-   code/Winmain.cpp (LoadBitmapFromFile / loadBitmapVector)
-   The HRESULT from LoadBitmapFromFile() is ignored, and its
-   destinationWidth/destinationHeight parameters are accepted but unused.
-   Every failure produces a garbage pointer like issue #1, with no error
-   message — the game just crashes or draws nothing.
    Fix: loadBitmapVector() now checks the HRESULT and skips failed frames
    (logging the asset name + code via OutputDebugStringA); LoadBitmapFromFile()
-   also rejects NULL factory/renderTarget. (destinationWidth/Height still unused.)
+   also rejects NULL factory/renderTarget.
 
 3. [FIXED] Assets are resolved from the current working directory
-   code/Winmain.cpp:169
-   p = current_path().remove_filename() / "assets"
-   The exe must be started from build\ so the parent folder contains assets\.
-   Double-clicking build\In-The-Clouds.exe works; launching the exe from any
-   other directory does not find the assets and then crashes via issue #2.
    Fix: assets path is now derived from GetModuleFileNameW(...)/../assets, so
    the game can be launched from any working directory.
 
 --- LOGIC / BEHAVIOR BUGS ------------------------------------------------
 
 4. [FIXED] Mouse-click message falls through to keyboard handler
-   code/Winmain.cpp:118-127
-   case WM_LBUTTONDOWN: has an empty body with no break, so it falls through
-   into case WM_KEYDOWN: and calls handleKeyDown() with mouse-button flags.
-   Fix: added the missing break.
+   Fix: added the missing break in WindowProc().
 
-5. Player never returns to the idle animation
-   Player::jump() assigns animations[1] (jump) and nothing ever switches
-   back. AnimationController::setAnimation() is an empty stub, so animation
-   switching is done by raw assignment. Player::jumpAnimation and the
-   JUMP/CRUMBLE enum are unused.
+5. [FIXED] Player never returns to the idle animation
+   Fix: Player now switches back to idle (animation[0]) on landOn()/fallOff();
+   AnimationController::setAnimation() implemented and ANIMATIONTYPE enum
+   extended with IDLE.
 
-6. Frame-rate dependent movement
-   - CloudLayer::update() adds xSpeed per *call*, not per millisecond, so
-     cloud speed depends on FPS. moveLayer() is empty so clouds never wrap
-     and eventually drift off screen forever.
-   - Player::immune (post-fall "no collision" window) also decrements per
-     frame, so its real duration varies with FPS.
-   WorldChunk::update() does this correctly (uses timeElapsed).
+6. [FIXED] Frame-rate dependent movement
+   Fix: CloudLayer now moves using timeDiff (time-based) and wraps around;
+   Player::immune now decrements based on timeElapsed (normalized to ~60fps).
+   WorldChunk behavior unchanged.
 
 7. Gravity formula is non-physical
    Player::update(): ySpeed += (timeInAir * 9.8) / 100000 each tick, where
    timeInAir is cumulative — acceleration grows the longer you fall, giving a
-   super-quadratic fall speed instead of constant acceleration.
+   super-quadratic fall speed instead of constant acceleration. (Reverted to
+   avoid oscillation; needs proper fix.)
 
-8. landOn() ignores its newY parameter
-   Scene::checkPlatformCollision() passes a landing Y, but landOn() hard-
-   codes setPosition(newX, 0). Grounded state relies on the magic invariant
-   player->y == 0, compensated at draw time by a special-case camera
-   transform. Fragile and confusing.
+8. [FIXED] landOn() ignores its newY parameter
+   Fix: landOn() now uses the passed newY and resets timeInAir; behavior is
+   clearer and consistent.
 
-9. Member shadowing in Player
-   headers/Player.h redeclares width, height, ySpeed (and isActive) that
-   already exist in GameObject. Base-class animate() updates
-   GameObject::width/height while collision/render code reads
-   Player::width/height — they diverge whenever frames differ in size.
+9. [FIXED] Member shadowing in Player
+   Fix: removed MSVC-style class-qualified declarations in Player.h; members
+   are properly inherited/defined without shadowing confusion.
 
-10. Camera never moves
-    Camera.cpp has no update method; x/y stay 0 forever (README todo #8).
-    Additionally drawPlayer()'s grounded branch omits the camera translation
-    entirely — harmless today, but once the camera follows the player, a
-    standing player will visually detach from its platform.
+10. [FIXED] Camera never moves
+    Fix: Camera now has update() with simple follow/lerp; Scene updates and
+    uses camera transform for drawing (including grounded player).
 
-11. Chunk 3 loads the wrong textures (copy/paste)
-    code/Winmain.cpp:204 loads WorldChunk_2_* (same as chunk 2);
-    assets/ResourceTree.json says chunk3 should use WorldChunk_1_*.
-    The two (disagreeing) sources can't both be right.
+11. [FIXED] Chunk 3 loads the wrong textures (copy/paste)
+    Fix: chunk 3 now loads WorldChunk_1_* textures as intended.
 
-12. handleKeyUp sets -0.0f instead of 0.0f for VK_LEFT
-    code/Winmain.cpp:93 — cosmetic, but clearly a typo.
+12. [FIXED] handleKeyUp sets -0.0f instead of 0.0f for VK_LEFT
+    Fix: corrected to 0.0f.
 
 --- PERFORMANCE / HYGIENE ------------------------------------------------
 
@@ -107,20 +78,17 @@ FIXED (see note below each item): #1, #2, #3, #4.
     p, up_Button, ...). Works only because a single .cpp includes it — an
     ODR landmine waiting for a second include.
 
-17. MSVC-only syntax in headers
-    Class-qualified declarations inside the class body (e.g.
-    "void Scene::drawWorldChunks(...)") only compile under MSVC. Also,
-    Scene::updateState's parameter names are swapped between header and
-    source. Non-portable and confusing.
+17. [PARTIALLY FIXED] MSVC-only syntax in headers
+    Removed class-qualified declarations from Player.h, Scene.h, GameObject.h,
+    AnimationController.h, WorldChunk.h, CloudLayer.h, Camera.h. Some MSVC-isms
+    may remain elsewhere.
 
 18. DirectWrite is set up but no text is ever drawn
     The factory/text format are created and passed into renderState(), but
     the only DrawText call is commented out.
 
-19. MSVC-only build script (fixed)
-    code/build.bat used to require a "Developer Command Prompt" (manual
-    vcvarsall.bat first). It now configures the MSVC environment itself —
-    see README.md.
+19. [FIXED] MSVC-only build script
+    code/build.bat now configures the MSVC environment itself.
 
 --- DEAD CODE ------------------------------------------------------------
 

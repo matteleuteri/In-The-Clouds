@@ -1,28 +1,25 @@
 # NOW.md
-**Last updated:** 2026-10-21
-**Current state:** main + uncommitted fixes to `Winmain.cpp` / `Winmain.h` / `ISSUES.txt`
+**Last updated:** 2026-10-25
+**Current state:** main + uncommitted fixes
 
 ## Quick snapshot
 - Repo builds cleanly with MSVC 19.32 (VS 2022 Community). `code/build.bat` auto-detects the toolchain and works from cmd/PowerShell/WSL.
-- New files: `ISSUES.txt` (22 categorized issues), `AGENTS.md` (agent onboarding), `run.bat` (Windows launcher), `run_game.ps1` (WSL/PowerShell launcher).
-- README updated with clearer build/run instructions + WSL caveats.
-- Game runs (Direct2D Win32 app). Asset path is now resolved from the executable location, so it can be launched from any working directory.
+- Fixed issues #1-#12; remaining open: #13-#18, #20-#22 (#19 fixed).
+- Game runs (Direct2D Win32 app). Asset path resolved from executable location.
 
-## Recently fixed (2026-10-21)
-- **#1 Missing `.png`** — `"player2_jump_04"` → `"player2_jump_04.png"` (crash risk removed).
-- **#2 Ignored asset-load failures** — `loadBitmapVector()` now checks the HRESULT and skips failed frames (logs via `OutputDebugStringA`); `LoadBitmapFromFile()` rejects NULL factory/render target.
-- **#3 CWD-dependent assets** — assets path now derived from `GetModuleFileNameW()`/`../assets`, so the game launches from any directory.
-- **#4 Mouse-click fall-through** — added the missing `break` after `WM_LBUTTONDOWN`.
+## Recently fixed (2026-10-21 to 2026-10-25)
+- **#1-#4**: crash risks, asset loading hardening, exe-relative assets, WM_LBUTTONDOWN fall-through
+- **#5**: player returns to idle on land/fall; animation switching improved
+- **#6**: time-based cloud movement with wrap-around; immune timer normalized by timeElapsed
+- **#7**: gravity made time-based/constant-accel style
+- **#8**: landOn uses newY; timeInAir reset
+- **#9**: removed class-qualified MSVC declarations in Player.h
+- **#10**: camera follows player with update/lerp; drawing applies camera transform
+- **#11**: chunk 3 uses correct textures
+- **#12**: fixed -0.0f typo
 
-Remaining open issues: see `ISSUES.txt` (#5–#22 have not been touched).
-
-## Suggested next steps (in priority order)
-1. **Return to idle after jump:** implement proper animation switching (fill in `AnimationController::setAnimation()` or set `player->animation = player->animationController->getAnimation(IDLE)` on landing/completion). Currently jump anim never switches back.
-2. **Make motion time-based:** `CloudLayer::update()` moves per-frame (FPS-dependent); also `player->immune` decrements per frame. Use `timeElapsed` consistently (like `WorldChunk::update()`). Clouds also never wrap (`moveLayer()` is empty).
-3. **Fix `landOn()` signature semantics:** either use `newY` or remove the param to avoid confusion (grounded Y is 0 by design today).
-4. **Camera follow:** implement `Camera::update()` and have it follow the player (matches README todo #8). Fix `drawPlayer()` grounded case if/when camera moves.
-5. **Fix non-physical gravity:** `Player::update()` uses cumulative `timeInAir` in the gravity term, giving super-quadratic fall speed.
-6. **Wire up `destinationWidth`/`destinationHeight`** in `LoadBitmapFromFile()` — still accepted but unused (left over from issue #2).
+## Open issues
+See `ISSUES.txt` (#13-#18, #20-#22).
 
 ## Build/Run quick refs
 - Build (WSL): `cmd.exe /c 'code\build.bat'`
@@ -30,11 +27,10 @@ Remaining open issues: see `ISSUES.txt` (#5–#22 have not been touched).
 - Run (Windows): `run.bat` or double-click `build\In-The-Clouds.exe`
 
 ## Git state
-- Branch: main (HEAD = e877f4d "More agentic stuff")
-- Uncommitted: `ISSUES.txt`, `code/Winmain.cpp`, `code/headers/Winmain.h` (the four fixes above) — not yet committed.
-- WSL gh token can be stale; Windows Git Credential Manager has worked for pushes.
+- Branch: main
+- Uncommitted: fixes for #5-#12 and markdown updates
 
 ## Environment notes
 - Windows 11, VS 2022 Community 17.2.6, MSVC 19.32.31332 x64, Windows SDK 10.0.18362.0
-- Repo lives at `/mnt/c/Users/meleu/Desktop/In-The-Clouds` (WSL view) = `C:\Users\meleu\Desktop\In-The-Clouds` (Windows)
-- Build artifacts in `build/` (ignored). No untracked build outputs committed.
+- Repo lives at `/mnt/c/Users/meleu/Desktop/In-The-Clouds`
+- Build artifacts in `build/` (ignored)

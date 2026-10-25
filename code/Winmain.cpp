@@ -105,7 +105,7 @@ static void handleKeyDown(WPARAM wParam)
 static void handleKeyUp(WPARAM wParam)
 {
     if(wParam == VK_RIGHT) scene->player->xSpeed = 0.0f;
-    if(wParam == VK_LEFT) scene->player->xSpeed = -0.0f;
+    if(wParam == VK_LEFT) scene->player->xSpeed = 0.0f;
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -229,7 +229,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             chunk2Animations[0] = chunk2Anm;
             AnimationController *chunk2AnimationController = new AnimationController(chunk2Animations);
 
-            std::vector<std::string> chunk3AssetNames = { "WorldChunk_2_1.png", "WorldChunk_2_2.png" };
+            std::vector<std::string> chunk3AssetNames = { "WorldChunk_1_1.png", "WorldChunk_1_2.png" };
             std::vector<ID2D1Bitmap*> chunk3Bitmaps = loadBitmapVector(pIWICFactory, chunk3AssetNames);
             Animation* chunk3Anm = new Animation(chunk3Bitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> chunk3Animations;

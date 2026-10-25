@@ -6,7 +6,8 @@
 
 enum ANIMATIONTYPE
 {
-    JUMP,
+    IDLE = 0,
+    JUMP = 1,
     CRUMBLE
 };
 
@@ -14,8 +15,8 @@ class AnimationController
 {
 public:
     std::map<int, Animation*> animations;
-    AnimationController::AnimationController(std::map<int, Animation*> animations);
-    void AnimationController::setAnimation(ANIMATIONTYPE animationType);
+    AnimationController(std::map<int, Animation*> animations);
+    void setAnimation(ANIMATIONTYPE animationType);
 };
 
 #endif

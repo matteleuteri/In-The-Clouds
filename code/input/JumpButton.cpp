@@ -2,5 +2,8 @@
 
 void JumpButton::execute(std::unique_ptr<Scene>& scene)
 {
-    scene->player->jump();
+    if(scene->player != NULL && !scene->player->isInAir)
+    {
+        scene->player->jump();
+    }
 }

@@ -35,13 +35,13 @@ public:
     WorldChunk *chunkCurrentlyOn;
 
     Animation *jumpAnimation;
-    void Player::fallOff();
-    void Player::setPosition(float x2, float y2);
-    Player::Player(AnimationController *animationController, float x, float y, float xSpeed);
-    void Player::jump();
-    void Player::update(int32_t timeElapsed);
-    void Player::landOn(WorldChunk *wc, float newX, float newY);
-    std::array<float, 2> Player::getAbsoluteCoordinates();
+    void fallOff();
+    void setPosition(float x2, float y2);
+    Player(AnimationController *animationController, float x, float y, float xSpeed);
+    void jump();
+    void update(int32_t timeElapsed);
+    void landOn(WorldChunk *wc, float newX, float newY);
+    std::array<float, 2> getAbsoluteCoordinates();
 };
 
 #endif

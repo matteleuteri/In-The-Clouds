@@ -49,10 +49,11 @@ void Scene::checkPlatformCollision(int32_t currentTime)
 void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 {
     int32_t timeElapsed = endTime - startTime;
-    cloudLayer1->update(endTime);
+    if(timeElapsed < 0) timeElapsed = 0;
+    cloudLayer1->update(timeElapsed);
     cloudLayer1->animate(endTime);
 
-    cloudLayer2->update(endTime);
+    cloudLayer2->update(timeElapsed);
     cloudLayer2->animate(endTime);
 
     for (std::unique_ptr<WorldChunk> &wc: worldChunks)
@@ -63,6 +64,8 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 
     player->update(timeElapsed);
     player->animate(endTime);
+
+    if(camera) camera->update(timeElapsed);
 
     checkPlatformCollision(endTime);
 }
@@ -83,19 +86,19 @@ void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteT
 
 void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(camera->x, camera->y));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0.0f, 0.0f));
     drawBM(renderTarget, background.get());
 }
 
 void Scene::drawCloudLayer(ID2D1HwndRenderTarget* renderTarget, CloudLayer *cloundLayer)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(camera->x, camera->y));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0.0f, 0.0f));
     drawBM(renderTarget, cloundLayer);
 }
 
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(camera->x, camera->y));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0.0f, 0.0f));
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
         // D2D1_SIZE_F size = wc->animation->bitmaps[wc->animation->currentFrame]->GetSize();
@@ -107,7 +110,7 @@ void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
 {
     if(player->isInAir)
     {
-        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(camera->x, camera->y));
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0.0f, 0.0f));
     }
     else
     {

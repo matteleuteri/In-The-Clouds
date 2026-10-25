@@ -36,14 +36,14 @@ public:
     std::unique_ptr<CloudLayer> cloudLayer1;
     std::unique_ptr<CloudLayer> cloudLayer2;
     std::vector<std::unique_ptr<WorldChunk>> worldChunks;
-    Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc);
-    void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
-    void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget);
-    void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget);
-    void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteTextFormat* pTextFormat_);
-    void Scene::updateState(HWND hwnd, int32_t startTime, int32_t endTime); 
-    void Scene::checkPlatformCollision(int32_t currentTime);
-    void Scene::drawCloudLayer(ID2D1HwndRenderTarget* renderTarget, CloudLayer *cloundLayer);
+    Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc);
+    void drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
+    void drawBackground(ID2D1HwndRenderTarget* renderTarget);
+    void drawPlayer(ID2D1HwndRenderTarget* renderTarget);
+    void renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteTextFormat* pTextFormat_);
+    void updateState(HWND hwnd, int32_t endTime, int32_t startTime); 
+    void checkPlatformCollision(int32_t currentTime);
+    void drawCloudLayer(ID2D1HwndRenderTarget* renderTarget, CloudLayer *cloundLayer);
 };
 
 #endif

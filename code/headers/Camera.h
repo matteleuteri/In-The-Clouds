@@ -2,6 +2,7 @@
 #define _CAMERA
 
 #include "GameObject.h"
+#include <stdint.h>
 
 class Camera 
 {
@@ -12,7 +13,8 @@ public:
     int height;
     float speed;
     GameObject* following;
-    Camera::Camera(GameObject* following, int width, int height);
+    Camera(GameObject* following, int width, int height);
+    void update(int32_t timeElapsed);
 };
 
 #endif
