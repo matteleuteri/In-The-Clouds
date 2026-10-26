@@ -102,6 +102,7 @@ void Player::fallOff()
     std::array<float, 2> a = getAbsoluteCoordinates();
     setPosition(a[0], a[1]);
     isInAir = true;
+    ySpeed = 2.0f; // initial downward velocity so drop-through clears the landing threshold
 }
 
 void Player::jump()
