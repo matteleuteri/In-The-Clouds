@@ -268,7 +268,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             up_Button = new JumpButton();
             
             int32_t startTime = GetTickCount();
-            int32_t endTime;            
+            int32_t endTime;
+            const int32_t targetFrameMs = 16; // cap at ~60 FPS to stop busy spin
             while(isRunning)
             {
                 MSG msg;
@@ -283,6 +284,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
                     DispatchMessageA(&msg);
                 }
                 endTime = GetTickCount();
+                int32_t frameTime = endTime - startTime;
+                if (frameTime < targetFrameMs)
+                {
+                    Sleep(targetFrameMs - frameTime);
+                    endTime = GetTickCount();
+                }
                 scene->updateState(hwnd, endTime, startTime);
                 scene->renderState(hwnd, renderTarget, pTextFormat_);                    
                 startTime = endTime;
