@@ -37,7 +37,7 @@ void Scene::checkPlatformCollision(int32_t currentTime)
 
     for (std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        if (player->ySpeed > 0 && player->x > wc->x - player->width/2 && player->x < wc->x + wc->width + player->width/2 && std::abs(wc->y - (player->y + player->height)) <= 25)
+        if (player->ySpeed > 0 && player->x > wc->x - player->width/3 && player->x < wc->x + wc->width + player->width/3 && std::abs(wc->y - (player->y + player->height)) <= 25)
         {
             float newx = player->x - wc->x + player->width/2;
             if(newx < player->width/2) newx = player->width/2;
@@ -45,6 +45,8 @@ void Scene::checkPlatformCollision(int32_t currentTime)
             player->landOn(wc.get(), newx, wc->y);
             player->x = newx;
             player->chunkCurrentlyOn = wc.get();
+            // Adjust for moving platform
+            player->x += (wc->xSpeed * 0.0667f); // rough compensation
             return;
         }
     }
