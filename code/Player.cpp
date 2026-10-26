@@ -72,7 +72,8 @@ void Player::landOn(WorldChunk *wc, float newX, float newY)
     {
         animation = animationController->animations[0];
     }
-    setPosition(newX, 0.0f);
+    x = newX;
+    y = 0.0f;
 }
 
 void Player::setPosition(float x2, float y2)
