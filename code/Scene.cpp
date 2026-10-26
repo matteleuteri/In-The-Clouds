@@ -43,6 +43,8 @@ void Scene::checkPlatformCollision(int32_t currentTime)
             if(newx < player->width/2) newx = player->width/2;
             if(newx > wc->width - player->width/2) newx = wc->width - player->width/2;
             player->landOn(wc.get(), newx, wc->y);
+            player->x = newx;
+            player->chunkCurrentlyOn = wc.get();
             return;
         }
     }
