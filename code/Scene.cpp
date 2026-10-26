@@ -40,8 +40,8 @@ void Scene::checkPlatformCollision(int32_t currentTime)
         if (player->ySpeed > 0 && player->x > wc->x - player->width/2 && player->x < wc->x + wc->width + player->width/2 && std::abs(wc->y - (player->y + player->height)) <= 25)
         {
             float newx = player->x - wc->x + player->width/2;
-            if(newx < 0) newx = 0;
-            if(newx > wc->width) newx = wc->width;
+            if(newx < player->width/2) newx = player->width/2;
+            if(newx > wc->width - player->width/2) newx = wc->width - player->width/2;
             player->landOn(wc.get(), newx, wc->y);
             return;
         }
