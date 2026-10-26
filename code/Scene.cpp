@@ -28,7 +28,7 @@ void Scene::checkPlatformCollision(int32_t currentTime)
     if (!player->isInAir)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
-        if (player->x < 0 || player->x > wc->width)
+        if (player->x < player->width/2 || player->x > wc->width - player->width/2)
         {
             player->fallOff();
             return;
