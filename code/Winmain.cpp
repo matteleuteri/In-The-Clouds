@@ -94,7 +94,10 @@ static void handleKeyDown(WPARAM wParam)
 
     if(wParam == VK_UP) up_Button->execute(scene);  
 
-    // if(wParam == VK_DOWN);
+    if(wParam == VK_DOWN && scene->player != NULL && !scene->player->isInAir)
+    {
+        scene->player->fallOff();
+    }
     // if(wParam == 77) scene->player->onPlatform = true; // M
     // if(wParam == 80) 
     // {
