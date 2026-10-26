@@ -1,5 +1,7 @@
 #include "headers/Player.h"
 
+#include <cstdio>
+
 Player::Player(AnimationController *animationController, float x, float y, float xSpeed): GameObject(animationController, x, y, xSpeed)
 {
     isActive = true;
@@ -26,7 +28,7 @@ std::array<float, 2> Player::getAbsoluteCoordinates()
     {
         // we need to get the players coordinates wrt the screen, 
         // using the coordinates wrt a world chunk 
-        c1 = chunkCurrentlyOn->x + x - width;
+        c1 = chunkCurrentlyOn->x + x - width / 2.0f;
         c2 = chunkCurrentlyOn->y - height;
     }
 
@@ -43,7 +45,7 @@ void Player::update(int32_t timeElapsed)
     if(isInAir)
     {
         timeInAir += timeElapsed;
-        ySpeed += ((timeInAir* 9.8f) / 100000);
+        ySpeed += 0.002f * timeElapsed;
         y += timeElapsed * ySpeed;
     }
     if(y > 720)
@@ -60,6 +62,13 @@ void Player::update(int32_t timeElapsed)
     }
     if(immune < 0) immune = 0;
     x += xSpeed * timeElapsed;
+
+    char dbg[256];
+    float wcx = chunkCurrentlyOn ? chunkCurrentlyOn->x : -1.0f;
+    float wcw = chunkCurrentlyOn ? chunkCurrentlyOn->width : -1.0f;
+    snprintf(dbg, sizeof(dbg), "PLAYER: update: inAir=%d x=%.2f y=%.2f wx=%.2f wy=%.2f xs=%.2f ys=%.2f\n",
+        isInAir ? 1 : 0, x, y, wcx, wcw, xSpeed, ySpeed);
+    OutputDebugStringA(dbg);
 }
 
 void Player::landOn(WorldChunk *wc, float newX, float newY)

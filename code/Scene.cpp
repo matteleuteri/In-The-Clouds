@@ -1,5 +1,7 @@
 #include "headers/Scene.h"
 
+#include <cstdio>
+
 Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc) : isActive(active), x(x), y(y), rc(rc)
 {
     player = std::make_unique<Player>(animationControllers[0], 600.0f, 60.0f, 0.0f);
@@ -21,15 +23,15 @@ static void drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
 
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
-    if (player->immune > 0) {
-        return;
-    }
-
     if (!player->isInAir)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
-        if (player->x < player->width/2 || player->x > wc->width - player->width/2)
+        if (player->immune <= 0 && (player->x < player->width/2 || player->x > wc->width - player->width/2))
         {
+            char dbg[256];
+            snprintf(dbg, sizeof(dbg), "PLAYER: FALLOFF wcx=%.2f wcw=%.2f px=%.2f limit=%.2f\n",
+                wc->x, wc->width, player->x, wc->width - player->width/2);
+            OutputDebugStringA(dbg);
             player->fallOff();
             return;
         }   
@@ -40,13 +42,11 @@ void Scene::checkPlatformCollision(int32_t currentTime)
         if (player->ySpeed > 0 && player->x > wc->x - player->width/3 && player->x < wc->x + wc->width + player->width/3 && std::abs(wc->y - (player->y + player->height)) <= 25)
         {
             float newx = player->x - wc->x + player->width/2;
-            if(newx < player->width/2) newx = player->width/2;
-            if(newx > wc->width - player->width/2) newx = wc->width - player->width/2;
             player->landOn(wc.get(), newx, wc->y);
-            player->x = newx;
-            player->chunkCurrentlyOn = wc.get();
-            // Adjust for moving platform
-            player->x += (wc->xSpeed * 0.0667f); // rough compensation
+            char dbg[256];
+            snprintf(dbg, sizeof(dbg), "PLAYER: LAND wcx=%.2f wcw=%.2f newx=%.2f px=%.2f py=%.2f valid=[%.2f, %.2f]\n",
+                wc->x, wc->width, newx, player->x, player->y, player->width/2, wc->width - player->width/2);
+            OutputDebugStringA(dbg);
             return;
         }
     }
