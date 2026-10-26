@@ -116,7 +116,7 @@ void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
     }
     else
     {
-        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width + x, player->chunkCurrentlyOn->y - player->height + y));
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width/2 + x, player->chunkCurrentlyOn->y - player->height + y));
     }
     drawBM(renderTarget, player.get());
 }
