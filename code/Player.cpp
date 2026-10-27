@@ -77,6 +77,7 @@ void Player::landOn(WorldChunk *wc, float newX, float newY)
     isInAir = false;
     ySpeed = 0.0f;
     timeInAir = 0;
+    immune = 0; // clear immune so fall-off detection works immediately after landing
     if(animationController != NULL && animationController->animations.count(0) > 0)
     {
         animation = animationController->animations[0];
