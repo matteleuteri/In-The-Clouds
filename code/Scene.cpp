@@ -27,10 +27,14 @@ static void drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
 
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
-    // Always check for landing first — even during the immune grace period —
-    // so falling off one platform doesn't make you fall through another below.
+    // Always check for landing — but skip the chunk the player just fell off
+    // while immune, so walking off an edge doesn't immediately snap them back
+    // onto the same platform (the "wall" at the edge). Landing on other
+    // platforms below is still allowed during immune.
     for (std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
+        if (player->immune > 0 && wc.get() == player->chunkCurrentlyOn)
+            continue;
         if (player->ySpeed > 0 && player->x > wc->x - player->width/3 && player->x < wc->x + wc->width + player->width/3 && std::abs(wc->y - (player->y + player->height)) <= 25)
         {
             float newx = player->x - wc->x + player->width/2;
@@ -50,7 +54,7 @@ void Scene::checkPlatformCollision(int32_t currentTime)
     if (!player->isInAir && player->immune <= 0)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
-        if (player->x < player->width/2 || player->x > wc->width - player->width/2)
+        if (wc && (player->x < player->width/2 || player->x > wc->width - player->width/2))
         {
             char dbg[256];
             snprintf(dbg, sizeof(dbg), "PLAYER: FALLOFF wcx=%.2f wcw=%.2f px=%.2f limit=%.2f\n",
