@@ -85,6 +85,9 @@ If asked to fix bugs, prioritize:
 - **Tiling background** — `Scene::drawBackground()` repeats the background image horizontally (`fmodf`-wrapped) so panning past the image's natural width shows more background instead of black.
 - **Debug logging** — `OutputDebugStringA` logs every player update frame (`inAir, x, y, chunkX, chunkWidth, xs, ys`) and collision events (`LAND` with clamped `newx` + valid range; `FALLOFF` with chunk bounds vs player `x`). View with DebugView.
 - **Procedural generation** — chunks and clouds spawn ahead of the camera's right edge and are removed once behind the left edge, giving an endless world. Chunks spawn at varying heights.
+- **Coyote time** — edge-walkoff grace period (8 frames) lets players walk
+  back onto a platform after reaching the edge; re-landing on the same
+  chunk is suppressed during the grace period.
 
 ## When Working With This Repo
 

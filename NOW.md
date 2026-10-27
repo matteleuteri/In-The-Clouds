@@ -26,8 +26,9 @@
 - **Procedural generation** — chunks and clouds spawn ahead of camera, despawn behind; chunks at varying heights
 - **Debug logging** — OutputDebugStringA logs player updates and collision events
 - **Collision hardening** — landing always checked (even during immune);
-  re-landing on the just-fell-off chunk is suppressed while immune (fixes
-  wall at platform edge); respawn/cleanup avoid dangling chunk pointers
+  coyote time (8 frames) for edge-walkoff lets players walk back onto a
+  platform after reaching the edge; re-landing on the just-fell-off chunk
+  is suppressed during coyote time; respawn/cleanup avoid dangling pointers
 
 ## Build/Run quick refs
 - Build (WSL): `cmd.exe /c 'code\build.bat'`

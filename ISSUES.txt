@@ -134,7 +134,7 @@ FIXED: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13. Remaining open: #
     (LAND with clamped newx + valid range; FALLOFF with chunk bounds vs
     player x). View with DebugView.
 
---- NEW FEATURES (added 2026-10-27) ---
+--- NEW FEATURES (added 2026-10-26 to 2026-10-27) ---
 
 26. Procedural generation — chunks (platforms) and clouds spawn just before
     they become visible as the camera pans right, and are removed once they
@@ -142,9 +142,13 @@ FIXED: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13. Remaining open: #
     the player can jump between them indefinitely. CloudLayers are now
     stored in a vector instead of two fixed instances.
 
-27. Collision hardening — checkPlatformCollision now always checks landing
-    (even during immune grace period) so falling off one platform doesn't
-    make you fall through platforms below; immune only suppresses fall-off
-    and re-landing on the same chunk (fixes wall at platform edge).
-    Player respawn (y > 720) nulls chunkCurrentlyOn to avoid dangling
-    pointers to cleaned-up chunks; cleanupChunks does the same.
+27. Collision hardening — checkPlatformCollision uses coyote time for
+    edge-walkoff: reaching the edge starts an 8-frame grace period during
+    which the player can walk back on. Landing on the just-fell-off chunk
+    is suppressed during coyote time. Landing is always checked (even
+    during immune) so falling off one platform doesn't make you fall
+    through platforms below. Player respawn (y > 720) nulls chunkCurrentlyOn.
+
+28. Coyote time — edge-walkoff grace period (8 frames) lets players walk
+    back onto a platform after reaching the edge; re-landing on the same
+    chunk is suppressed during the grace period.
