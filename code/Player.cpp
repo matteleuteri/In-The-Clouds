@@ -112,7 +112,6 @@ void Player::jump()
     {
         animation = animationController->animations[1];
     }
-    immune = 20;
     std::array<float, 2> a = getAbsoluteCoordinates();
     isInAir = true;
     setPosition(a[0], a[1]);
