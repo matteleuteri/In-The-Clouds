@@ -11,9 +11,6 @@ making to learn C++ and game development.
   workload **"Desktop development with C++"** — this provides `cl.exe`
   (the MSVC compiler) and the Windows SDK.
 
-You do **not** need to open a "Developer Command Prompt" — the build script
-sets up the compiler environment itself.
-
 ## How to build
 
 Either:

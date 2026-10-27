@@ -12,6 +12,7 @@
 #include <combaseapi.h>
 #include <Objbase.h>
 #include <map>
+#include <cstdlib>
 #include "Player.h"
 #include "WorldChunk.h"
 #include "AnimationController.h"
@@ -33,9 +34,13 @@ public:
     int32_t lastTimestamp;
     std::unique_ptr<Player> player;
     std::unique_ptr<Background> background;
-    std::unique_ptr<CloudLayer> cloudLayer1;
-    std::unique_ptr<CloudLayer> cloudLayer2;
+    std::vector<std::unique_ptr<CloudLayer>> cloudLayers;
     std::vector<std::unique_ptr<WorldChunk>> worldChunks;
+    std::vector<AnimationController*> animationControllers;
+    float nextChunkSpawnX;
+    float nextCloudSpawnX;
+    int chunkControllerIndex;
+    int cloudControllerIndex;
     Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc);
     void drawWorldChunks(ID2D1HwndRenderTarget* renderTarget);
     void drawBackground(ID2D1HwndRenderTarget* renderTarget);
@@ -44,6 +49,10 @@ public:
     void updateState(HWND hwnd, int32_t endTime, int32_t startTime); 
     void checkPlatformCollision(int32_t currentTime);
     void drawCloudLayer(ID2D1HwndRenderTarget* renderTarget, CloudLayer *cloundLayer);
+    void spawnChunk(float x, float y, AnimationController* ac);
+    void spawnCloud(float x, float y, AnimationController* ac);
+    void cleanupChunks(float cameraX);
+    void cleanupClouds(float cameraX);
 };
 
 #endif

@@ -3,16 +3,19 @@
 #include <cstdio>
 #include <cmath>
 
-Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc) : isActive(active), x(x), y(y), rc(rc)
+Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc) : isActive(active), x(x), y(y), rc(rc), nextChunkSpawnX(0.0f), nextCloudSpawnX(0.0f), chunkControllerIndex(1), cloudControllerIndex(5)
 {
+    this->animationControllers = animationControllers;
     player = std::make_unique<Player>(animationControllers[0], 600.0f, 60.0f, 0.0f);
     camera = std::make_unique<Camera>(player.get(), 1280, 720);
-    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[1], 200.0f, 200.0f, 0.5f));
-    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[2], 600.0f, 600.0f, 0.5f));
-    worldChunks.push_back(std::make_unique<WorldChunk>(animationControllers[3], 1000.0f, 500.0f, 0.5f));
     background = std::make_unique<Background>(animationControllers[4], 0.0f, 0.0f, 0.0f);
-    cloudLayer1 = std::make_unique<CloudLayer>(animationControllers[5], 400.0f, 0.0f, 1.0f);
-    cloudLayer2 = std::make_unique<CloudLayer>(animationControllers[6], 0.0f, 0.0f, 0.5f);
+    srand((unsigned int)GetTickCount());
+    // Seed initial chunks/clouds so the player has something to land on
+    spawnChunk(600.0f, 600.0f, animationControllers[1]);
+    nextChunkSpawnX = 1000.0f;
+    spawnCloud(400.0f, 0.0f, animationControllers[5]);
+    spawnCloud(900.0f, 50.0f, animationControllers[6]);
+    nextCloudSpawnX = 1400.0f;
     lastTimestamp = GetTickCount();
 }
 
@@ -63,13 +66,11 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 {
     int32_t timeElapsed = endTime - startTime;
     if(timeElapsed < 0) timeElapsed = 0;
-    cloudLayer1->update(timeElapsed);
-    cloudLayer1->animate(endTime);
-
-    cloudLayer2->update(timeElapsed);
-    cloudLayer2->animate(endTime);
-
-    for (std::unique_ptr<WorldChunk> &wc: worldChunks)
+    for (auto &cl : cloudLayers)
+    {
+        cl->update(timeElapsed);
+        cl->animate(endTime);
+    }    for (std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
         wc->update(timeElapsed);
         wc->animate(endTime);
@@ -89,6 +90,35 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
     }
     if (camera) camera->update(timeElapsed, playerWorldCenterX);
 
+    // Procedural generation: spawn chunks/clouds just before they become
+    // visible, and remove ones that have fallen behind the camera.
+    if (camera)
+    {
+        float camRight = camera->x + (float)camera->width;
+        const float SPAWN_AHEAD = 500.0f;
+        const float CHUNK_SPACING = 500.0f;
+        while (nextChunkSpawnX < camRight + SPAWN_AHEAD)
+        {
+            float cy = 200.0f + (float)(rand() % 400);
+            spawnChunk(nextChunkSpawnX, cy, animationControllers[1 + (chunkControllerIndex % 3)]);
+            nextChunkSpawnX += CHUNK_SPACING + (float)(rand() % 200);
+            chunkControllerIndex++;
+        }
+        cleanupChunks(camera->x);
+
+        float camRightCloud = camera->x + (float)camera->width;
+        const float CLOUD_SPAWN_AHEAD = 600.0f;
+        const float CLOUD_SPACING = 400.0f;
+        while (nextCloudSpawnX < camRightCloud + CLOUD_SPAWN_AHEAD)
+        {
+            float cy = (float)(rand() % 300);
+            spawnCloud(nextCloudSpawnX, cy, animationControllers[5 + (cloudControllerIndex % 2)]);
+            nextCloudSpawnX += CLOUD_SPACING + (float)(rand() % 300);
+            cloudControllerIndex++;
+        }
+        cleanupClouds(camera->x);
+    }
+
     checkPlatformCollision(endTime);
 }
 
@@ -98,8 +128,10 @@ void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteT
     renderTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black));
     
     drawBackground(renderTarget);
-    drawCloudLayer(renderTarget, cloudLayer1.get());
-    drawCloudLayer(renderTarget, cloudLayer2.get());
+    for (auto &cl : cloudLayers)
+    {
+        drawCloudLayer(renderTarget, cl.get());
+    }
     drawWorldChunks(renderTarget);
     drawPlayer(renderTarget);
 
@@ -137,7 +169,6 @@ void Scene::drawCloudLayer(ID2D1HwndRenderTarget* renderTarget, CloudLayer *clou
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(-camera->x, 0.0f));
     drawBM(renderTarget, cloundLayer);
 }
-
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 {
     renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(-camera->x, 0.0f));
@@ -160,6 +191,50 @@ void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
             player->chunkCurrentlyOn->y - player->height));
     }
     drawBM(renderTarget, player.get());
+}
+
+void Scene::spawnChunk(float x, float y, AnimationController* ac)
+{
+    worldChunks.push_back(std::make_unique<WorldChunk>(ac, x, y, 0.5f));
+}
+
+void Scene::spawnCloud(float x, float y, AnimationController* ac)
+{
+    cloudLayers.push_back(std::make_unique<CloudLayer>(ac, x, y, 1.0f));
+}
+
+void Scene::cleanupChunks(float cameraX)
+{
+    const float DESPAWN_BEHIND = -600.0f;
+    for (auto it = worldChunks.begin(); it != worldChunks.end(); )
+    {
+        WorldChunk *wc = it->get();
+        if (wc->x + wc->width < cameraX + DESPAWN_BEHIND)
+        {
+            it = worldChunks.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+void Scene::cleanupClouds(float cameraX)
+{
+    const float DESPAWN_BEHIND = -800.0f;
+    for (auto it = cloudLayers.begin(); it != cloudLayers.end(); )
+    {
+        CloudLayer *cl = it->get();
+        if (cl->x + cl->width < cameraX + DESPAWN_BEHIND)
+        {
+            it = cloudLayers.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }
 
 // D2D1_RECT_F layoutRect = D2D1::RectF(
