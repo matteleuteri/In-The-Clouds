@@ -32,6 +32,7 @@ public:
 
     int32_t timeInAir;
     int32_t immune;
+    int32_t coyoteTime;
     WorldChunk *chunkCurrentlyOn;
 
     Animation *jumpAnimation;

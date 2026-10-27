@@ -11,6 +11,8 @@ Player::Player(AnimationController *animationController, float x, float y, float
     height = animation->bitmaps[0]->GetSize().height;
     timeInAir = 0;
     immune = 0;
+    coyoteTime = 0;
+    chunkCurrentlyOn = nullptr;
     ySpeed = 0;
 }
 
@@ -42,7 +44,7 @@ std::array<float, 2> Player::getAbsoluteCoordinates()
 
 void Player::update(int32_t timeElapsed)
 {
-    if(isInAir)
+    if(isInAir || coyoteTime > 0)
     {
         timeInAir += timeElapsed;
         ySpeed += 0.002f * timeElapsed;
@@ -63,6 +65,7 @@ void Player::update(int32_t timeElapsed)
         immune -= (int32_t)delta;
     }
     if(immune < 0) immune = 0;
+    if(coyoteTime > 0) coyoteTime--;
     x += xSpeed * timeElapsed;
 
     char dbg[256];
@@ -80,6 +83,7 @@ void Player::landOn(WorldChunk *wc, float newX, float newY)
     ySpeed = 0.0f;
     timeInAir = 0;
     immune = 0; // clear immune so fall-off detection works immediately after landing
+    coyoteTime = 0; // reset coyote grace period on landing
     if(animationController != NULL && animationController->animations.count(0) > 0)
     {
         animation = animationController->animations[0];
@@ -97,6 +101,7 @@ void Player::setPosition(float x2, float y2)
 void Player::fallOff()
 {
     immune = 20;
+    coyoteTime = 8;
     timeInAir = 0;
     if(animationController != NULL && animationController->animations.count(0) > 0)
     {
@@ -110,6 +115,7 @@ void Player::fallOff()
 void Player::jump()
 {
     timeInAir = 0;
+    coyoteTime = 0; // jumping intentionally, not falling off
     if(animationController != NULL && animationController->animations.count(1) > 0)
     {
         animation = animationController->animations[1];

@@ -27,13 +27,34 @@ static void drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
 
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
-    // Always check for landing — but skip the chunk the player just fell off
-    // while immune, so walking off an edge doesn't immediately snap them back
-    // onto the same platform (the "wall" at the edge). Landing on other
-    // platforms below is still allowed during immune.
+    // Walk off edge with coyote time: when the player reaches the edge, start
+    // a grace period (coyoteTime) during which they can walk back onto the
+    // platform. During this time they begin falling but cannot re-land on the
+    // same chunk, preventing the "wall at the edge" and "snap back" issues.
+    if (!player->isInAir && player->immune <= 0 && player->chunkCurrentlyOn)
+    {
+        WorldChunk *wc = player->chunkCurrentlyOn;
+        if (player->x < player->width/2 || player->x > wc->width - player->width/2)
+        {
+            if (player->coyoteTime <= 0)
+            {
+                player->coyoteTime = 8;
+                player->isInAir = true;
+                player->ySpeed = 0.0f;
+                player->immune = 20;
+            }
+        }
+        else
+        {
+            player->coyoteTime = 0; // back on platform, reset grace period
+        }
+    }
+
+    // Landing check — always active, but skip the chunk we just fell off
+    // during coyote time so we don't snap back onto it immediately.
     for (std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        if (player->immune > 0 && wc.get() == player->chunkCurrentlyOn)
+        if (player->coyoteTime > 0 && wc.get() == player->chunkCurrentlyOn)
             continue;
         if (player->ySpeed > 0 && player->x > wc->x - player->width/3 && player->x < wc->x + wc->width + player->width/3 && std::abs(wc->y - (player->y + player->height)) <= 25)
         {
@@ -47,21 +68,6 @@ void Scene::checkPlatformCollision(int32_t currentTime)
             OutputDebugStringA(dbg);
             return;
         }
-    }
-
-    // Fall-off check only when grounded and not immune — immune prevents
-    // immediately falling off again right after landing.
-    if (!player->isInAir && player->immune <= 0)
-    {
-        WorldChunk *wc = player->chunkCurrentlyOn;
-        if (wc && (player->x < player->width/2 || player->x > wc->width - player->width/2))
-        {
-            char dbg[256];
-            snprintf(dbg, sizeof(dbg), "PLAYER: FALLOFF wcx=%.2f wcw=%.2f px=%.2f limit=%.2f\n",
-                wc->x, wc->width, player->x, wc->width - player->width/2);
-            OutputDebugStringA(dbg);
-            player->fallOff();
-        }   
     }
 }
 
