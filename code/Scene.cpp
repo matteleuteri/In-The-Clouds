@@ -1,6 +1,7 @@
 #include "headers/Scene.h"
 
 #include <cstdio>
+#include <cmath>
 
 Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc) : isActive(active), x(x), y(y), rc(rc)
 {
@@ -107,8 +108,25 @@ void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteT
 
 void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(-camera->x, 0.0f));
-    drawBM(renderTarget, background.get());
+    if (!background || background->animation->bitmaps.empty()) return;
+    D2D1_SIZE_F size = background->animation->bitmaps[background->animation->currentFrame]->GetSize();
+    float bgWidth = size.width;
+    if (bgWidth <= 0.0f) return;
+    float screenW = (float)camera->width;
+    float camX = camera->x;
+
+    // screen position where the background tile at world x=0 appears: -camX
+    // Wrap into [0, bgWidth) then tile across the screen so there is no black
+    // gap at either end as the camera pans past the image's natural width.
+    float offset = -camX;
+    float wrapped = fmodf(offset, bgWidth);
+    if (wrapped < 0.0f) wrapped += bgWidth;
+
+    for (float sx = wrapped - bgWidth; sx < screenW; sx += bgWidth)
+    {
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(sx, 0.0f));
+        drawBM(renderTarget, background.get());
+    }
 }
 
 void Scene::drawCloudLayer(ID2D1HwndRenderTarget* renderTarget, CloudLayer *cloundLayer)
