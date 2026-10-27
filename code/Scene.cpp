@@ -111,6 +111,7 @@ void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
     if (!background || background->animation->bitmaps.empty()) return;
     D2D1_SIZE_F size = background->animation->bitmaps[background->animation->currentFrame]->GetSize();
     float bgWidth = size.width;
+    float bgHeight = size.height;
     if (bgWidth <= 0.0f) return;
     float screenW = (float)camera->width;
     float camX = camera->x;
@@ -122,10 +123,12 @@ void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
     float wrapped = fmodf(offset, bgWidth);
     if (wrapped < 0.0f) wrapped += bgWidth;
 
-    for (float sx = wrapped - bgWidth; sx < screenW; sx += bgWidth)
+    ID2D1Bitmap* bmp = background->animation->bitmaps[background->animation->currentFrame];
+    const float overlap = 1.0f; // overlap tiles by 1px to hide sub-pixel seams
+    for (float sx = wrapped - bgWidth - overlap; sx < screenW + overlap; sx += bgWidth)
     {
         renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(sx, 0.0f));
-        drawBM(renderTarget, background.get());
+        renderTarget->DrawBitmap(bmp, D2D1::RectF(0.0f, 0.0f, bgWidth + overlap, bgHeight));
     }
 }
 
