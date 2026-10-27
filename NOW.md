@@ -25,6 +25,7 @@
 - **Tiling background** — background repeats horizontally; 1px tile overlap hides seams
 - **Procedural generation** — chunks and clouds spawn ahead of camera, despawn behind; chunks at varying heights
 - **Debug logging** — OutputDebugStringA logs player updates and collision events
+- **Collision hardening** — landing always checked (even during immune); respawn/cleanup avoid dangling chunk pointers
 
 ## Build/Run quick refs
 - Build (WSL): `cmd.exe /c 'code\build.bat'`

@@ -141,3 +141,9 @@ FIXED: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13. Remaining open: #
     fall behind the camera's left edge. Chunks spawn at varying heights so
     the player can jump between them indefinitely. CloudLayers are now
     stored in a vector instead of two fixed instances.
+
+27. Collision hardening — checkPlatformCollision now always checks landing
+    (even during immune grace period) so falling off one platform doesn't
+    make you fall through platforms below; immune only suppresses fall-off.
+    Player respawn (y > 720) nulls chunkCurrentlyOn to avoid dangling
+    pointers to cleaned-up chunks; cleanupChunks does the same.
