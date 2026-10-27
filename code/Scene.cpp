@@ -23,10 +23,14 @@ static void drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
 
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
+    if (player->immune > 0) {
+        return;
+    }
+
     if (!player->isInAir)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
-        if (player->immune <= 0 && (player->x < player->width/2 || player->x > wc->width - player->width/2))
+        if (player->x < player->width/2 || player->x > wc->width - player->width/2)
         {
             char dbg[256];
             snprintf(dbg, sizeof(dbg), "PLAYER: FALLOFF wcx=%.2f wcw=%.2f px=%.2f limit=%.2f\n",
