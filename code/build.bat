@@ -5,8 +5,7 @@ rem =========================================================================
 rem  In-The-Clouds build script
 rem
 rem  Compiles the game to build\In-The-Clouds.exe.
-rem  Works from any directory and from a normal (non-developer) command
-rem  prompt — it sets up the MSVC environment itself if needed.
+rem  Sets up the MSVC environment itself if needed.
 rem =========================================================================
 
 rem If cl.exe is already on PATH (e.g. inside a Developer Command Prompt),
