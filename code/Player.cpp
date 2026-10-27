@@ -53,6 +53,8 @@ void Player::update(int32_t timeElapsed)
         y = 75;
         ySpeed = 0;
         timeInAir = 0;
+        isInAir = true;
+        chunkCurrentlyOn = nullptr; // avoid dangling pointer to cleaned-up chunk
     }
     if(immune > 0)
     {

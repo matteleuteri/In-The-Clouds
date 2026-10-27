@@ -27,24 +27,8 @@ static void drawBM(ID2D1HwndRenderTarget* renderTarget, GameObject* g)
 
 void Scene::checkPlatformCollision(int32_t currentTime)
 {
-    if (player->immune > 0) {
-        return;
-    }
-
-    if (!player->isInAir)
-    {
-        WorldChunk *wc = player->chunkCurrentlyOn;
-        if (player->x < player->width/2 || player->x > wc->width - player->width/2)
-        {
-            char dbg[256];
-            snprintf(dbg, sizeof(dbg), "PLAYER: FALLOFF wcx=%.2f wcw=%.2f px=%.2f limit=%.2f\n",
-                wc->x, wc->width, player->x, wc->width - player->width/2);
-            OutputDebugStringA(dbg);
-            player->fallOff();
-            return;
-        }   
-    }
-
+    // Always check for landing first — even during the immune grace period —
+    // so falling off one platform doesn't make you fall through another below.
     for (std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
         if (player->ySpeed > 0 && player->x > wc->x - player->width/3 && player->x < wc->x + wc->width + player->width/3 && std::abs(wc->y - (player->y + player->height)) <= 25)
@@ -59,6 +43,21 @@ void Scene::checkPlatformCollision(int32_t currentTime)
             OutputDebugStringA(dbg);
             return;
         }
+    }
+
+    // Fall-off check only when grounded and not immune — immune prevents
+    // immediately falling off again right after landing.
+    if (!player->isInAir && player->immune <= 0)
+    {
+        WorldChunk *wc = player->chunkCurrentlyOn;
+        if (player->x < player->width/2 || player->x > wc->width - player->width/2)
+        {
+            char dbg[256];
+            snprintf(dbg, sizeof(dbg), "PLAYER: FALLOFF wcx=%.2f wcw=%.2f px=%.2f limit=%.2f\n",
+                wc->x, wc->width, player->x, wc->width - player->width/2);
+            OutputDebugStringA(dbg);
+            player->fallOff();
+        }   
     }
 }
 
@@ -211,6 +210,12 @@ void Scene::cleanupChunks(float cameraX)
         WorldChunk *wc = it->get();
         if (wc->x + wc->width < cameraX + DESPAWN_BEHIND)
         {
+            // Avoid dangling pointer if this is the chunk the player stands on
+            if (player->chunkCurrentlyOn == wc)
+            {
+                player->chunkCurrentlyOn = nullptr;
+                player->isInAir = true;
+            }
             it = worldChunks.erase(it);
         }
         else
