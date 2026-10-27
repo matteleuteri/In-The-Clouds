@@ -14,7 +14,7 @@ public:
     float speed;
     GameObject* following;
     Camera(GameObject* following, int width, int height);
-    void update(int32_t timeElapsed);
+    void update(int32_t timeElapsed, float playerWorldCenterX);
 };
 
 #endif

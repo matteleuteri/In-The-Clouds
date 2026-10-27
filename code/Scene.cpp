@@ -77,7 +77,16 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
     player->update(timeElapsed);
     player->animate(endTime);
 
-    if(camera) camera->update(timeElapsed);
+    // Deadzone camera: keep the player horizontally in the middle third of
+    // the screen. When the player leaves that band, shift the world so they
+    // are placed back at the nearest third boundary.
+    float playerWorldCenterX = player->x + player->width / 2.0f;
+    if (!player->isInAir && player->chunkCurrentlyOn)
+    {
+        // grounded: player->x is chunk-relative; world center = chunk->x + player->x
+        playerWorldCenterX = player->chunkCurrentlyOn->x + player->x;
+    }
+    if (camera) camera->update(timeElapsed, playerWorldCenterX);
 
     checkPlatformCollision(endTime);
 }
@@ -98,35 +107,36 @@ void Scene::renderState(HWND hwnd, ID2D1HwndRenderTarget* renderTarget, IDWriteT
 
 void Scene::drawBackground(ID2D1HwndRenderTarget* renderTarget)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0.0f, 0.0f));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(-camera->x, 0.0f));
     drawBM(renderTarget, background.get());
 }
 
 void Scene::drawCloudLayer(ID2D1HwndRenderTarget* renderTarget, CloudLayer *cloundLayer)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0.0f, 0.0f));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(-camera->x, 0.0f));
     drawBM(renderTarget, cloundLayer);
 }
 
 void Scene::drawWorldChunks(ID2D1HwndRenderTarget* renderTarget)
 {
-    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0.0f, 0.0f));
+    renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(-camera->x, 0.0f));
     for(std::unique_ptr<WorldChunk> &wc: worldChunks)
     {
-        // D2D1_SIZE_F size = wc->animation->bitmaps[wc->animation->currentFrame]->GetSize();
         drawBM(renderTarget, wc.get());    
     }
 }
 
 void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
 {
-    if(player->isInAir)
+    if (player->isInAir)
     {
-        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(0.0f, 0.0f));
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(-camera->x, 0.0f));
     }
     else
     {
-        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(player->chunkCurrentlyOn->x - player->width/2 + x, player->chunkCurrentlyOn->y - player->height + y));
+        renderTarget->SetTransform(D2D1::Matrix3x2F::Translation(
+            player->chunkCurrentlyOn->x - player->width / 2.0f - camera->x,
+            player->chunkCurrentlyOn->y - player->height));
     }
     drawBM(renderTarget, player.get());
 }

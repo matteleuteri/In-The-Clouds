@@ -7,10 +7,15 @@ Camera::Camera(GameObject* following, int width, int height): following(followin
     speed = 0.0f;
 }
 
-void Camera::update(int32_t timeElapsed)
+void Camera::update(int32_t timeElapsed, float playerWorldCenterX)
 {
     (void)timeElapsed;
-    // Keep camera fixed to avoid shaking with existing draw logic
-    x = 0.0f;
-    y = 0.0f;
+    if (!following) return;
+    float screenW = (float)width;
+    float third = screenW / 3.0f;
+    float playerScreenX = playerWorldCenterX - x;
+    if (playerScreenX < third)
+        x = playerWorldCenterX - third;
+    else if (playerScreenX > 2.0f * third)
+        x = playerWorldCenterX - 2.0f * third;
 }
