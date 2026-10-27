@@ -1,25 +1,29 @@
 # NOW.md
-**Last updated:** 2026-10-25
-**Current state:** main + uncommitted fixes
+**Last updated:** 2026-10-27
+**Current state:** main + all changes committed and pushed
 
 ## Quick snapshot
 - Repo builds cleanly with MSVC 19.32 (VS 2022 Community). `code/build.bat` auto-detects the toolchain and works from cmd/PowerShell/WSL.
-- Fixed issues #1-#12; remaining open: #13-#18, #20-#22 (#19 fixed).
+- Fixed issues #1-#13; remaining open: #14-#18, #20-#22 (#19 fixed).
 - Game runs (Direct2D Win32 app). Asset path resolved from executable location.
 
-## Recently fixed (2026-10-21 to 2026-10-25)
+## Recently fixed (2026-10-21 to 2026-10-27)
 - **#1-#4**: crash risks, asset loading hardening, exe-relative assets, WM_LBUTTONDOWN fall-through
 - **#5**: player returns to idle on land/fall; animation switching improved
 - **#6**: time-based cloud movement with wrap-around; immune timer normalized by timeElapsed
-- **#7**: gravity made time-based/constant-accel style
+- **#7**: gravity made constant-acceleration (ySpeed += 0.002f * timeElapsed)
 - **#8**: landOn uses newY; timeInAir reset
 - **#9**: removed class-qualified MSVC declarations in Player.h
-- **#10**: camera follows player with update/lerp; drawing applies camera transform
+- **#10**: deadzone camera keeps player in middle third; drawing applies camera transform
 - **#11**: chunk 3 uses correct textures
 - **#12**: fixed -0.0f typo
+- **#13**: frame limiter caps main loop at ~60 FPS (16 ms sleep)
 
-## Open issues
-See `ISSUES.txt` (#13-#18, #20-#22).
+## New features (2026-10-26 to 2026-10-27)
+- **Down-arrow fall-through** — VK_DOWN while grounded drops through the platform (natural gravity from rest, immune grace period)
+- **Deadzone camera** — player stays in middle third; world pans horizontally
+- **Tiling background** — background repeats horizontally; 1px tile overlap hides seams
+- **Debug logging** — OutputDebugStringA logs player updates and collision events
 
 ## Build/Run quick refs
 - Build (WSL): `cmd.exe /c 'code\build.bat'`
@@ -28,7 +32,7 @@ See `ISSUES.txt` (#13-#18, #20-#22).
 
 ## Git state
 - Branch: main
-- Uncommitted: fixes for #5-#12 and markdown updates
+- All changes committed
 
 ## Environment notes
 - Windows 11, VS 2022 Community 17.2.6, MSVC 19.32.31332 x64, Windows SDK 10.0.18362.0

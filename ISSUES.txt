@@ -3,7 +3,7 @@ IN THE CLOUDS — KNOWN ISSUES
 Spotted during a full code review, Oct 2026. Ordered by severity.
 Line numbers are approximate.
 
-FIXED: #1, #2, #3, #4, #5, #6, #8, #9, #11, #12. #7 and #10 reverted due to regressions.
+FIXED: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13. Remaining open: #14-#18, #20-#22 (#19 fixed).
 
 --- CRASH RISKS ----------------------------------------------------------
 
@@ -34,11 +34,11 @@ FIXED: #1, #2, #3, #4, #5, #6, #8, #9, #11, #12. #7 and #10 reverted due to regr
    Player::immune now decrements based on timeElapsed (normalized to ~60fps).
    WorldChunk behavior unchanged.
 
-7. Gravity formula is non-physical
+7. [FIXED] Gravity formula is non-physical
    Player::update(): ySpeed += (timeInAir * 9.8) / 100000 each tick, where
    timeInAir is cumulative — acceleration grows the longer you fall, giving a
-   super-quadratic fall speed instead of constant acceleration. (Reverted to
-   avoid oscillation; needs proper fix.)
+   super-quadratic fall speed instead of constant acceleration. Fixed to
+   constant acceleration (ySpeed += 0.002f * timeElapsed).
 
 8. [FIXED] landOn() ignores its newY parameter
    Fix: landOn() now uses the passed newY and resets timeInAir; behavior is
@@ -49,8 +49,9 @@ FIXED: #1, #2, #3, #4, #5, #6, #8, #9, #11, #12. #7 and #10 reverted due to regr
    are properly inherited/defined without shadowing confusion.
 
 10. [FIXED] Camera never moves
-    Fix: Camera now has update() with simple follow/lerp; Scene updates and
-    uses camera transform for drawing (including grounded player).
+    Deadzone camera keeps the player horizontally in the middle third of the
+    screen; all drawing (background, clouds, chunks, player) applies the
+    camera transform.
 
 11. [FIXED] Chunk 3 loads the wrong textures (copy/paste)
     Fix: chunk 3 now loads WorldChunk_1_* textures as intended.
@@ -60,9 +61,9 @@ FIXED: #1, #2, #3, #4, #5, #6, #8, #9, #11, #12. #7 and #10 reverted due to regr
 
 --- PERFORMANCE / HYGIENE ------------------------------------------------
 
-13. No frame limiter
-    The main loop renders flat-out with PeekMessage — 100% CPU busy spin,
-    no vsync, no sleep. Timing uses GetTickCount() (1 ms resolution).
+13. [FIXED] No frame limiter
+    Main loop now caps at ~60 FPS via 16 ms sleep in wWinMain(), ending the
+    100% CPU busy spin.
 
 14. Everything is leaked
     Animations, AnimationControllers, buttons, COM factories (D2D/DWrite/WIC),
@@ -115,3 +116,20 @@ FIXED: #1, #2, #3, #4, #5, #6, #8, #9, #11, #12. #7 and #10 reverted due to regr
     CloudLayer xSpeedOffset/ySpeedOffset, and C4100 is disabled in the build
     to hide unused-parameter warnings (e.g. checkPlatformCollision's
     currentTime).
+
+--- NEW FEATURES (added 2026-10-26) ---
+
+23. Down-arrow fall-through — VK_DOWN while grounded calls Player::fallOff(),
+    dropping the player through the platform using natural gravity from rest
+    (no initial velocity). immune = 20 suppresses collision during the drop
+    so the player doesn't immediately snap back onto the platform.
+
+24. Tiling background — Scene::drawBackground() repeats the background image
+    horizontally (fmodf-wrapped) so panning past the image's natural width
+    shows more background instead of black. Adjacent tiles overlap by 1 px
+    to hide sub-pixel seams.
+
+25. Debug logging — OutputDebugStringA logs every player update frame
+    (inAir, x, y, chunkX, chunkWidth, xs, ys) and collision events
+    (LAND with clamped newx + valid range; FALLOFF with chunk bounds vs
+    player x). View with DebugView.

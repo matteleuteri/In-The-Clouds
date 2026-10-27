@@ -9,8 +9,8 @@ This is a 2D platformer written in C++ (C++17) using **Win32 + Direct2D + Direct
 Key facts:
 - **Build:** Windows-only, built via MSVC (`cl.exe`). `code/build.bat` automatically finds and sets up the MSVC environment (vswhere + fallbacks for VS 2022/2019 Build Tools). Works from normal Command Prompt/PowerShell/WSL.
 - **Runtime:** Must be started with working directory = `build\` (game loads `../assets/`). Use `run_game.ps1` from WSL/PowerShell, or `run.bat`/double-click exe from Windows.
-- **Game loop:** `Winmain.cpp::wWinMain()` sets up D2D/DWrite/WIC, hardcodes asset loading, creates a `Scene`, then loops: pump messages → `scene->updateState()` → `scene->renderState()`. Timing uses `GetTickCount()`, no frame limiter, no vsync.
-- **Architecture:** `Scene` owns game state (Player, WorldChunks, Backgrounds, CloudLayers, Camera). `GameObject` is base; animations via `Animation` + `AnimationController`. Input: `JumpButton` (command pattern) wired to `VK_UP`.
+- **Game loop:** `Winmain.cpp::wWinMain()` sets up D2D/DWrite/WIC, hardcodes asset loading, creates a `Scene`, then loops: pump messages → `scene->updateState()` → `scene->renderState()`. Timing uses `GetTickCount()`. A ~60 FPS frame limiter caps the busy spin (16 ms sleep + `Sleep`).
+- **Architecture:** `Scene` owns game state (Player, WorldChunks, Backgrounds, CloudLayers, Camera). `GameObject` is base; animations via `Animation` + `AnimationController`. Input: `JumpButton` (command pattern) wired to `VK_UP`; `VK_DOWN` triggers `Player::fallOff()` to drop through a platform.
 
 ## Build Commands
 
@@ -35,21 +35,25 @@ Successful build creates `build\In-The-Clouds.exe` and `.pdb`.
 powershell.exe -ExecutionPolicy Bypass -File "C:\Users\meleu\Desktop\In-The-Clouds\run_game.ps1"
 ```
 
-**Controls:** Left/Right arrows = move, Up arrow = jump, Close window = quit.
+**Controls:** Left/Right arrows = move, Up arrow = jump, Down arrow = fall through platform (when standing on one), Close window = quit.
 
 ## Known Issues (Critical)
 
-See `ISSUES.txt` for the full list (22 items). Items **#1–#4** have been fixed as of 2026-10-21:
+See `ISSUES.txt` for the full list. Items **#1–#4, #6–#13** have been fixed as of 2026-10-26:
 
 1. **[FIXED] CRASH RISK: `Winmain.cpp:182`** — added `.png` extension to `"player2_jump_04"`.
 2. **[FIXED] Asset load failures ignored** — `loadBitmapVector()` now checks HRESULTs and skips failed frames (logs via `OutputDebugStringA`); `LoadBitmapFromFile()` guards against NULL factory/render target.
 3. **[FIXED] CWD-dependent assets** — asset path is now derived from `GetModuleFileNameW()`/`../assets`, so the game can launch from any working directory.
 4. **[FIXED] Mouse click falls through** to `WM_KEYDOWN` — added missing `break` in `WindowProc()`.
-
-The most important remaining ones:
-5. **Player never returns to idle** after jumping (`AnimationController::setAnimation()` stub; `Player::jump()` only switches to jump anim).
-6. **Frame-rate dependent motion** for clouds and `immune` timer (uses per-frame increments; `WorldChunk` correctly uses `timeElapsed`).
-7. **`landOn()` ignores `newY`** parameter (hardcodes Y=0) — the grounded coordinate system is a bit of a hack (chunk-relative coords at draw time).
+5. **[FIXED] Player never returns to the idle animation** — `Player` now switches back to idle (animation[0]) on `landOn()`/`fallOff()`; `AnimationController::setAnimation()` implemented and `ANIMATIONTYPE` enum extended with IDLE.
+6. **[FIXED] Frame-rate dependent movement** — clouds and `immune` timer now use `timeElapsed`; `WorldChunk` already used `timeElapsed`; main loop now capped at ~60 FPS via frame limiter.
+7. **[FIXED] Gravity formula non-physical** — `Player::update()` now uses constant acceleration (`ySpeed += 0.002f * timeElapsed`) instead of cumulative `timeInAir`.
+8. **[FIXED] `landOn()` ignores `newY`** — `landOn()` now uses the passed `newY` and resets `timeInAir`.
+9. **[FIXED] Member shadowing in Player** — removed MSVC-style class-qualified declarations in `Player.h`.
+10. **[FIXED] Camera never moves** — deadzone camera keeps the player in the middle third of the screen; all drawing applies the camera transform.
+11. **[FIXED] Chunk 3 loads the wrong textures** — chunk 3 now loads `WorldChunk_1_*` textures as intended.
+12. **[FIXED] `handleKeyUp` sets -0.0f** — corrected to `0.0f`.
+13. **[FIXED] No frame limiter** — main loop now caps at ~60 FPS (16 ms sleep).
 
 ## Code Style & Conventions
 
@@ -74,6 +78,12 @@ If asked to fix bugs, prioritize:
 2. Add `break` after `WM_LBUTTONDOWN` case in `WindowProc()` (prevents fall-through).
 3. Add basic HRESULT checks in `LoadBitmapFromFile()`/`createResources()` and log or bail safely.
 4. Make cloud movement time-based (or at least document/normalize), and have clouds wrap around.
+
+## New Features (added 2026-10-26)
+
+- **Down-arrow fall-through** — `VK_DOWN` while grounded calls `Player::fallOff()`, dropping the player through the platform using natural gravity from rest (no initial velocity). `immune = 20` suppresses collision during the drop so the player doesn't immediately snap back onto the platform.
+- **Tiling background** — `Scene::drawBackground()` repeats the background image horizontally (`fmodf`-wrapped) so panning past the image's natural width shows more background instead of black.
+- **Debug logging** — `OutputDebugStringA` logs every player update frame (`inAir, x, y, chunkX, chunkWidth, xs, ys`) and collision events (`LAND` with clamped `newx` + valid range; `FALLOFF` with chunk bounds vs player `x`). View with DebugView.
 
 ## When Working With This Repo
 
