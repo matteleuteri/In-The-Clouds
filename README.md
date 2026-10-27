@@ -90,4 +90,8 @@ ISSUES.txt           known issues found during a full code review
   world never ends in black as the camera pans past its natural width.
 - **Down-arrow drop-through**: press Down while standing on a platform to
   fall through it (uses natural gravity from rest).
+- **Procedural generation**: chunks (platforms) and clouds spawn just before
+  they become visible as you move right, and are removed once they fall
+  behind the camera. Chunks appear at varying heights so you can jump
+  between them indefinitely.
 

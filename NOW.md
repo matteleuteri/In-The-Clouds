@@ -23,6 +23,7 @@
 - **Down-arrow fall-through** — VK_DOWN while grounded drops through the platform (natural gravity from rest, immune grace period)
 - **Deadzone camera** — player stays in middle third; world pans horizontally
 - **Tiling background** — background repeats horizontally; 1px tile overlap hides seams
+- **Procedural generation** — chunks and clouds spawn ahead of camera, despawn behind; chunks at varying heights
 - **Debug logging** — OutputDebugStringA logs player updates and collision events
 
 ## Build/Run quick refs

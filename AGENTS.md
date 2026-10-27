@@ -84,6 +84,7 @@ If asked to fix bugs, prioritize:
 - **Down-arrow fall-through** — `VK_DOWN` while grounded calls `Player::fallOff()`, dropping the player through the platform using natural gravity from rest (no initial velocity). `immune = 20` suppresses collision during the drop so the player doesn't immediately snap back onto the platform.
 - **Tiling background** — `Scene::drawBackground()` repeats the background image horizontally (`fmodf`-wrapped) so panning past the image's natural width shows more background instead of black.
 - **Debug logging** — `OutputDebugStringA` logs every player update frame (`inAir, x, y, chunkX, chunkWidth, xs, ys`) and collision events (`LAND` with clamped `newx` + valid range; `FALLOFF` with chunk bounds vs player `x`). View with DebugView.
+- **Procedural generation** — chunks and clouds spawn ahead of the camera's right edge and are removed once behind the left edge, giving an endless world. Chunks spawn at varying heights.
 
 ## When Working With This Repo
 

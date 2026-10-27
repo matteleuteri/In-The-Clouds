@@ -133,3 +133,11 @@ FIXED: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13. Remaining open: #
     (inAir, x, y, chunkX, chunkWidth, xs, ys) and collision events
     (LAND with clamped newx + valid range; FALLOFF with chunk bounds vs
     player x). View with DebugView.
+
+--- NEW FEATURES (added 2026-10-27) ---
+
+26. Procedural generation — chunks (platforms) and clouds spawn just before
+    they become visible as the camera pans right, and are removed once they
+    fall behind the camera's left edge. Chunks spawn at varying heights so
+    the player can jump between them indefinitely. CloudLayers are now
+    stored in a vector instead of two fixed instances.
