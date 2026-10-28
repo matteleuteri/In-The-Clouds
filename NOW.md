@@ -37,7 +37,9 @@
 
 ## Git state
 - Branch: main
-- All changes committed
+- All changes committed, not yet pushed to origin
+- GitHub Actions release workflow builds and attaches In-The-Clouds.exe on
+  v* tags (.github/workflows/release.yml)
 
 ## Environment notes
 - Windows 11, VS 2022 Community 17.2.6, MSVC 19.32.31332 x64, Windows SDK 10.0.18362.0
