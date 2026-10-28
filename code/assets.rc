@@ -1,0 +1,33 @@
+// ============================================================================
+// In-The-Clouds embedded game assets
+// All PNGs are baked into the EXE as RCDATA resources so the standalone
+// executable needs no external assets folder.
+// ============================================================================
+
+#include <windows.h>
+
+// Player animations
+PLAYER2_IDLE_01   RCDATA "..\\assets\\player2_idle_01.png"
+PLAYER2_IDLE_02   RCDATA "..\\assets\\player2_idle_02.png"
+PLAYER2_IDLE_03   RCDATA "..\\assets\\player2_idle_03.png"
+PLAYER2_JUMP_01   RCDATA "..\\assets\\player2_jump_01.png"
+PLAYER2_JUMP_02   RCDATA "..\\assets\\player2_jump_02.png"
+PLAYER2_JUMP_03   RCDATA "..\\assets\\player2_jump_03.png"
+PLAYER2_JUMP_04   RCDATA "..\\assets\\player2_jump_04.png"
+
+// World chunks (platforms)
+WORLDCHUNK_1_1    RCDATA "..\\assets\\WorldChunk_1_1.png"
+WORLDCHUNK_1_2    RCDATA "..\\assets\\WorldChunk_1_2.png"
+WORLDCHUNK_2_1    RCDATA "..\\assets\\WorldChunk_2_1.png"
+WORLDCHUNK_2_2    RCDATA "..\\assets\\WorldChunk_2_2.png"
+
+// Background
+BACKGROUND        RCDATA "..\\assets\\background.png"
+
+// Cloud layers
+CLOUDLAYER_1_1    RCDATA "..\\assets\\cloudLayer_1_1.png"
+CLOUDLAYER_1_2    RCDATA "..\\assets\\cloudLayer_1_2.png"
+CLOUDLAYER_1_3    RCDATA "..\\assets\\cloudLayer_1_3.png"
+CLOUDLAYER_2_1    RCDATA "..\\assets\\cloudLayer_2_1.png"
+CLOUDLAYER_2_2    RCDATA "..\\assets\\cloudLayer_2_2.png"
+CLOUDLAYER_2_3    RCDATA "..\\assets\\cloudLayer_2_3.png"

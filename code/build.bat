@@ -61,7 +61,16 @@ set linkerFlags=-link -INCREMENTAL:NO -DEBUG:FULL
 
 echo.
 echo Compiling...
-cl %compilerFlags% ..\code\*.cpp ..\code\background\*.cpp ..\code\input\*.cpp %linkerFlags% user32.lib d2d1.lib Ole32.lib Shlwapi.lib Dwrite.lib
+rem Compile embedded asset resources (.rc -> .res)
+where rc >nul 2>nul
+if errorlevel 1 (
+  for %%r in ("%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.19041.0\x64\rc.exe" "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\rc.exe" "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.22621.0\x64\rc.exe") do if exist "%%~fr" set "RCEXE=%%~fr"
+)
+if not defined RCEXE set "RCEXE=rc"
+"%RCEXE%" /r /fo assets.res ..\code\assets.rc
+if errorlevel 1 goto :build_failed
+
+cl %compilerFlags% ..\code\*.cpp ..\code\background\*.cpp ..\code\input\*.cpp assets.res %linkerFlags% user32.lib d2d1.lib Ole32.lib Shlwapi.lib Dwrite.lib
 set "BUILD_RESULT=%errorlevel%"
 
 popd

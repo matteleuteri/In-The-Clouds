@@ -5,7 +5,6 @@
 #include <windows.h>
 #include <stdint.h>
 #include <profileapi.h>
-#include <filesystem>
 #include <array>
 #include <cstdio>
 #include <dwrite.h>
@@ -16,7 +15,6 @@
 #include "JumpButton.h"
 
 static bool isRunning;
-std::filesystem::path p;
 std::unique_ptr<Scene> scene;
 ID2D1HwndRenderTarget* renderTarget;
 

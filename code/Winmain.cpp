@@ -1,18 +1,47 @@
 #include "headers/Winmain.h"
 
-static HRESULT LoadBitmapFromFile(IWICImagingFactory *pIWICFactory, LPCWSTR uri, UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap **ppBitmap)
+static HRESULT LoadBitmapFromResource(IWICImagingFactory *pIWICFactory, LPCWSTR resourceName, UINT destinationWidth, UINT destinationHeight, ID2D1Bitmap **ppBitmap)
 {
     if(pIWICFactory == NULL || ppBitmap == NULL || renderTarget == NULL)
     {
         return E_POINTER;
     }
 
+    // Find and load the embedded resource into memory
+    HINSTANCE hInst = GetModuleHandle(NULL);
+    HRSRC hRes = FindResource(hInst, resourceName, RT_RCDATA);
+    if(hRes == NULL)
+    {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+
+    DWORD resSize = SizeofResource(hInst, hRes);
+    HGLOBAL hResData = LoadResource(hInst, hRes);
+    if(hResData == NULL)
+    {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+
+    LPVOID resPtr = LockResource(hResData);
+    if(resPtr == NULL)
+    {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+
+    IWICStream *pStream = NULL;
     IWICBitmapDecoder *pDecoder = NULL;
     IWICBitmapFrameDecode *pSource = NULL;
     IWICFormatConverter *pConverter = NULL;
 
-    HRESULT hr = pIWICFactory->CreateDecoderFromFilename(uri, NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &pDecoder);
-
+    HRESULT hr = pIWICFactory->CreateStream(&pStream);
+    if(SUCCEEDED(hr))
+    {
+        hr = pStream->InitializeFromMemory(reinterpret_cast<BYTE*>(resPtr), resSize);
+    }
+    if(SUCCEEDED(hr))
+    {
+        hr = pIWICFactory->CreateDecoderFromStream(pStream, NULL, WICDecodeMetadataCacheOnLoad, &pDecoder);
+    }
     if(SUCCEEDED(hr))
     {
         hr = pDecoder->GetFrame(0, &pSource);
@@ -29,6 +58,12 @@ static HRESULT LoadBitmapFromFile(IWICImagingFactory *pIWICFactory, LPCWSTR uri,
     {
         hr = renderTarget->CreateBitmapFromWicBitmap(pConverter, ppBitmap);
     }
+
+    if(pConverter) pConverter->Release();
+    if(pSource) pSource->Release();
+    if(pDecoder) pDecoder->Release();
+    if(pStream) pStream->Release();
+
     return hr;
 }
 
@@ -63,25 +98,20 @@ static IWICImagingFactory* createResources(HWND hwnd, RECT* rc)
     return pIWICFactory;
 }
 
-static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFactory, std::vector<std::string>& assetNames)
+static std::vector<ID2D1Bitmap*> loadBitmapVector(IWICImagingFactory* pIWICFactory, std::vector<std::wstring>& assetNames)
 {
     std::vector<ID2D1Bitmap*> bitmapVector = {};
     for(auto& asset : assetNames)
     {
-        p /= asset;
         ID2D1Bitmap *currBitmap = NULL;
-        HRESULT hr = LoadBitmapFromFile(pIWICFactory, p.c_str(), 20, 20, &currBitmap);
+        HRESULT hr = LoadBitmapFromResource(pIWICFactory, asset.c_str(), 20, 20, &currBitmap);
         if(FAILED(hr) || currBitmap == NULL)
         {
-            // Log the failure and skip this frame instead of pushing a garbage
-            // pointer into the animation (which would crash on render).
             char message[512];
-            snprintf(message, sizeof(message), "Failed to load asset '%ls' (hr=0x%08lX)\n", p.c_str(), (unsigned long)hr);
+            snprintf(message, sizeof(message), "Failed to load asset '%ls' (hr=0x%08lX)\n", asset.c_str(), (unsigned long)hr);
             OutputDebugStringA(message);
-            p.remove_filename();
             continue;
         }
-        p.remove_filename();
         bitmapVector.push_back(currBitmap);
     }
     return bitmapVector;
@@ -185,44 +215,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             RECT rc;
             GetClientRect(hwnd, &rc);
 
-            // Resolve the assets folder. Try several candidate paths so the
-            // game works both from build\ (exe_dir/../assets) and from a
-            // downloaded release (exe_dir/assets or cwd/assets).
-            std::filesystem::path assetsPath;
-            wchar_t modulePath[MAX_PATH];
-            if(GetModuleFileNameW(NULL, modulePath, MAX_PATH) > 0)
-            {
-                std::filesystem::path exeDir = std::filesystem::path(modulePath).parent_path();
-                std::filesystem::path candidates[] = {
-                    exeDir / ".." / "assets",
-                    exeDir / "assets",
-                };
-                for (auto &c : candidates)
-                {
-                    if (std::filesystem::exists(c))
-                    {
-                        assetsPath = c;
-                        break;
-                    }
-                }
-            }
-            if (assetsPath.empty())
-            {
-                assetsPath = std::filesystem::current_path() / "assets";
-            }
-            p = assetsPath;
-            // wchar_t fnameBuffer[MAX_PATH];
-            // GetModuleFileName(NULL, fnameBuffer, MAX_PATH);
-
             IWICImagingFactory* pIWICFactory = createResources(hwnd, &rc);
 
             // JsonParser *jp = new JsonParser("ResourceTree.json");
             // jp->parse();
 
-            std::vector<std::string> playerIdleAssetNames = { "player2_idle_01.png", "player2_idle_02.png", "player2_idle_03.png" };
+            std::vector<std::wstring> playerIdleAssetNames = { L"PLAYER2_IDLE_01", L"PLAYER2_IDLE_02", L"PLAYER2_IDLE_03" };
             std::vector<ID2D1Bitmap*> playerIdleBitmaps = loadBitmapVector(pIWICFactory, playerIdleAssetNames);
             Animation* playerIdleAnm = new Animation(playerIdleBitmaps, 0, GetTickCount(), 100);
-            std::vector<std::string> playerJumpAssetNames = { "player2_jump_01.png", "player2_jump_02.png", "player2_jump_03.png", "player2_jump_04.png"};
+            std::vector<std::wstring> playerJumpAssetNames = { L"PLAYER2_JUMP_01", L"PLAYER2_JUMP_02", L"PLAYER2_JUMP_03", L"PLAYER2_JUMP_04"};
             std::vector<ID2D1Bitmap*> playerJumpBitmaps = loadBitmapVector(pIWICFactory, playerJumpAssetNames);
             Animation* playerJumpAnm = new Animation(playerJumpBitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> playerAnimations;
@@ -230,42 +231,42 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             playerAnimations[1] = playerJumpAnm;
             AnimationController *playerAnimationController = new AnimationController(playerAnimations);
 
-            std::vector<std::string> chunk1AssetNames = { "WorldChunk_1_1.png", "WorldChunk_1_2.png" };
+            std::vector<std::wstring> chunk1AssetNames = { L"WORLDCHUNK_1_1", L"WORLDCHUNK_1_2" };
             std::vector<ID2D1Bitmap*> chunk1Bitmaps = loadBitmapVector(pIWICFactory, chunk1AssetNames);
             Animation* chunk1Anm = new Animation(chunk1Bitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> chunk1Animations;
             chunk1Animations[0] = chunk1Anm;
             AnimationController *chunk1AnimationController = new AnimationController(chunk1Animations);
 
-            std::vector<std::string> chunk2AssetNames = { "WorldChunk_2_1.png", "WorldChunk_2_2.png" };
+            std::vector<std::wstring> chunk2AssetNames = { L"WORLDCHUNK_2_1", L"WORLDCHUNK_2_2" };
             std::vector<ID2D1Bitmap*> chunk2Bitmaps = loadBitmapVector(pIWICFactory, chunk2AssetNames);
             Animation* chunk2Anm = new Animation(chunk2Bitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> chunk2Animations;
             chunk2Animations[0] = chunk2Anm;
             AnimationController *chunk2AnimationController = new AnimationController(chunk2Animations);
 
-            std::vector<std::string> chunk3AssetNames = { "WorldChunk_1_1.png", "WorldChunk_1_2.png" };
+            std::vector<std::wstring> chunk3AssetNames = { L"WORLDCHUNK_1_1", L"WORLDCHUNK_1_2" };
             std::vector<ID2D1Bitmap*> chunk3Bitmaps = loadBitmapVector(pIWICFactory, chunk3AssetNames);
             Animation* chunk3Anm = new Animation(chunk3Bitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> chunk3Animations;
             chunk3Animations[0] = chunk3Anm;
             AnimationController *chunk3AnimationController = new AnimationController(chunk3Animations);
 
-            std::vector<std::string> backgroundAssetNames = { "background.png" };
+            std::vector<std::wstring> backgroundAssetNames = { L"BACKGROUND" };
             std::vector<ID2D1Bitmap*> backgroundBitmaps = loadBitmapVector(pIWICFactory, backgroundAssetNames);
             Animation* backgroundAnm = new Animation(backgroundBitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> backgroundAnimations;
             backgroundAnimations[0] = backgroundAnm;
             AnimationController *backgroundAnimationController = new AnimationController(backgroundAnimations);
 
-            std::vector<std::string> cloudLayer1AssetNames = { "cloudLayer_1_2.png", "cloudLayer_1_1.png","cloudLayer_1_3.png","cloudLayer_1_1.png" };
+            std::vector<std::wstring> cloudLayer1AssetNames = { L"CLOUDLAYER_1_2", L"CLOUDLAYER_1_1", L"CLOUDLAYER_1_3", L"CLOUDLAYER_1_1" };
             std::vector<ID2D1Bitmap*> cloudLayer1Bitmaps = loadBitmapVector(pIWICFactory, cloudLayer1AssetNames);
             Animation* cloudLayer1Anm = new Animation(cloudLayer1Bitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> cloudLayer1Animations;
             cloudLayer1Animations[0] = cloudLayer1Anm;
             AnimationController *cloudLayer1AnimationController = new AnimationController(cloudLayer1Animations);
 
-            std::vector<std::string> cloudLayer2AssetNames = { "cloudLayer_2_2.png", "cloudLayer_2_1.png","cloudLayer_2_3.png","cloudLayer_2_1.png" };
+            std::vector<std::wstring> cloudLayer2AssetNames = { L"CLOUDLAYER_2_2", L"CLOUDLAYER_2_1", L"CLOUDLAYER_2_3", L"CLOUDLAYER_2_1" };
             std::vector<ID2D1Bitmap*> cloudLayer2Bitmaps = loadBitmapVector(pIWICFactory, cloudLayer2AssetNames);
             Animation* cloudLayer2Anm = new Animation(cloudLayer2Bitmaps, 0, GetTickCount(), 100);
             std::map<int, Animation*> cloudLayer2Animations;
