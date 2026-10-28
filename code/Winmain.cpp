@@ -185,20 +185,32 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
             RECT rc;
             GetClientRect(hwnd, &rc);
 
-            // Resolve the assets folder relative to the executable, not the
-            // current working directory, so the game can be launched from
-            // anywhere (the exe lives in build\, so ../assets is correct).
+            // Resolve the assets folder. Try several candidate paths so the
+            // game works both from build\ (exe_dir/../assets) and from a
+            // downloaded release (exe_dir/assets or cwd/assets).
+            std::filesystem::path assetsPath;
             wchar_t modulePath[MAX_PATH];
             if(GetModuleFileNameW(NULL, modulePath, MAX_PATH) > 0)
             {
-                p = std::filesystem::path(modulePath).parent_path();
+                std::filesystem::path exeDir = std::filesystem::path(modulePath).parent_path();
+                std::filesystem::path candidates[] = {
+                    exeDir / ".." / "assets",
+                    exeDir / "assets",
+                };
+                for (auto &c : candidates)
+                {
+                    if (std::filesystem::exists(c))
+                    {
+                        assetsPath = c;
+                        break;
+                    }
+                }
             }
-            else
+            if (assetsPath.empty())
             {
-                p = std::filesystem::current_path();
+                assetsPath = std::filesystem::current_path() / "assets";
             }
-            p /= "..";
-            p /= "assets";
+            p = assetsPath;
             // wchar_t fnameBuffer[MAX_PATH];
             // GetModuleFileName(NULL, fnameBuffer, MAX_PATH);
 
