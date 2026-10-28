@@ -139,8 +139,9 @@ FIXED: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13. Remaining open: #
 26. Procedural generation — chunks (platforms) and clouds spawn just before
     they become visible as the camera pans right, and are removed once they
     fall behind the camera's left edge. Chunks spawn at varying heights so
-    the player can jump between them indefinitely. CloudLayers are now
-    stored in a vector instead of two fixed instances.
+    the player can jump between them indefinitely. Clouds spawn at varying
+    heights and speeds with no wrap-around (cleaned up when off-screen).
+    CloudLayers are stored in a vector instead of two fixed instances.
 
 27. Collision hardening — checkPlatformCollision uses coyote time for
     edge-walkoff: reaching the edge starts an 8-frame grace period during
