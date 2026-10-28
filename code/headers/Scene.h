@@ -50,7 +50,7 @@ public:
     void checkPlatformCollision(int32_t currentTime);
     void drawCloudLayer(ID2D1HwndRenderTarget* renderTarget, CloudLayer *cloundLayer);
     void spawnChunk(float x, float y, AnimationController* ac);
-    void spawnCloud(float x, float y, AnimationController* ac);
+    void spawnCloud(float x, float y, AnimationController* ac, float xSpeed);
     void cleanupChunks(float cameraX);
     void cleanupClouds(float cameraX);
 };

@@ -26,7 +26,7 @@ void CloudLayer::moveLayer()
 
 void CloudLayer::update(int32_t timeDiff)
 {
-    // Make cloud movement time-based and wrap around
+    // Make cloud movement time-based; no wrap-around — clouds are spawned
+    // ahead of the camera and cleaned up once behind it (see Scene::cleanupClouds).
     x += xSpeed * (timeDiff / 16.0f);
-    moveLayer();
 }
