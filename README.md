@@ -52,6 +52,19 @@ In-The-Clouds.exe
 > (`build\..\assets\`), so you can now launch it from any working directory.
 > If you move the `.exe` out of `build\`, keep it next to an `assets\` folder.
 
+## Releases
+
+GitHub Actions automatically builds the game and attaches `In-The-Clouds.exe`
+as a release asset whenever you push a tag matching `v*`:
+
+```bat
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The workflow runs on `windows-latest`, executes `code\build.bat`, and uploads
+`build\In-The-Clouds.exe` to the release.
+
 ## Controls
 
 | Key        | Action |
