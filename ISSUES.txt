@@ -148,6 +148,8 @@ FIXED: #1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #11, #12, #13. Remaining open: #
     is suppressed during coyote time. Landing is always checked (even
     during immune) so falling off one platform doesn't make you fall
     through platforms below. Player respawn (y > 720) nulls chunkCurrentlyOn.
+    Coyote time converts player->x to absolute screen coords before going
+    airborne (matching fallOff()/jump()).
 
 28. Coyote time — edge-walkoff grace period (8 frames) lets players walk
     back onto a platform after reaching the edge; re-landing on the same

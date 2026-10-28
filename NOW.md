@@ -1,6 +1,6 @@
 # NOW.md
-**Last updated:** 2026-10-27
-**Current state:** main + all changes committed and pushed
+**Last updated:** 2026-10-28
+**Current state:** main + all changes committed, not yet pushed (9 commits ahead of origin)
 
 ## Quick snapshot
 - Repo builds cleanly with MSVC 19.32 (VS 2022 Community). `code/build.bat` auto-detects the toolchain and works from cmd/PowerShell/WSL.
