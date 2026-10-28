@@ -38,6 +38,10 @@ void Scene::checkPlatformCollision(int32_t currentTime)
         {
             if (player->coyoteTime <= 0)
             {
+                // Convert to absolute screen coords before going airborne,
+                // just like fallOff() and jump() do.
+                std::array<float, 2> a = player->getAbsoluteCoordinates();
+                player->setPosition(a[0], a[1]);
                 player->coyoteTime = 8;
                 player->isInAir = true;
                 player->ySpeed = 0.0f;
