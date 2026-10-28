@@ -11,7 +11,7 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
     background = std::make_unique<Background>(animationControllers[4], 0.0f, 0.0f, 0.0f);
     srand((unsigned int)GetTickCount());
     // Seed initial chunks/clouds so the player has something to land on
-    spawnChunk(600.0f, 600.0f, animationControllers[1]);
+    spawnChunk(600.0f, 600.0f, animationControllers[1], 0.5f);
     nextChunkSpawnX = 1000.0f;
     spawnCloud(400.0f, 0.0f, animationControllers[5], 1.0f);
     spawnCloud(900.0f, 50.0f, animationControllers[6], 0.5f);
@@ -113,7 +113,8 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
         while (nextChunkSpawnX < camRight + SPAWN_AHEAD)
         {
             float cy = 200.0f + (float)(rand() % 400);
-            spawnChunk(nextChunkSpawnX, cy, animationControllers[1 + (chunkControllerIndex % 3)]);
+            float cs = 0.2f + (float)(rand() % 200) / 100.0f;
+            spawnChunk(nextChunkSpawnX, cy, animationControllers[1 + (chunkControllerIndex % 3)], cs);
             nextChunkSpawnX += CHUNK_SPACING + (float)(rand() % 200);
             chunkControllerIndex++;
         }
@@ -207,9 +208,9 @@ void Scene::drawPlayer(ID2D1HwndRenderTarget* renderTarget)
     drawBM(renderTarget, player.get());
 }
 
-void Scene::spawnChunk(float x, float y, AnimationController* ac)
+void Scene::spawnChunk(float x, float y, AnimationController* ac, float xSpeed)
 {
-    worldChunks.push_back(std::make_unique<WorldChunk>(ac, x, y, 0.5f));
+    worldChunks.push_back(std::make_unique<WorldChunk>(ac, x, y, xSpeed));
 }
 
 void Scene::spawnCloud(float x, float y, AnimationController* ac, float xSpeed)
