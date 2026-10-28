@@ -23,7 +23,7 @@
 - **Down-arrow fall-through** — VK_DOWN while grounded drops through the platform (natural gravity from rest, immune grace period)
 - **Deadzone camera** — player stays in middle third; world pans horizontally
 - **Tiling background** — background repeats horizontally; 1px tile overlap hides seams
-- **Procedural generation** — chunks and clouds spawn ahead of camera, despawn behind; chunks at varying heights; clouds at varying heights and speeds with no wrap-around
+- **Procedural generation** — chunks and clouds spawn ahead of camera, despawn behind; chunks at varying heights and speeds; clouds at varying heights and speeds with no wrap-around
 - **Debug logging** — OutputDebugStringA logs player updates and collision events
 - **Collision hardening** — landing always checked (even during immune);
   coyote time (8 frames) for edge-walkoff lets players walk back onto a
