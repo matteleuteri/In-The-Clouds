@@ -248,13 +248,13 @@ void Scene::spawnCloud(float x, float y, AnimationController* ac, float xSpeed)
 
 void Scene::cleanupChunks(float cameraX)
 {
-    const float DESPAWN_BEHIND = -600.0f;
+    const float DESPAWN_BEHIND = -800.0f;
+    const float DESPAWN_AHEAD = 2000.0f;
     for (auto it = worldChunks.begin(); it != worldChunks.end(); )
     {
         WorldChunk *wc = it->get();
-        if (wc->x + wc->width < cameraX + DESPAWN_BEHIND)
+        if ((wc->x + wc->width < cameraX + DESPAWN_BEHIND) || (wc->x > cameraX + DESPAWN_AHEAD))
         {
-            // Avoid dangling pointer if this is the chunk the player stands on
             if (player->chunkCurrentlyOn == wc)
             {
                 player->chunkCurrentlyOn = nullptr;
