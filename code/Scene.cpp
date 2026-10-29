@@ -271,11 +271,12 @@ void Scene::cleanupChunks(float cameraX)
 
 void Scene::cleanupClouds(float cameraX)
 {
-    const float DESPAWN_BEHIND = -800.0f;
+    const float DESPAWN_BEHIND = -1000.0f;
+    const float DESPAWN_AHEAD = 2000.0f;
     for (auto it = cloudLayers.begin(); it != cloudLayers.end(); )
     {
         CloudLayer *cl = it->get();
-        if (cl->x + cl->width < cameraX + DESPAWN_BEHIND)
+        if ((cl->x + cl->width < cameraX + DESPAWN_BEHIND) || (cl->x > cameraX + DESPAWN_AHEAD))
         {
             it = cloudLayers.erase(it);
         }
