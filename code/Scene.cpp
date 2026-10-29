@@ -258,8 +258,8 @@ void Scene::spawnCloud(float x, float y, AnimationController* ac, float xSpeed)
 
 void Scene::cleanupChunks(float cameraX)
 {
-    const float DESPAWN_BEHIND = -1500.0f;
-    const float DESPAWN_AHEAD = 3000.0f;
+    const float DESPAWN_BEHIND = -2000.0f;
+    const float DESPAWN_AHEAD = 4000.0f;
     for (auto it = worldChunks.begin(); it != worldChunks.end(); )
     {
         WorldChunk *wc = it->get();
