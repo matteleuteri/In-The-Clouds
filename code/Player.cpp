@@ -1,6 +1,7 @@
 #include "headers/Player.h"
 
 #include <cstdio>
+#include <sstream>
 
 Player::Player(AnimationController *animationController, float x, float y, float xSpeed): GameObject(animationController, x, y, xSpeed)
 {
