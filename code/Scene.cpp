@@ -115,6 +115,11 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
 
     // Procedural generation: spawn chunks/clouds in both directions,
     // and remove ones that have fallen behind/outside view.
+    {
+        char dbg[256];
+        snprintf(dbg, sizeof(dbg), "SCENE: CHUNKS=%d camX=%.2f\n", (int)worldChunks.size(), camera ? camera->x : 0);
+        OutputDebugStringA(dbg);
+    }
     if (camera)
     {
         float camRight = camera->x + (float)camera->width;
