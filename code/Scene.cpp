@@ -12,8 +12,10 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
     srand((unsigned int)GetTickCount());
     // Seed initial chunks/clouds so the player has something to land on
     spawnChunk(600.0f, 600.0f, animationControllers[1], 0.5f);
+    spawnChunk(0.0f, 500.0f, animationControllers[2], -0.3f);
+    spawnChunk(-400.0f, 400.0f, animationControllers[3], 0.4f);
     nextChunkSpawnX = 1000.0f;
-    nextChunkSpawnXLeft = 200.0f;
+    nextChunkSpawnXLeft = -800.0f;
     spawnCloud(400.0f, 0.0f, animationControllers[5], 1.0f);
     spawnCloud(900.0f, 50.0f, animationControllers[6], 0.5f);
     nextCloudSpawnX = 1400.0f;
