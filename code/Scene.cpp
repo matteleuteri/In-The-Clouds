@@ -13,7 +13,7 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
     // Seed initial chunks/clouds so the player has something to land on
     spawnChunk(600.0f, 600.0f, animationControllers[1], 0.5f);
     nextChunkSpawnX = 1000.0f;
-    nextChunkSpawnXLeft = 0.0f;
+    nextChunkSpawnXLeft = 200.0f;
     spawnCloud(400.0f, 0.0f, animationControllers[5], 1.0f);
     spawnCloud(900.0f, 50.0f, animationControllers[6], 0.5f);
     nextCloudSpawnX = 1400.0f;
@@ -131,8 +131,8 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
         {
             float cy = 200.0f + (float)(rand() % 400);
             float cs = 0.2f + (float)(rand() % 200) / 100.0f;
-            spawnChunk(nextChunkSpawnXLeft - CHUNK_SPACING - (float)(rand() % 200), cy, animationControllers[1 + (chunkControllerIndex % 3)], cs);
             nextChunkSpawnXLeft -= CHUNK_SPACING + (float)(rand() % 200);
+            spawnChunk(nextChunkSpawnXLeft, cy, animationControllers[1 + (chunkControllerIndex % 3)], cs);
             chunkControllerIndex++;
         }
         cleanupChunks(camera->x);
@@ -153,8 +153,8 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
         {
             float cy = -50.0f + (float)(rand() % 400);
             float cs = 0.3f + (float)(rand() % 200) / 100.0f;
-            spawnCloud(nextCloudSpawnXLeft - CLOUD_SPACING - (float)(rand() % 300), cy, animationControllers[5 + (cloudControllerIndex % 2)], cs);
             nextCloudSpawnXLeft -= CLOUD_SPACING + (float)(rand() % 300);
+            spawnCloud(nextCloudSpawnXLeft, cy, animationControllers[5 + (cloudControllerIndex % 2)], cs);
             cloudControllerIndex++;
         }
         cleanupClouds(camera->x);
