@@ -2,8 +2,8 @@ name: Build Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
   build:
@@ -16,9 +16,11 @@ jobs:
         shell: cmd
         run: code\build.bat
 
-      - name: Upload release asset
+      - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           files: build\In-The-Clouds.exe
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
           generate_release_notes: true
           fail_on_unmatched_files: false
