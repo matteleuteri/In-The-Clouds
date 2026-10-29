@@ -134,6 +134,9 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
             float cy = 200.0f + (float)(rand() % 400);
             float cs = 0.2f + (float)(rand() % 200) / 100.0f;
             nextChunkSpawnXLeft -= CHUNK_SPACING + (float)(rand() % 200);
+            char dbg[256];
+            snprintf(dbg, sizeof(dbg), "SCENE: SPAWN_LEFT x=%.2f camLeft=%.2f nextLeft=%.2f\n", nextChunkSpawnXLeft, camLeft, nextChunkSpawnXLeft);
+            OutputDebugStringA(dbg);
             spawnChunk(nextChunkSpawnXLeft, cy, animationControllers[1 + (chunkControllerIndex % 3)], cs);
             chunkControllerIndex++;
         }
