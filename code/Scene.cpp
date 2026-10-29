@@ -13,7 +13,9 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
     // Seed initial chunks/clouds so the player has something to land on
     spawnChunk(600.0f, 600.0f, animationControllers[1], 0.5f);
     spawnChunk(0.0f, 500.0f, animationControllers[2], -0.3f);
-    spawnChunk(-400.0f, 400.0f, animationControllers[3], 0.4f);
+    spawnChunk(-200.0f, 450.0f, animationControllers[3], 0.4f);
+    spawnChunk(-400.0f, 400.0f, animationControllers[1], -0.2f);
+    spawnChunk(-600.0f, 350.0f, animationControllers[2], 0.3f);
     nextChunkSpawnX = 1000.0f;
     nextChunkSpawnXLeft = -800.0f;
     spawnCloud(400.0f, 0.0f, animationControllers[5], 1.0f);
