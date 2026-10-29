@@ -38,7 +38,9 @@ public:
     std::vector<std::unique_ptr<WorldChunk>> worldChunks;
     std::vector<AnimationController*> animationControllers;
     float nextChunkSpawnX;
+    float nextChunkSpawnXLeft;
     float nextCloudSpawnX;
+    float nextCloudSpawnXLeft;
     int chunkControllerIndex;
     int cloudControllerIndex;
     Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc);

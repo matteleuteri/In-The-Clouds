@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <cmath>
 
-Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc) : isActive(active), x(x), y(y), rc(rc), nextChunkSpawnX(0.0f), nextCloudSpawnX(0.0f), chunkControllerIndex(1), cloudControllerIndex(5)
+Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*> animationControllers, float x, float y, RECT *rc) : isActive(active), x(x), y(y), rc(rc), nextChunkSpawnX(0.0f), nextChunkSpawnXLeft(0.0f), nextCloudSpawnX(0.0f), nextCloudSpawnXLeft(0.0f), chunkControllerIndex(1), cloudControllerIndex(5)
 {
     this->animationControllers = animationControllers;
     player = std::make_unique<Player>(animationControllers[0], 600.0f, 60.0f, 0.0f);
@@ -13,9 +13,11 @@ Scene::Scene(int32_t currentTime, bool active, std::vector<AnimationController*>
     // Seed initial chunks/clouds so the player has something to land on
     spawnChunk(600.0f, 600.0f, animationControllers[1], 0.5f);
     nextChunkSpawnX = 1000.0f;
+    nextChunkSpawnXLeft = 0.0f;
     spawnCloud(400.0f, 0.0f, animationControllers[5], 1.0f);
     spawnCloud(900.0f, 50.0f, animationControllers[6], 0.5f);
     nextCloudSpawnX = 1400.0f;
+    nextCloudSpawnXLeft = -200.0f;
     lastTimestamp = GetTickCount();
 }
 
@@ -107,13 +109,15 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
     }
     if (camera) camera->update(timeElapsed, playerWorldCenterX);
 
-    // Procedural generation: spawn chunks/clouds just before they become
-    // visible, and remove ones that have fallen behind the camera.
+    // Procedural generation: spawn chunks/clouds in both directions,
+    // and remove ones that have fallen behind/outside view.
     if (camera)
     {
         float camRight = camera->x + (float)camera->width;
+        float camLeft = camera->x;
         const float SPAWN_AHEAD = 500.0f;
         const float CHUNK_SPACING = 500.0f;
+        // Spawn to the right
         while (nextChunkSpawnX < camRight + SPAWN_AHEAD)
         {
             float cy = 200.0f + (float)(rand() % 400);
@@ -122,17 +126,35 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
             nextChunkSpawnX += CHUNK_SPACING + (float)(rand() % 200);
             chunkControllerIndex++;
         }
+        // Spawn to the left
+        while (nextChunkSpawnXLeft > camLeft - SPAWN_AHEAD)
+        {
+            float cy = 200.0f + (float)(rand() % 400);
+            float cs = 0.2f + (float)(rand() % 200) / 100.0f;
+            spawnChunk(nextChunkSpawnXLeft - CHUNK_SPACING - (float)(rand() % 200), cy, animationControllers[1 + (chunkControllerIndex % 3)], cs);
+            nextChunkSpawnXLeft -= CHUNK_SPACING + (float)(rand() % 200);
+            chunkControllerIndex++;
+        }
         cleanupChunks(camera->x);
 
-        float camRightCloud = camera->x + (float)camera->width;
         const float CLOUD_SPAWN_AHEAD = 600.0f;
         const float CLOUD_SPACING = 400.0f;
-        while (nextCloudSpawnX < camRightCloud + CLOUD_SPAWN_AHEAD)
+        // Spawn clouds to the right
+        while (nextCloudSpawnX < camRight + CLOUD_SPAWN_AHEAD)
         {
             float cy = -50.0f + (float)(rand() % 400);
             float cs = 0.3f + (float)(rand() % 200) / 100.0f;
             spawnCloud(nextCloudSpawnX, cy, animationControllers[5 + (cloudControllerIndex % 2)], cs);
             nextCloudSpawnX += CLOUD_SPACING + (float)(rand() % 300);
+            cloudControllerIndex++;
+        }
+        // Spawn clouds to the left
+        while (nextCloudSpawnXLeft > camLeft - CLOUD_SPAWN_AHEAD)
+        {
+            float cy = -50.0f + (float)(rand() % 400);
+            float cs = 0.3f + (float)(rand() % 200) / 100.0f;
+            spawnCloud(nextCloudSpawnXLeft - CLOUD_SPACING - (float)(rand() % 300), cy, animationControllers[5 + (cloudControllerIndex % 2)], cs);
+            nextCloudSpawnXLeft -= CLOUD_SPACING + (float)(rand() % 300);
             cloudControllerIndex++;
         }
         cleanupClouds(camera->x);
