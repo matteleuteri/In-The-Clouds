@@ -129,6 +129,11 @@ void Scene::updateState(HWND hwnd, int32_t endTime, int32_t startTime)
             chunkControllerIndex++;
         }
         // Spawn to the left
+        {
+            char dbg[256];
+            snprintf(dbg, sizeof(dbg), "SCENE: CHECK_LEFT camLeft=%.2f nextLeft=%.2f cond=%d\n", camLeft, nextChunkSpawnXLeft, (nextChunkSpawnXLeft > camLeft - SPAWN_AHEAD));
+            OutputDebugStringA(dbg);
+        }
         while (nextChunkSpawnXLeft > camLeft - SPAWN_AHEAD)
         {
             float cy = 200.0f + (float)(rand() % 400);
