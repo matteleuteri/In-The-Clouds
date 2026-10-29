@@ -34,15 +34,13 @@ void Scene::checkPlatformCollision(int32_t currentTime)
     if (!player->isInAir && player->immune <= 0 && player->chunkCurrentlyOn)
     {
         WorldChunk *wc = player->chunkCurrentlyOn;
-        if (player->x < player->width/2 || player->x > wc->width - player->width/2)
+        if (player->x < player->width/4 || player->x > wc->width - player->width/4)
         {
             char dbg[256];
-            snprintf(dbg, sizeof(dbg), "SCENE: EDGE_CHECK x=%.2f w=%.2f range=[%.2f,%.2f] coyote=%d\n", player->x, player->width, player->width/2, wc->width - player->width/2, player->coyoteTime);
+            snprintf(dbg, sizeof(dbg), "SCENE: EDGE_CHECK x=%.2f w=%.2f range=[%.2f,%.2f] coyote=%d\n", player->x, player->width, player->width/4, wc->width - player->width/4, player->coyoteTime);
             OutputDebugStringA(dbg);
             if (player->coyoteTime <= 0)
             {
-                // Convert to absolute screen coords before going airborne,
-                // just like fallOff() and jump() do.
                 std::array<float, 2> a = player->getAbsoluteCoordinates();
                 player->setPosition(a[0], a[1]);
                 player->coyoteTime = 8;
@@ -53,7 +51,7 @@ void Scene::checkPlatformCollision(int32_t currentTime)
         }
         else
         {
-            player->coyoteTime = 0; // back on platform, reset grace period
+            player->coyoteTime = 0;
         }
     }
 
@@ -69,8 +67,8 @@ void Scene::checkPlatformCollision(int32_t currentTime)
             snprintf(ldbg, sizeof(ldbg), "SCENE: LAND_CHECK wcx=%.2f wcw=%.2f wcy=%.2f px=%.2f py=%.2f pys=%.2f dist=%.2f\n", wc->x, wc->width, wc->y, player->x, player->y, player->ySpeed, std::abs(wc->y - (player->y + player->height)));
             OutputDebugStringA(ldbg);
             float newx = player->x - wc->x + player->width/2;
-            if(newx < player->width/2) newx = player->width/2;
-            if(newx > wc->width - player->width/2) newx = wc->width - player->width/2;
+            if(newx < player->width/4) newx = player->width/4;
+            if(newx > wc->width - player->width/4) newx = wc->width - player->width/4;
             player->landOn(wc.get(), newx, wc->y);
             char dbg[256];
             snprintf(dbg, sizeof(dbg), "PLAYER: LAND wcx=%.2f wcw=%.2f newx=%.2f px=%.2f py=%.2f valid=[%.2f, %.2f]\n",
